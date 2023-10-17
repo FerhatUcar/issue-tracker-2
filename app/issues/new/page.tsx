@@ -1,17 +1,18 @@
 "use client";
-import { Button, TextField } from "@radix-ui/themes";
-import SimpleMDE from "react-simplemde-editor";
+
 import "easymde/dist/easymde.min.css";
+import dynamic from "next/dynamic";
+
+const IssueForm = dynamic(() => import("@/app/issues/_components/IssueForm"), {
+  ssr: false,
+  loading: () => <div>Loading...</div>,
+});
 
 const NewIssuesPage = () => {
   return (
-    <div className="max-w-xl space-y-3">
-      <TextField.Root>
-        <TextField.Input placeholder="title" />
-      </TextField.Root>
-      <SimpleMDE placeholder="Description" />
-      <Button>Submit</Button>
-    </div>
+    <>
+      <IssueForm />
+    </>
   );
 };
 
