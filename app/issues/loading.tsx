@@ -1,9 +1,8 @@
 import React from "react";
 import { Table } from "@radix-ui/themes";
-import Skeleton from "react-loading-skeleton";
-import "react-loading-skeleton/dist/skeleton.css";
 import IssueActions from "@/app/issues/_components/IssueActions";
 import prisma from "@/prisma/client";
+import { Skeleton } from "@/app/components";
 
 const LoadingIssuesPage = async () => {
   const issues = await prisma.issue.findMany();
