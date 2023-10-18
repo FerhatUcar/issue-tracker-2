@@ -8,12 +8,10 @@ const IssueForm = dynamic(() => import("@/app/issues/_components/IssueForm"), {
   loading: () => <div>Loading...</div>,
 });
 
-const NewIssuesPage = () => {
-  return (
-    <>
-      <IssueForm />
-    </>
-  );
-};
+const NewIssuesPage = () => (
+  <>
+    <IssueForm />
+  </>
+);
 
 export default NewIssuesPage;

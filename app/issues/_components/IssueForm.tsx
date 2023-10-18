@@ -1,3 +1,5 @@
+"use client";
+
 import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import axios from "axios";
@@ -9,17 +11,18 @@ import { createIssueSchema } from "@/app/validationSchema";
 import { z } from "zod";
 import ErrorMessage from "@/app/components/ErrorMessage";
 import Spinner from "@/app/components/Spinner";
+import { Issue } from "@prisma/client";
 
-type IssueForm = z.infer<typeof createIssueSchema>;
+type IssueFormData = z.infer<typeof createIssueSchema>;
 
-const IssueForm = () => {
+const IssueForm = ({ issue }: { issue?: Issue }) => {
   const router = useRouter();
   const {
     register,
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<IssueForm>({
+  } = useForm<IssueFormData>({
     resolver: zodResolver(createIssueSchema),
   });
   const [error, setError] = useState("");
@@ -43,12 +46,17 @@ const IssueForm = () => {
           <Callout.Text>{error}</Callout.Text>
         </Callout.Root>
       )}
-      <form className="max-w-xl space-y-3" onSubmit={onSubmit}>
+      <form className="space-y-3" onSubmit={onSubmit}>
         <TextField.Root>
-          <TextField.Input placeholder="title" {...register("title")} />
+          <TextField.Input
+            defaultValue={issue?.title}
+            placeholder="title"
+            {...register("title")}
+          />
         </TextField.Root>
         <ErrorMessage>{errors.title?.message}</ErrorMessage>
         <Controller
+          defaultValue={issue?.description}
           render={({ field }) => (
             <SimpleMDE placeholder="Description" {...field} />
           )}
