@@ -4,14 +4,19 @@ import { Grid, Box, Flex } from "@radix-ui/themes";
 import EditIssueButton from "@/app/issues/[id]/EditIssueButton";
 import IssueDetails from "@/app/issues/[id]/IssueDetails";
 import DeleteIssueButton from "@/app/issues/[id]/DeleteIssueButton";
+import { IssueType } from "@/app/issues/types";
+import { cache } from "react";
 
 type Props = {
   params: { id: string };
 };
+
+const fetchUser = cache((issueId: number) =>
+  prisma.issue.findUnique({ where: { id: issueId } }),
+);
+
 const IssueDetailPage = async ({ params }: Props) => {
-  const issue = await prisma.issue.findUnique({
-    where: { id: parseInt(params.id) },
-  });
+  const issue: IssueType | null = await fetchUser(parseInt(params.id));
 
   if (!issue) {
     notFound();

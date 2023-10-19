@@ -14,10 +14,11 @@ export async function PATCH(
   const body = await request.json();
   const validation = patchIssueSchema.safeParse(body);
 
-  if (!validation.success)
+  if (!validation.success) {
     return NextResponse.json(validation.error.format(), {
       status: 400,
     });
+  }
 
   const { assignedToUserId, title, description } = body;
 
@@ -61,8 +62,9 @@ export async function DELETE(
     where: { id: parseInt(params.id) },
   });
 
-  if (!issue)
+  if (!issue) {
     return NextResponse.json({ error: "Invalid issue" }, { status: 404 });
+  }
 
   await prisma.issue.delete({
     where: { id: issue.id },
