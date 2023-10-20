@@ -4,8 +4,10 @@ import { Grid, Box, Flex } from "@radix-ui/themes";
 import EditIssueButton from "@/app/issues/[id]/EditIssueButton";
 import IssueDetails from "@/app/issues/[id]/IssueDetails";
 import DeleteIssueButton from "@/app/issues/[id]/DeleteIssueButton";
-import { IssueType } from "@/app/issues/types";
+import { Issue } from "@prisma/client";
 import { cache } from "react";
+import { getServerSession } from "next-auth";
+import authOptions from "@/app/auth/authOptions";
 
 type Props = {
   params: { id: string };
@@ -16,7 +18,8 @@ const fetchUser = cache((issueId: number) =>
 );
 
 const IssueDetailPage = async ({ params }: Props) => {
-  const issue: IssueType | null = await fetchUser(parseInt(params.id));
+  const session = await getServerSession(authOptions);
+  const issue: Issue | null = await fetchUser(parseInt(params.id));
 
   if (!issue) {
     notFound();
@@ -27,12 +30,14 @@ const IssueDetailPage = async ({ params }: Props) => {
       <Box className="md:col-span-4">
         <IssueDetails issue={issue} />
       </Box>
-      <Box>
-        <Flex direction="column" gap="4">
-          <EditIssueButton issueId={issue.id} />
-          <DeleteIssueButton issueId={issue.id} />
-        </Flex>
-      </Box>
+      {session && (
+        <Box>
+          <Flex direction="column" gap="4">
+            <EditIssueButton issueId={issue.id} />
+            <DeleteIssueButton issueId={issue.id} />
+          </Flex>
+        </Box>
+      )}
     </Grid>
   );
 };
