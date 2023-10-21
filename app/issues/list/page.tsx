@@ -22,7 +22,10 @@ const IssuesPage = async () => {
         </Table.Header>
         <Table.Body>
           {issues.map((issue) => (
-            <Table.Row key={issue.id}>
+            <Table.Row
+              key={issue.id}
+              className="hover:bg-fuchsia-100 transition-colors"
+            >
               <Table.Cell>
                 <Link href={`/issues/${issue.id}`}>{issue.title}</Link>
                 <div className="block md:hidden">
