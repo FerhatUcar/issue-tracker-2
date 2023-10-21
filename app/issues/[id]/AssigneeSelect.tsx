@@ -1,15 +1,32 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Select } from "@radix-ui/themes";
+import { User } from "next-auth";
+import axios from "axios";
 
 const AssigneeSelect = () => {
+  const [users, setUsers] = useState<User[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const { data } = await axios.get<User[]>("/api/users");
+      setUsers(data);
+    };
+
+    fetchData();
+  }, []);
+
   return (
     <Select.Root>
       <Select.Trigger placeholder="Assign..." />
       <Select.Content>
         <Select.Group>
           <Select.Label>Suggestions</Select.Label>
-          <Select.Item value="1">Ferhat Ucar</Select.Item>
+          {users.map((user) => (
+            <Select.Item key={user.id} value={user.id}>
+              {user.name}
+            </Select.Item>
+          ))}
         </Select.Group>
       </Select.Content>
     </Select.Root>
