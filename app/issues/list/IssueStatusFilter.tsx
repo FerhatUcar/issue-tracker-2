@@ -15,12 +15,25 @@ const IssueStatusFilter = () => {
   const searchParams = useSearchParams();
 
   const handleOnValueChange = (status: string) => {
-    const query = status ? `?status=${status}` : "";
+    const params = new URLSearchParams();
+
+    if (status) {
+      params.append("status", status);
+    }
+
+    if (searchParams.get("orderBy")) {
+      params.append("orderBy", searchParams.get("orderBy")!);
+    }
+
+    const query = params.size ? "?" + params.toString() : "";
     router.push("/issues/list" + query);
   };
 
   return (
-    <Select.Root onValueChange={handleOnValueChange}>
+    <Select.Root
+      defaultValue={searchParams.get("status") || ""}
+      onValueChange={handleOnValueChange}
+    >
       <Select.Trigger placeholder="Filter by status" />
       <Select.Content>
         {statuses.map((status, i) => (
