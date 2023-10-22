@@ -4,10 +4,13 @@ import IssueActions from "@/app/issues/list/IssueActions";
 import { Issue, Status } from "@prisma/client";
 import Pagination from "@/app/components/Pagination";
 import IssueTable, {
-  columnNames,
+  Column,
+  // columns,
+  // columnNames,
   IssueQuery,
 } from "@/app/issues/list/IssueTable";
 import { Flex } from "@radix-ui/themes";
+import { columns } from "@/app/issues/list/IssueColumns";
 
 type IssuePageProps = {
   searchParams: IssueQuery;
@@ -20,8 +23,10 @@ const IssuesPage = async ({ searchParams }: IssuePageProps) => {
     : undefined;
   const where = { status };
 
+  const columnNames = columns.map((column) => column.value);
+
   const orderBy = columnNames.includes(searchParams.orderBy)
-    ? { [searchParams.orderBy]: "asc" }
+    ? { [searchParams.orderBy]: searchParams.sortBy }
     : undefined;
 
   const page = parseInt(searchParams.page) || 1;
