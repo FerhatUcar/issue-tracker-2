@@ -1,11 +1,20 @@
-import React, { FC } from "react";
+"use client";
+
+import React, { FC, useState } from "react";
 import { Table } from "@radix-ui/themes";
 import NextLink from "next/link";
-import { ArrowUpIcon } from "@radix-ui/react-icons";
+import { ArrowDownIcon, ArrowUpIcon } from "@radix-ui/react-icons";
 import { IssueStatusBadge, Link } from "@/app/components";
 import { Issue, Status } from "@prisma/client";
+import { columns } from "@/app/issues/list/IssueColumns";
 
-export type IssueQuery = { status: Status; orderBy: keyof Issue; page: string };
+export type IssueQuery = {
+  status: Status;
+  orderBy: keyof Issue;
+  sortBy: "asc" | "desc";
+  page: string;
+};
+export type Column = { label: string; value: keyof Issue; className?: string };
 
 type IssueTableProps = {
   searchParams: IssueQuery;
@@ -13,6 +22,10 @@ type IssueTableProps = {
 };
 
 const IssueTable: FC<IssueTableProps> = ({ searchParams, issues }) => {
+  const [sort, setSort] = useState("asc");
+
+  const handleOnSort = () => setSort(sort === "asc" ? "desc" : "asc");
+
   return (
     <Table.Root variant="surface">
       <Table.Header>
@@ -23,15 +36,25 @@ const IssueTable: FC<IssueTableProps> = ({ searchParams, issues }) => {
               className={column.className}
             >
               <NextLink
+                onClick={handleOnSort}
                 href={{
-                  query: { ...searchParams, orderBy: column.value },
+                  query: {
+                    ...searchParams,
+                    sortBy: sort,
+                    orderBy: column.value,
+                  },
                 }}
               >
                 {column.label}
               </NextLink>
-              {column.value === searchParams.orderBy && (
-                <ArrowUpIcon className="inline" />
-              )}
+              {column.value === searchParams.orderBy &&
+                searchParams.sortBy === "asc" && (
+                  <ArrowUpIcon className="inline" />
+                )}
+              {column.value === searchParams.orderBy &&
+                searchParams.sortBy === "desc" && (
+                  <ArrowDownIcon className="inline" />
+                )}
             </Table.ColumnHeaderCell>
           ))}
         </Table.Row>
@@ -60,13 +83,5 @@ const IssueTable: FC<IssueTableProps> = ({ searchParams, issues }) => {
     </Table.Root>
   );
 };
-
-const columns: { label: string; value: keyof Issue; className?: string }[] = [
-  { label: "Issue", value: "title" },
-  { label: "Status", value: "status", className: "hidden md:table-cell" },
-  { label: "Created", value: "createdAt", className: "hidden md:table-cell" },
-];
-
-export const columnNames = columns.map((column) => column.value);
 
 export default IssueTable;
