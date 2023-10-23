@@ -21,7 +21,7 @@ const RootLayout = ({ children }: { children: ReactNode }) => (
     <body className={inter.variable}>
       <QueryClientProvider>
         <AuthProvider>
-          <Theme accentColor="plum">
+          <Theme appearance="dark" accentColor="plum">
             <NavBar />
             <main className="p-5">
               <Container>{children}</Container>

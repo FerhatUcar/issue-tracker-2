@@ -16,11 +16,17 @@ export default async function Home() {
   const inProgress = await getIssueStatus("IN_PROGRESS");
   const closed = await getIssueStatus("CLOSED");
 
+  const props = {
+    open,
+    inProgress,
+    closed,
+  };
+
   return (
     <Grid columns={{ initial: "1", md: "2" }} gap="5">
       <Flex direction="column" gap="5">
-        <IssueSummary open={open} inProgress={inProgress} closed={closed} />
-        <IssueChart open={open} inProgress={inProgress} closed={closed} />
+        <IssueSummary {...props} />
+        <IssueChart {...props} />
       </Flex>
       <LatestIssues />
     </Grid>
