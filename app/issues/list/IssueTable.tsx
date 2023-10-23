@@ -63,7 +63,7 @@ const IssueTable: FC<IssueTableProps> = ({ searchParams, issues }) => {
         {issues.map((issue) => (
           <Table.Row
             key={issue.id}
-            className="hover:bg-fuchsia-100 transition-colors"
+            className="hover:bg-pink-900 text-pink-100 transition-colors"
           >
             <Table.Cell>
               <Link href={`/issues/${issue.id}`}>{issue.title}</Link>
