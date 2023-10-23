@@ -1,11 +1,8 @@
-import React from 'react';
+import React from "react";
+import LatestIssues from "@/app/LatestIssues";
 
 const Home = () => {
-    return (
-        <div>
-          Home
-        </div>
-    );
+  return <LatestIssues />;
 };
 
 export default Home;
