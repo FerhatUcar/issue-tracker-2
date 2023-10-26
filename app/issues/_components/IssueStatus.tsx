@@ -2,10 +2,17 @@
 
 import React from "react";
 import { Select } from "@radix-ui/themes";
-import { Issue } from "@prisma/client";
+import { Issue, Status } from "@prisma/client";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 import { notFound, useRouter } from "next/navigation";
+
+export const statuses: { label: string; value?: Status }[] = [
+  { label: "All" },
+  { label: "Open", value: "OPEN" },
+  { label: "In Progress", value: "IN_PROGRESS" },
+  { label: "Closed", value: "CLOSED" },
+];
 
 const IssueStatus = ({ issue }: { issue?: Issue }) => {
   const router = useRouter();
@@ -33,9 +40,11 @@ const IssueStatus = ({ issue }: { issue?: Issue }) => {
         <Select.Content>
           <Select.Group>
             <Select.Label>Choose status</Select.Label>
-            <Select.Item value="OPEN">Open</Select.Item>
-            <Select.Item value="IN_PROGRESS">In Progress</Select.Item>
-            <Select.Item value="CLOSED">Closed</Select.Item>
+            {statuses.slice(1).map((status, i) => (
+              <Select.Item key={i} value={status.value || "OPEN"}>
+                {status.label}
+              </Select.Item>
+            ))}
           </Select.Group>
         </Select.Content>
       </Select.Root>

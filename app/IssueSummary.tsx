@@ -27,7 +27,10 @@ const IssueSummary: FC<IssueSummaryProps> = ({ open, inProgress, closed }) => {
   return (
     <Flex gap="4">
       {containers.map((container) => (
-        <Card key={container.label}>
+        <Card
+          key={container.label}
+          className="hover:bg-neutral-800 transition-colors"
+        >
           <Flex direction="column" gap="1">
             <Link
               className="text-sm font-medium"
