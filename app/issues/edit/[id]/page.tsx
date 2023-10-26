@@ -3,6 +3,8 @@ import prisma from "@/prisma/client";
 import { notFound } from "next/navigation";
 import IssueFormSkeleton from "@/app/issues/_components/IssueFormSkeleton";
 import dynamic from "next/dynamic";
+import { Box, Grid, Select } from "@radix-ui/themes";
+import IssueStatus from "@/app/issues/_components/IssueStatus";
 
 const IssueForm = dynamic(() => import("@/app/issues/_components/IssueForm"), {
   ssr: false,
@@ -20,7 +22,16 @@ const EditIssuePage = async ({ params }: Props) => {
 
   if (!issue) notFound();
 
-  return <IssueForm issue={issue} />;
+  return (
+    <Grid columns={{ initial: "1", sm: "5" }} gap="5">
+      <Box className="md:col-span-4">
+        <IssueForm issue={issue} />
+      </Box>
+      <Box>
+        <IssueStatus issue={issue} />
+      </Box>
+    </Grid>
+  );
 };
 
 export default EditIssuePage;

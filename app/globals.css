@@ -23,3 +23,29 @@ body {
     @apply text-pink-50 hover:text-pink-200 transition-colors;
   }
 }
+
+.EasyMDEContainer .CodeMirror {
+  background: #1a1a1a;
+  color: white;
+}
+
+.editor-toolbar {
+  background: #1a1a1a;
+}
+
+.editor-toolbar button:hover {
+  background: #1a1a1a !important;
+}
+
+.editor-toolbar button.active {
+  background: #1a1a1a !important;
+}
+
+.rt-TextFieldRoot {
+  border: solid 1px #ced4da;
+  border-radius: 0.5rem;
+}
+
+.rt-TableRow {
+  vertical-align: middle !important;
+}
