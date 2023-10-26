@@ -1,12 +1,13 @@
 "use client";
 
 import React, { FC, useState } from "react";
-import { Table } from "@radix-ui/themes";
+import { Avatar, Flex, Table } from "@radix-ui/themes";
 import NextLink from "next/link";
 import { ArrowDownIcon, ArrowUpIcon } from "@radix-ui/react-icons";
 import { IssueStatusBadge, Link } from "@/app/components";
 import { Issue, Status } from "@prisma/client";
 import { columns } from "@/app/issues/list/IssueColumns";
+import { useSession } from "next-auth/react";
 
 export type IssueQuery = {
   status: Status;
@@ -14,15 +15,20 @@ export type IssueQuery = {
   sortBy: "asc" | "desc";
   page: string;
 };
-export type Column = { label: string; value: keyof Issue; className?: string };
+export type Column = {
+  label: string;
+  value: keyof Issue;
+  className?: string;
+};
 
 type IssueTableProps = {
   searchParams: IssueQuery;
   issues: Issue[];
 };
 
-const IssueTable: FC<IssueTableProps> = ({ searchParams, issues }) => {
+const IssueTable: FC<IssueTableProps> = async ({ searchParams, issues }) => {
   const [sort, setSort] = useState("asc");
+  const { data: session } = useSession();
 
   const handleOnSort = () => setSort(sort === "asc" ? "desc" : "asc");
 
@@ -63,19 +69,29 @@ const IssueTable: FC<IssueTableProps> = ({ searchParams, issues }) => {
         {issues.map((issue) => (
           <Table.Row
             key={issue.id}
-            className="hover:bg-pink-900 text-pink-100 transition-colors"
+            className="h-16 hover:bg-gray-800 text-pink-100 transition-colors"
           >
             <Table.Cell>
-              <Link href={`/issues/${issue.id}`}>{issue.title}</Link>
-              <div className="block md:hidden">
-                <IssueStatusBadge status={issue.status} />
-              </div>
+              <Flex align="center" justify="between">
+                <Link href={`/issues/${issue.id}`}>{issue.title}</Link>
+              </Flex>
             </Table.Cell>
-            <Table.Cell className="hidden md:table-cell">
+            <Table.Cell>
               <IssueStatusBadge status={issue.status} />
             </Table.Cell>
             <Table.Cell className="hidden md:table-cell">
               {issue.createdAt.toDateString()}
+            </Table.Cell>
+            <Table.Cell>
+              {issue.assignedToUserId && (
+                <Avatar
+                  src={session?.user?.image!}
+                  fallback="?"
+                  size="2"
+                  radius="full"
+                  referrerPolicy="no-referrer"
+                />
+              )}
             </Table.Cell>
           </Table.Row>
         ))}

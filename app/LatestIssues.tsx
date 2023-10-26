@@ -15,18 +15,16 @@ const LatestIssues = async () => {
 
   return (
     <Card>
-      <Heading size="4" mb="5">
-        Latest Issues
-      </Heading>
+      <Heading size="7">Latest Issues</Heading>
       <Table.Root>
         <Table.Body>
           {issues.map((issue) => (
             <Table.Row key={issue.id}>
               <Table.Cell>
-                <Flex justify="between">
-                  <Flex direction="column" align="start" gap="2">
-                    <Link href={`/issues/${issue.id}`}>{issue.title}</Link>
+                <Flex justify="between" align="center">
+                  <Flex direction="row" align="center" height="8" gap="2">
                     <IssueStatusBadge status={issue.status} />
+                    <Link href={`/issues/${issue.id}`}>{issue.title}</Link>
                   </Flex>
                   {issue.assignedToUser && (
                     <Avatar

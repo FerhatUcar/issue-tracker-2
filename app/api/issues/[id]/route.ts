@@ -14,7 +14,7 @@ export async function PATCH(
     return NextResponse.json({}, { status: 401 });
   }
 
-  const { assignedToUserId, title, description, ...body } =
+  const { assignedToUserId, status, title, description, ...body } =
     await request.json();
   const validation = patchIssueSchema.safeParse(body);
 
@@ -48,6 +48,7 @@ export async function PATCH(
       title,
       description,
       assignedToUserId,
+      status,
     },
   });
 

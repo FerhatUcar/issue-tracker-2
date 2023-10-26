@@ -1,17 +1,18 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { Controller, useForm } from "react-hook-form";
-import axios from "axios";
-import { Button, Callout, TextField } from "@radix-ui/themes";
-import SimpleMDE from "react-simplemde-editor";
-import { useState } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { issueSchema } from "@/app/validationSchema";
-import { z } from "zod";
 import ErrorMessage from "@/app/components/ErrorMessage";
 import Spinner from "@/app/components/Spinner";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Issue } from "@prisma/client";
+import { Button, Callout, TextField } from "@radix-ui/themes";
+import axios from "axios";
+import "easymde/dist/easymde.min.css";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import SimpleMDE from "react-simplemde-editor";
+import { z } from "zod";
+import { issueSchema } from "@/app/validationSchema";
 
 type IssueFormData = z.infer<typeof issueSchema>;
 
@@ -30,17 +31,19 @@ const IssueForm = ({ issue }: { issue?: Issue }) => {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
+      setSubmitting(true);
+
       if (issue) {
-        await axios.patch(`/api/issues/${issue.id}`, data);
+        await axios.patch("/api/issues/" + issue.id, data);
       } else {
         await axios.post("/api/issues", data);
       }
 
       router.push("/issues/list");
       router.refresh();
-    } catch (err) {
+    } catch (error) {
       setSubmitting(false);
-      setError("Error occurred");
+      setError("An unexpected error occurred.");
     }
   });
 
@@ -55,18 +58,25 @@ const IssueForm = ({ issue }: { issue?: Issue }) => {
         <TextField.Root>
           <TextField.Input
             defaultValue={issue?.title}
-            placeholder="title"
+            size="3"
+            placeholder="Title"
             {...register("title")}
           />
         </TextField.Root>
         <ErrorMessage>{errors.title?.message}</ErrorMessage>
         <Controller
+          name="description"
+          control={control}
           defaultValue={issue?.description}
           render={({ field }) => (
-            <SimpleMDE placeholder="Description" {...field} />
+            <SimpleMDE
+              options={{
+                hideIcons: ["fullscreen", "side-by-side", "preview", "guide"],
+              }}
+              placeholder="Description"
+              {...field}
+            />
           )}
-          control={control}
-          name="description"
         />
         <ErrorMessage>{errors.description?.message}</ErrorMessage>
         <Button disabled={isSubmitting}>

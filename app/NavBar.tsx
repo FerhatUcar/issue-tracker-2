@@ -16,23 +16,21 @@ import {
   Text,
 } from "@radix-ui/themes";
 
-const NavBar = () => {
-  return (
-    <nav className="border-b mb-5 px-5 py-3">
-      <Container>
-        <Flex justify="between">
-          <Flex align="center" gap="3">
-            <Link href="/">
-              <AiFillBug />
-            </Link>
-            <NavLinks />
-          </Flex>
-          <AuthStatus />
+const NavBar = () => (
+  <nav className="border-b mb-5 px-5 py-3">
+    <Container>
+      <Flex justify="between">
+        <Flex align="center" gap="3">
+          <Link href="/">
+            <AiFillBug />
+          </Link>
+          <NavLinks />
         </Flex>
-      </Container>
-    </nav>
-  );
-};
+        <AuthStatus />
+      </Flex>
+    </Container>
+  </nav>
+);
 
 const NavLinks = () => {
   const currentPath = usePathname();

@@ -15,6 +15,9 @@ const config: Config = {
       },
     },
   },
-  plugins: [require("@tailwindcss/typography")],
+  plugins: [
+    require("@tailwindcss/typography"),
+    require("tailwindcss/nesting")(require("postcss-nesting")),
+  ],
 };
 export default config;

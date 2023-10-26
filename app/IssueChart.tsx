@@ -21,8 +21,8 @@ const IssueChart: FC<IssueChartProps> = ({ open, inProgress, closed }) => {
     <Card>
       <ResponsiveContainer width="100%" height={300}>
         <BarChart data={data}>
-          <XAxis dataKey="label" />
-          <YAxis />
+          <XAxis tick={{ fill: "white" }} dataKey="label" />
+          <YAxis tick={{ fill: "white" }} />
           <Bar
             dataKey="value"
             barSize={60}
