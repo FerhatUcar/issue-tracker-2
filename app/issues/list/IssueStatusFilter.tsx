@@ -2,13 +2,7 @@ import React from "react";
 import { Select } from "@radix-ui/themes";
 import { Status } from "@prisma/client";
 import { useRouter, useSearchParams } from "next/navigation";
-
-const statuses: { label: string; value?: Status }[] = [
-  { label: "All" },
-  { label: "Open", value: "OPEN" },
-  { label: "In Progress", value: "IN_PROGRESS" },
-  { label: "Closed", value: "CLOSED" },
-];
+import { statuses } from "@/app/issues/_components/IssueStatus";
 
 const IssueStatusFilter = () => {
   const router = useRouter();

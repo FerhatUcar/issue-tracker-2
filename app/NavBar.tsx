@@ -3,21 +3,27 @@
 import { Skeleton } from "@/app/components";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React from "react";
+import React, { FC } from "react";
 import { AiFillBug } from "react-icons/ai";
 import classnames from "classnames";
 import { useSession } from "next-auth/react";
 import {
   Avatar,
+  Badge,
   Box,
   Container,
   DropdownMenu,
   Flex,
+  HoverCard,
   Text,
 } from "@radix-ui/themes";
 
-const NavBar = () => (
-  <nav className="border-b mb-5 px-5 py-3">
+type NavBarProps = {
+  count: number;
+};
+
+const NavBar: FC<NavBarProps> = ({ count }) => (
+  <nav className="mb-5 px-5 py-3 bg-neutral-800">
     <Container>
       <Flex justify="between">
         <Flex align="center" gap="3">
@@ -26,7 +32,17 @@ const NavBar = () => (
           </Link>
           <NavLinks />
         </Flex>
-        <AuthStatus />
+        <Flex align="center" gap="3">
+          <HoverCard.Root>
+            <HoverCard.Trigger>
+              <Badge className="h-6" variant="solid" radius="full" color="red">
+                {count}
+              </Badge>
+            </HoverCard.Trigger>
+            <HoverCard.Content>Issues on your name: {count}</HoverCard.Content>
+          </HoverCard.Root>
+          <AuthStatus />
+        </Flex>
       </Flex>
     </Container>
   </nav>

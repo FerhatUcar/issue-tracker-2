@@ -8,8 +8,10 @@ import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/app/components";
 import { Issue } from "@prisma/client";
 import toast, { Toaster } from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 const AssigneeSelect = ({ issue }: { issue: Issue }) => {
+  const router = useRouter();
   const { data: users, error, isLoading } = useUsers();
 
   if (isLoading) {
@@ -25,6 +27,10 @@ const AssigneeSelect = ({ issue }: { issue: Issue }) => {
     return axios
       .patch(`/api/issues/${issue.id}`, {
         assignedToUserId,
+      })
+      .then(() => {
+        router.push("/issues/list");
+        router.refresh();
       })
       .catch(() => {
         toast.error("Changes could not be saved.");
