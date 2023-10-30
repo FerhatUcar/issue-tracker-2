@@ -8,7 +8,6 @@ import { ReactNode } from "react";
 import { Container, Theme } from "@radix-ui/themes";
 import AuthProvider from "@/app/auth/Provider";
 import QueryClientProvider from "./QueryClientProvider";
-import { Status } from "@prisma/client";
 import prisma from "@/prisma/client";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });

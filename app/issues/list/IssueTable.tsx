@@ -28,15 +28,17 @@ type IssueTableProps = {
 
 const IssueTable: FC<IssueTableProps> = async ({ searchParams, issues }) => {
   const [sort, setSort] = useState("asc");
-  const { data: session } = useSession();
+  const { status, data: session } = useSession();
 
   const handleOnSort = () => setSort(sort === "asc" ? "desc" : "asc");
+  const hideLastColumnOnSignOff =
+    status === "unauthenticated" || status === "loading" ? -1 : undefined;
 
   return (
     <Table.Root variant="surface">
       <Table.Header>
         <Table.Row>
-          {columns.map((column) => (
+          {columns.slice(0, hideLastColumnOnSignOff).map((column) => (
             <Table.ColumnHeaderCell
               key={column.value}
               className={column.className}
@@ -82,17 +84,19 @@ const IssueTable: FC<IssueTableProps> = async ({ searchParams, issues }) => {
             <Table.Cell className="hidden md:table-cell">
               {issue.createdAt.toDateString()}
             </Table.Cell>
-            <Table.Cell>
-              {issue.assignedToUserId && (
-                <Avatar
-                  src={session?.user?.image!}
-                  fallback="?"
-                  size="2"
-                  radius="full"
-                  referrerPolicy="no-referrer"
-                />
-              )}
-            </Table.Cell>
+            {status === "authenticated" && (
+              <Table.Cell>
+                {issue.assignedToUserId && (
+                  <Avatar
+                    src={session?.user?.image!}
+                    fallback="?"
+                    size="2"
+                    radius="full"
+                    referrerPolicy="no-referrer"
+                  />
+                )}
+              </Table.Cell>
+            )}
           </Table.Row>
         ))}
       </Table.Body>
