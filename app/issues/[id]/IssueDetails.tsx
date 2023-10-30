@@ -4,9 +4,18 @@ import { Avatar, Card, Flex, Heading, Text } from "@radix-ui/themes";
 import ReactMarkdown from "react-markdown";
 import React from "react";
 import { getServerSession } from "next-auth";
+import prisma from "@/prisma/client";
 
 const IssueDetails = async ({ issue }: { issue: Issue }) => {
+  let userId;
   const session = await getServerSession();
+  const getUserId = await prisma.user.findMany({
+    select: {
+      id: true,
+    },
+  });
+
+  getUserId.forEach(({ id }) => (userId = id));
 
   return (
     <>
@@ -17,7 +26,7 @@ const IssueDetails = async ({ issue }: { issue: Issue }) => {
             <IssueStatusBadge status={issue.status} />
             <Text>{issue.createdAt.toDateString()}</Text>
           </Flex>
-          {issue.assignedToUserId && (
+          {issue.assignedToUserId === userId && (
             <Avatar
               src={session!.user!.image!}
               fallback="?"

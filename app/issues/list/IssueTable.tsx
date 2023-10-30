@@ -8,6 +8,7 @@ import { IssueStatusBadge, Link } from "@/app/components";
 import { Issue, Status } from "@prisma/client";
 import { columns } from "@/app/issues/list/IssueColumns";
 import { useSession } from "next-auth/react";
+import prisma from "@/prisma/client";
 
 export type IssueQuery = {
   status: Status;
@@ -24,15 +25,23 @@ export type Column = {
 type IssueTableProps = {
   searchParams: IssueQuery;
   issues: Issue[];
+  userList: { id: string }[];
 };
 
-const IssueTable: FC<IssueTableProps> = async ({ searchParams, issues }) => {
+const IssueTable: FC<IssueTableProps> = async ({
+  searchParams,
+  issues,
+  userList,
+}) => {
   const [sort, setSort] = useState("asc");
   const { status, data: session } = useSession();
 
   const handleOnSort = () => setSort(sort === "asc" ? "desc" : "asc");
   const hideLastColumnOnSignOff =
     status === "unauthenticated" || status === "loading" ? -1 : undefined;
+
+  let userId: string | null;
+  userList.forEach(({ id }) => (userId = id));
 
   return (
     <Table.Root variant="surface">
@@ -86,7 +95,7 @@ const IssueTable: FC<IssueTableProps> = async ({ searchParams, issues }) => {
             </Table.Cell>
             {status === "authenticated" && (
               <Table.Cell>
-                {issue.assignedToUserId && (
+                {issue.assignedToUserId === userId && (
                   <Avatar
                     src={session?.user?.image!}
                     fallback="?"
