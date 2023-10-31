@@ -4,6 +4,14 @@ import { issueSchema } from "@/app/validationSchema";
 import { getServerSession } from "next-auth";
 import authOptions from "@/app/auth/authOptions";
 
+export async function GET(request: NextRequest) {
+  const uniqueUserIssues = await prisma.issue.findMany({
+    select: { assignedToUserId: true },
+  });
+
+  return NextResponse.json(uniqueUserIssues);
+}
+
 export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions);
 

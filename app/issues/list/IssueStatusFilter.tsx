@@ -1,6 +1,5 @@
 import React from "react";
 import { Select } from "@radix-ui/themes";
-import { Status } from "@prisma/client";
 import { useRouter, useSearchParams } from "next/navigation";
 import { statuses } from "@/app/issues/_components/IssueStatus";
 
