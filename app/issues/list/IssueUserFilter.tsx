@@ -5,14 +5,19 @@ import React from "react";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/app/components";
-import { deduplicateByProperty } from "@/app/utils/utils";
+import { deduplicateByProperty } from "@/app/helpers/utils";
+import { useDataQuery } from "@/app/helpers/hooks";
 
 type UniqueUserIssues = {
   assignedToUserId: string | null;
 };
 
 const IssueUserFilter = () => {
-  const { data: issues, error, isLoading } = useIssues();
+  const {
+    data: issues,
+    error,
+    isLoading,
+  } = useDataQuery<UniqueUserIssues>("issues");
 
   if (isLoading) {
     return <Skeleton />;
@@ -41,13 +46,5 @@ const IssueUserFilter = () => {
     </Select.Root>
   );
 };
-
-const useIssues = () =>
-  useQuery<UniqueUserIssues[]>({
-    queryKey: ["issues"],
-    queryFn: () => axios.get("/api/issues").then((res) => res.data),
-    staleTime: 60 * 1000, //60s
-    retry: 3,
-  });
 
 export default IssueUserFilter;

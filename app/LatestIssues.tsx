@@ -3,6 +3,7 @@ import { Avatar, Card, Flex, Heading, Table } from "@radix-ui/themes";
 import React from "react";
 import { IssueStatusBadge } from "./components";
 import Link from "next/link";
+import { AiOutlineNotification } from "react-icons/ai";
 
 const LatestIssues = async () => {
   const issues = await prisma.issue.findMany({
@@ -15,7 +16,10 @@ const LatestIssues = async () => {
 
   return (
     <Card>
-      <Heading size="7">Latest Issues</Heading>
+      <Flex align="center" gap="3">
+        <AiOutlineNotification size="25" />
+        <Heading size="7">Latest Issues</Heading>
+      </Flex>
       <Table.Root>
         <Table.Body>
           {issues.map((issue) => (

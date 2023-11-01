@@ -26,6 +26,8 @@ type NavBarProps = {
 
 const NavBar: FC<NavBarProps> = ({ count }) => {
   const { status } = useSession();
+  const hideHoverCard =
+    count === 0 || status === "unauthenticated" || status === "loading";
 
   return (
     <nav className="mb-5 px-5 py-3 bg-neutral-800">
@@ -38,9 +40,7 @@ const NavBar: FC<NavBarProps> = ({ count }) => {
             <NavLinks />
           </Flex>
           <Flex align="center" justify="between" gap="4">
-            {count === 0 ||
-            status === "unauthenticated" ||
-            status === "loading" ? null : (
+            {hideHoverCard ? null : (
               <HoverCard.Root>
                 <HoverCard.Trigger>
                   <Badge
@@ -53,7 +53,7 @@ const NavBar: FC<NavBarProps> = ({ count }) => {
                   </Badge>
                 </HoverCard.Trigger>
                 <HoverCard.Content>
-                  Issues on your name: {count}
+                  Open issue(s) on your name: {count}
                 </HoverCard.Content>
               </HoverCard.Root>
             )}

@@ -4,15 +4,15 @@ import React from "react";
 import { Select } from "@radix-ui/themes";
 import { User } from "next-auth";
 import axios from "axios";
-import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/app/components";
 import { Issue } from "@prisma/client";
 import toast, { Toaster } from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { useDataQuery } from "@/app/helpers/hooks";
 
 const AssigneeSelect = ({ issue }: { issue: Issue }) => {
   const router = useRouter();
-  const { data: users, error, isLoading } = useUsers();
+  const { data: users, error, isLoading } = useDataQuery<User>("users");
 
   if (isLoading) {
     return <Skeleton />;
@@ -61,13 +61,5 @@ const AssigneeSelect = ({ issue }: { issue: Issue }) => {
     </>
   );
 };
-
-const useUsers = () =>
-  useQuery<User[]>({
-    queryKey: ["users"],
-    queryFn: () => axios.get("/api/users").then((res) => res.data),
-    staleTime: 60 * 1000, //60s
-    retry: 3,
-  });
 
 export default AssigneeSelect;
