@@ -49,9 +49,9 @@ const AssigneeSelect = ({ issue }: { issue: Issue }) => {
             <Select.Label>Suggestions</Select.Label>
             <Select.Item value="unassigned">Unassigned</Select.Item>
             <Select.Separator />
-            {users?.map((user) => (
-              <Select.Item key={user.id} value={user.id}>
-                {user.name}
+            {users?.map(({ name, id }) => (
+              <Select.Item key={id} value={id}>
+                {name}
               </Select.Item>
             ))}
           </Select.Group>

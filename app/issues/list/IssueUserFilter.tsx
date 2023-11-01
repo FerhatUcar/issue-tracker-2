@@ -2,8 +2,6 @@
 
 import { Select } from "@radix-ui/themes";
 import React from "react";
-import axios from "axios";
-import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/app/components";
 import { deduplicateByProperty } from "@/app/helpers/utils";
 import { useDataQuery } from "@/app/helpers/hooks";
