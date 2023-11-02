@@ -4,7 +4,6 @@ import { Skeleton } from "@/app/components";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { FC } from "react";
-import { AiFillBug } from "react-icons/ai";
 import classnames from "classnames";
 import { useSession } from "next-auth/react";
 import {
@@ -16,11 +15,10 @@ import {
   DropdownMenu,
   Flex,
   HoverCard,
+  Separator,
   Text,
 } from "@radix-ui/themes";
 import { PersonIcon } from "@radix-ui/react-icons";
-import { useDataQuery } from "@/app/helpers/hooks";
-import { User } from "next-auth";
 import Image from "next/image";
 
 type NavBarProps = {
@@ -74,19 +72,23 @@ const NavLinks = () => {
   ];
 
   return (
-    <ul className="flex space-x-6">
+    <ul className="flex space-x-3">
       {links.map((link) => (
-        <li key={link.href}>
-          <Link
-            className={classnames({
-              "nav-link": true,
-              "!text-pink-400": link.href === currentPath,
-            })}
-            href={link.href}
-          >
-            {link.label}
-          </Link>
-        </li>
+        <Flex align="center" gap="3">
+          <li key={link.href}>
+            <Link
+              className={classnames({
+                "nav-link": true,
+                "!text-pink-400": link.href === currentPath,
+                "font-bold": link.href === currentPath,
+              })}
+              href={link.href}
+            >
+              {link.label}
+            </Link>
+          </li>
+          <Separator orientation="vertical" />
+        </Flex>
       ))}
     </ul>
   );

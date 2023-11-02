@@ -1,9 +1,17 @@
 import prisma from "@/prisma/client";
-import { Avatar, Card, Flex, Heading, Table } from "@radix-ui/themes";
+import {
+  Avatar,
+  Card,
+  Flex,
+  Heading,
+  IconButton,
+  Separator,
+  Table,
+} from "@radix-ui/themes";
 import React from "react";
 import { IssueStatusBadge } from "./components";
 import Link from "next/link";
-import { AiOutlineNotification } from "react-icons/ai";
+import { AiFillFileAdd, AiOutlineNotification } from "react-icons/ai";
 
 const LatestIssues = async () => {
   const issues = await prisma.issue.findMany({
@@ -16,10 +24,25 @@ const LatestIssues = async () => {
 
   return (
     <Card>
-      <Flex align="center" gap="3">
-        <AiOutlineNotification size="25" />
-        <Heading size="7">Latest Issues</Heading>
+      <Flex width="100%" justify="between" align="center">
+        <Flex align="center" gap="3">
+          <AiOutlineNotification size="25" />
+          <Flex gap="1" className="uppercase">
+            <Heading size="6" weight="bold">
+              Latest
+            </Heading>
+            <Heading size="6" weight="light">
+              Issues
+            </Heading>
+          </Flex>
+        </Flex>
+        <Link href="/issues/new">
+          <IconButton>
+            <AiFillFileAdd />
+          </IconButton>
+        </Link>
       </Flex>
+      <Separator mt="2" size="4" />
       <Table.Root>
         <Table.Body>
           {issues.map((issue) => (
