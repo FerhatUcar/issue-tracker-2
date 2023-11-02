@@ -19,18 +19,21 @@ import {
   Text,
 } from "@radix-ui/themes";
 import { PersonIcon } from "@radix-ui/react-icons";
+import { useDataQuery } from "@/app/helpers/hooks";
+import { User } from "next-auth";
 
 type NavBarProps = {
   count: number;
+  userId: string;
 };
 
-const NavBar: FC<NavBarProps> = ({ count }) => {
+const NavBar: FC<NavBarProps> = ({ count, userId }) => {
   const { status } = useSession();
   const hideHoverCard =
     count === 0 || status === "unauthenticated" || status === "loading";
 
   return (
-    <nav className="mb-5 px-5 py-3 bg-neutral-800">
+    <nav className="px-5 py-3 bg-neutral-800">
       <Container>
         <Flex justify="between">
           <Flex align="center" gap="3">
@@ -43,12 +46,7 @@ const NavBar: FC<NavBarProps> = ({ count }) => {
             {hideHoverCard ? null : (
               <HoverCard.Root>
                 <HoverCard.Trigger>
-                  <Badge
-                    className="h-6"
-                    variant="solid"
-                    radius="full"
-                    color="red"
-                  >
+                  <Badge variant="solid" radius="full" color="red">
                     {count}
                   </Badge>
                 </HoverCard.Trigger>
@@ -58,7 +56,7 @@ const NavBar: FC<NavBarProps> = ({ count }) => {
               </HoverCard.Root>
             )}
 
-            <AuthStatus />
+            <AuthStatus userId={userId} count={count} />
           </Flex>
         </Flex>
       </Container>
@@ -93,7 +91,11 @@ const NavLinks = () => {
   );
 };
 
-const AuthStatus = () => {
+type AuthStatus = {
+  userId: string;
+  count: number;
+};
+const AuthStatus: FC<AuthStatus> = ({ userId, count }) => {
   const { status, data: session } = useSession();
 
   if (status === "loading") return <Skeleton width="3rem" />;
@@ -125,9 +127,16 @@ const AuthStatus = () => {
           <DropdownMenu.Label>
             <Text size="2">{session!.user!.email}</Text>
           </DropdownMenu.Label>
-          <DropdownMenu.Item>
-            <Link href="/issues/list">My issues</Link>
-          </DropdownMenu.Item>
+          <Link href={`/issues/list?assignedToUserId=${userId}`}>
+            <DropdownMenu.Item>
+              <Flex justify="between" width="100%">
+                <Text>My issues</Text>
+                <Badge variant="solid" radius="full" color="red">
+                  {count}
+                </Badge>
+              </Flex>
+            </DropdownMenu.Item>
+          </Link>
           <DropdownMenu.Separator />
           <DropdownMenu.Item>
             <Link href="/api/auth/signout">Log out</Link>

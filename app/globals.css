@@ -49,3 +49,7 @@ body {
 .rt-TableRow {
   vertical-align: middle !important;
 }
+
+.rt-BaseMenuItem {
+  cursor: pointer !important;
+}

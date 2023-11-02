@@ -16,10 +16,12 @@ const IssuesPage = async ({ searchParams }: IssuePageProps) => {
   const status: Status | undefined = statuses.includes(searchParams.status)
     ? searchParams.status
     : undefined;
-  const where = { status };
-
+  const assignedToUserId =
+    searchParams.assignedToUserId === "All"
+      ? undefined
+      : searchParams.assignedToUserId;
+  const where = { status, assignedToUserId };
   const columnNames = columns.map((column) => column.value);
-
   const orderBy = columnNames.includes(searchParams.orderBy)
     ? { [searchParams.orderBy]: searchParams.sortBy }
     : undefined;
@@ -35,7 +37,6 @@ const IssuesPage = async ({ searchParams }: IssuePageProps) => {
   });
 
   const issueCount = await prisma.issue.count({ where });
-
   const getUserId = await prisma.user.findMany({
     select: {
       id: true,

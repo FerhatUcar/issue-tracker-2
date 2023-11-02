@@ -14,6 +14,10 @@ const IssueStatusFilter = () => {
       params.append("status", status);
     }
 
+    if (searchParams.get("assignedToUserId")) {
+      params.append("assignedToUserId", searchParams.get("assignedToUserId")!);
+    }
+
     if (searchParams.get("orderBy")) {
       params.append("orderBy", searchParams.get("orderBy")!);
     }

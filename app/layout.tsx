@@ -30,7 +30,7 @@ const getIssueStatus = async () => {
     userId = item.id;
   }
 
-  return prisma.issue.count({
+  const count = prisma.issue.count({
     where: {
       assignedToUserId: userId,
       NOT: {
@@ -38,10 +38,12 @@ const getIssueStatus = async () => {
       },
     },
   });
+
+  return { count, userId };
 };
 
 const RootLayout = async ({ children }: { children: ReactNode }) => {
-  const count = await getIssueStatus();
+  const { count, userId } = await getIssueStatus();
 
   return (
     <html lang="en">
@@ -49,7 +51,10 @@ const RootLayout = async ({ children }: { children: ReactNode }) => {
         <QueryClientProvider>
           <AuthProvider>
             <Theme appearance="dark" accentColor="plum">
-              <NavBar count={count} />
+              <NavBar
+                count={count as unknown as number}
+                userId={userId ?? ""}
+              />
               <main className="p-5">
                 <Container>{children}</Container>
               </main>

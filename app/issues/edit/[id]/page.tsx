@@ -3,7 +3,7 @@ import prisma from "@/prisma/client";
 import { notFound } from "next/navigation";
 import IssueFormSkeleton from "@/app/issues/_components/IssueFormSkeleton";
 import dynamic from "next/dynamic";
-import { Box, Grid, Select } from "@radix-ui/themes";
+import { Box, Grid } from "@radix-ui/themes";
 import IssueStatus from "@/app/issues/_components/IssueStatus";
 
 const IssueForm = dynamic(() => import("@/app/issues/_components/IssueForm"), {

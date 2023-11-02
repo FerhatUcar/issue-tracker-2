@@ -12,6 +12,7 @@ import prisma from "@/prisma/client";
 
 export type IssueQuery = {
   status: Status;
+  assignedToUserId: string;
   orderBy: keyof Issue;
   sortBy: "asc" | "desc";
   page: string;
