@@ -21,6 +21,7 @@ import {
 import { PersonIcon } from "@radix-ui/react-icons";
 import { useDataQuery } from "@/app/helpers/hooks";
 import { User } from "next-auth";
+import Image from "next/image";
 
 type NavBarProps = {
   count: number;
@@ -38,7 +39,7 @@ const NavBar: FC<NavBarProps> = ({ count, userId }) => {
         <Flex justify="between">
           <Flex align="center" gap="3">
             <Link href="/">
-              <AiFillBug />
+              <Image src="/logo.png" alt="Logo" width={60} height={60} />
             </Link>
             <NavLinks />
           </Flex>
@@ -131,9 +132,11 @@ const AuthStatus: FC<AuthStatus> = ({ userId, count }) => {
             <DropdownMenu.Item>
               <Flex justify="between" width="100%">
                 <Text>My issues</Text>
-                <Badge variant="solid" radius="full" color="red">
-                  {count}
-                </Badge>
+                {count >= 1 && (
+                  <Badge variant="solid" radius="full" color="red">
+                    {count}
+                  </Badge>
+                )}
               </Flex>
             </DropdownMenu.Item>
           </Link>
