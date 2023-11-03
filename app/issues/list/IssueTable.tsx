@@ -29,7 +29,7 @@ type IssueTableProps = {
   userList: { id: string }[];
 };
 
-const IssueTable: FC<IssueTableProps> = async ({
+const IssueTable: FC<IssueTableProps> = ({
   searchParams,
   issues,
   userList,

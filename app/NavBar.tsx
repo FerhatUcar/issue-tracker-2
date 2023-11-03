@@ -73,8 +73,8 @@ const NavLinks = () => {
 
   return (
     <ul className="flex space-x-3">
-      {links.map((link) => (
-        <Flex align="center" gap="3">
+      {links.map((link, i) => (
+        <Flex align="center" gap="3" key={i}>
           <li key={link.href}>
             <Link
               className={classnames({
