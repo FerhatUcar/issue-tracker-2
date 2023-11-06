@@ -11,6 +11,17 @@ type IssuePageProps = {
   searchParams: IssueQuery;
 };
 
+export type IssuesWithAssigning = (Issue & AssignedToUser)[];
+export type AssignedToUser = {
+  assignedToUser: {
+    id: string;
+    name: string | null;
+    email: string | null;
+    image: string | null;
+    emailVerified: Date | null;
+  } | null;
+};
+
 const IssuesPage = async ({ searchParams }: IssuePageProps) => {
   const statuses: Status[] = Object.values(Status);
   const status: Status | undefined = statuses.includes(searchParams.status)
@@ -29,27 +40,24 @@ const IssuesPage = async ({ searchParams }: IssuePageProps) => {
   const page = parseInt(searchParams.page) || 1;
   const pageSize = 10;
 
-  const issues: Issue[] = await prisma.issue.findMany({
+  const issuesWithAssigning: IssuesWithAssigning = await prisma.issue.findMany({
     where,
     orderBy,
     skip: (page - 1) * pageSize,
     take: pageSize,
+    include: {
+      assignedToUser: true,
+    },
   });
 
   const issueCount = await prisma.issue.count({ where });
-  const getUserId = await prisma.user.findMany({
-    select: {
-      id: true,
-    },
-  });
 
   return (
     <Flex direction="column" gap="3">
       <IssueActions />
       <IssueTable
         searchParams={searchParams}
-        issues={issues}
-        userList={getUserId}
+        issuesWithAssigning={issuesWithAssigning}
       />
       <Pagination
         itemCount={issueCount}

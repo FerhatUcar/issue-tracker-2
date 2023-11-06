@@ -9,6 +9,7 @@ import { Issue, Status } from "@prisma/client";
 import { columns } from "@/app/issues/list/IssueColumns";
 import { useSession } from "next-auth/react";
 import prisma from "@/prisma/client";
+import { AssignedToUser, IssuesWithAssigning } from "@/app/issues/list/page";
 
 export type IssueQuery = {
   status: Status;
@@ -25,24 +26,19 @@ export type Column = {
 
 type IssueTableProps = {
   searchParams: IssueQuery;
-  issues: Issue[];
-  userList: { id: string }[];
+  issuesWithAssigning: IssuesWithAssigning;
 };
 
 const IssueTable: FC<IssueTableProps> = ({
   searchParams,
-  issues,
-  userList,
+  issuesWithAssigning,
 }) => {
   const [sort, setSort] = useState("asc");
-  const { status, data: session } = useSession();
+  const { status } = useSession();
 
   const handleOnSort = () => setSort(sort === "asc" ? "desc" : "asc");
   const hideLastColumnOnSignOff =
     status === "unauthenticated" || status === "loading" ? -1 : undefined;
-
-  let userId: string | null;
-  userList.forEach(({ id }) => (userId = id));
 
   return (
     <Table.Root variant="surface">
@@ -78,7 +74,7 @@ const IssueTable: FC<IssueTableProps> = ({
         </Table.Row>
       </Table.Header>
       <Table.Body>
-        {issues.map((issue) => (
+        {issuesWithAssigning.map((issue) => (
           <Table.Row
             key={issue.id}
             className="h-16 hover:bg-gray-800 text-pink-100 transition-colors"
@@ -96,9 +92,9 @@ const IssueTable: FC<IssueTableProps> = ({
             </Table.Cell>
             {status === "authenticated" && (
               <Table.Cell>
-                {issue.assignedToUserId === userId && (
+                {issue.assignedToUserId && (
                   <Avatar
-                    src={session?.user?.image!}
+                    src={issue.assignedToUser?.image!}
                     fallback="?"
                     size="2"
                     radius="full"

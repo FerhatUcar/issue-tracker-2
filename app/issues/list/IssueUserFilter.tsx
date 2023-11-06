@@ -12,6 +12,7 @@ type UniqueUserIssues = {
   assignedToUserId: string | null;
 };
 type UserName = string | null | undefined;
+type UserId = string;
 type AssignedUser = {
   name: UserName;
   assignedToUserId: UniqueUserIssues["assignedToUserId"];
@@ -26,7 +27,7 @@ const IssueUserFilter = () => {
     isLoading,
   } = useDataQuery<UniqueUserIssues>("issues");
   const { data: users } = useDataQuery<User>("users");
-  const nameMapping: Record<string, UserName> = {};
+  const nameMapping: Record<UserId, UserName> = {};
   const assignedUser: AssignedUser[] = [];
 
   if (users) {
@@ -74,7 +75,7 @@ const IssueUserFilter = () => {
 
   return (
     <Select.Root
-      defaultValue={searchParams.get("assignedToUserId") || ""}
+      defaultValue={searchParams.get("assignedToUserId") || "All"}
       onValueChange={handleOnValueChange}
     >
       <Select.Trigger placeholder="Filter by user" />
