@@ -4,11 +4,13 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import NavBar from "@/app/NavBar";
-import { ReactNode } from "react";
+import React, { ReactNode } from "react";
 import { Container, Theme } from "@radix-ui/themes";
 import AuthProvider from "@/app/auth/Provider";
 import QueryClientProvider from "./QueryClientProvider";
 import prisma from "@/prisma/client";
+import { RecoilRoot } from "recoil";
+import RecoilContextProvider from "@/app/RecoilContextProvider";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -48,12 +50,14 @@ const RootLayout = async ({ children }: { children: ReactNode }) => {
       <body className={inter.variable}>
         <QueryClientProvider>
           <AuthProvider>
-            <Theme appearance="dark" accentColor="plum">
-              <NavBar count={count} userId={userId ?? ""} />
-              <main className="p-5">
-                <Container>{children}</Container>
-              </main>
-            </Theme>
+            <RecoilContextProvider>
+              <Theme appearance="dark" accentColor="plum">
+                <NavBar count={count} userId={userId ?? ""} />
+                <main className="p-5">
+                  <Container>{children}</Container>
+                </main>
+              </Theme>
+            </RecoilContextProvider>
           </AuthProvider>
         </QueryClientProvider>
       </body>

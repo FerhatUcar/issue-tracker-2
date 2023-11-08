@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { Avatar, Flex, Table } from "@radix-ui/themes";
 import NextLink from "next/link";
 import { ArrowDownIcon, ArrowUpIcon } from "@radix-ui/react-icons";
@@ -8,8 +8,9 @@ import { IssueStatusBadge, Link } from "@/app/components";
 import { Issue, Status } from "@prisma/client";
 import { columns } from "@/app/issues/list/IssueColumns";
 import { useSession } from "next-auth/react";
-import prisma from "@/prisma/client";
-import { AssignedToUser, IssuesWithAssigning } from "@/app/issues/list/page";
+import { IssuesWithAssigning } from "@/app/issues/list/page";
+import { useRecoilValue } from "recoil";
+import { searchValueState } from "@/app/state/selectors";
 
 export type IssueQuery = {
   status: Status;
@@ -35,6 +36,20 @@ const IssueTable: FC<IssueTableProps> = ({
 }) => {
   const [sort, setSort] = useState("asc");
   const { status } = useSession();
+  const searchValue = useRecoilValue(searchValueState);
+  const [filteredList, setFilteredList] = useState(issuesWithAssigning);
+  let updatedList: IssuesWithAssigning = [...issuesWithAssigning];
+
+  useEffect(
+    () =>
+      setFilteredList(
+        updatedList.filter(
+          ({ title }) =>
+            title.toLowerCase().indexOf(searchValue.toLowerCase()) !== -1,
+        ),
+      ),
+    [searchValue, issuesWithAssigning],
+  );
 
   const handleOnSort = () => setSort(sort === "asc" ? "desc" : "asc");
   const hideLastColumnOnSignOff =
@@ -74,7 +89,7 @@ const IssueTable: FC<IssueTableProps> = ({
         </Table.Row>
       </Table.Header>
       <Table.Body>
-        {issuesWithAssigning.map((issue) => (
+        {filteredList.map((issue) => (
           <Table.Row
             key={issue.id}
             className="h-16 hover:bg-gray-800 text-pink-100 transition-colors"

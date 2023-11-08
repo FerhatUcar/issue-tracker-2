@@ -4,13 +4,12 @@ import ErrorMessage from "@/app/components/ErrorMessage";
 import Spinner from "@/app/components/Spinner";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Issue } from "@prisma/client";
-import { Button, Callout, TextField } from "@radix-ui/themes";
+import { Button, Callout, Flex, TextField } from "@radix-ui/themes";
 import axios from "axios";
 import "easymde/dist/easymde.min.css";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import SimpleMDE from "react-simplemde-editor";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { issueSchema } from "@/app/validationSchema";
 
@@ -20,7 +19,7 @@ const IssueForm = ({ issue }: { issue?: Issue }) => {
   const router = useRouter();
   const {
     register,
-    control,
+    // control,
     handleSubmit,
     formState: { errors },
   } = useForm<IssueFormData>({
@@ -56,28 +55,45 @@ const IssueForm = ({ issue }: { issue?: Issue }) => {
       )}
       <form className="space-y-3" onSubmit={onSubmit}>
         <TextField.Root>
-          <TextField.Input
-            defaultValue={issue?.title}
-            size="3"
-            placeholder="Title"
-            {...register("title")}
-          />
+          <Flex align="center">
+            <span className="pl-3">Title</span>
+            <TextField.Input
+              defaultValue={issue?.title}
+              size="3"
+              placeholder="Issue title..."
+              {...register("title")}
+            />
+          </Flex>
         </TextField.Root>
         <ErrorMessage>{errors.title?.message}</ErrorMessage>
-        <Controller
-          name="description"
-          control={control}
-          defaultValue={issue?.description}
-          render={({ field }) => (
-            <SimpleMDE
-              options={{
-                hideIcons: ["fullscreen", "side-by-side", "preview", "guide"],
-              }}
-              placeholder="Description"
-              {...field}
+        {/*<Controller*/}
+        {/*  name="description"*/}
+        {/*  control={control}*/}
+        {/*  defaultValue={issue?.description}*/}
+        {/*  render={({ field }) => {*/}
+        {/*    console.log(field.value);*/}
+        {/*    return (*/}
+        {/*      <SimpleMDE*/}
+        {/*        options={{*/}
+        {/*          hideIcons: ["fullscreen", "side-by-side", "preview", "guide"],*/}
+        {/*        }}*/}
+        {/*        placeholder="Description"*/}
+        {/*        {...field}*/}
+        {/*      />*/}
+        {/*    );*/}
+        {/*  }}*/}
+        {/*/>*/}
+        <TextField.Root>
+          <Flex align="center">
+            <span className="pl-3">Description</span>
+            <TextField.Input
+              defaultValue={issue?.description}
+              size="3"
+              placeholder="Issue details..."
+              {...register("description")}
             />
-          )}
-        />
+          </Flex>
+        </TextField.Root>
         <ErrorMessage>{errors.description?.message}</ErrorMessage>
         <Button disabled={isSubmitting}>
           {issue ? "Update Issue" : "Submit New Issue"}{" "}
