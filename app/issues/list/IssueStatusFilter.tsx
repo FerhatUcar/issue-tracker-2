@@ -6,6 +6,8 @@ import { statuses } from "@/app/issues/_components/IssueStatus";
 const IssueStatusFilter = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const assignedToUserId = searchParams.get("assignedToUserId");
+  const orderBy = searchParams.get("orderBy");
 
   const handleOnValueChange = (status: string) => {
     const params = new URLSearchParams();
@@ -14,12 +16,12 @@ const IssueStatusFilter = () => {
       params.append("status", status);
     }
 
-    if (searchParams.get("assignedToUserId")) {
-      params.append("assignedToUserId", searchParams.get("assignedToUserId")!);
+    if (assignedToUserId) {
+      params.append("assignedToUserId", assignedToUserId!);
     }
 
-    if (searchParams.get("orderBy")) {
-      params.append("orderBy", searchParams.get("orderBy")!);
+    if (orderBy) {
+      params.append("orderBy", orderBy!);
     }
 
     const query = params.size ? "?" + params.toString() : "";
