@@ -33,9 +33,16 @@ const IssuesPage = async ({ searchParams }: IssuePageProps) => {
       : searchParams.assignedToUserId;
   const where = { status, assignedToUserId };
   const columnNames = columns.map((column) => column.value);
-  const orderBy = columnNames.includes(searchParams.orderBy)
-    ? { [searchParams.orderBy]: searchParams.sortBy }
-    : undefined;
+
+  const sortOrder: 'asc' | 'desc' =
+    searchParams.sortBy === 'asc' ? 'asc' : 'desc';
+
+  const orderBy: {
+    [key: string]: 'asc' | 'desc';
+  } =
+    columnNames.includes(searchParams.orderBy) && searchParams.sortBy
+      ? { [searchParams.orderBy]: sortOrder }
+      : { createdAt: "desc" };
 
   const page = parseInt(searchParams.page) || 1;
   const pageSize = 10;

@@ -38,6 +38,7 @@ const IssueTable: FC<IssueTableProps> = ({
   const { status } = useSession();
   const searchValue = useRecoilValue(searchValueState);
   const [filteredList, setFilteredList] = useState(issuesWithAssigning);
+
   let updatedList: IssuesWithAssigning = [...issuesWithAssigning];
 
   useEffect(
@@ -48,10 +49,13 @@ const IssueTable: FC<IssueTableProps> = ({
             title.toLowerCase().indexOf(searchValue.toLowerCase()) !== -1,
         ),
       ),
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [searchValue, issuesWithAssigning],
   );
 
   const handleOnSort = () => setSort(sort === "asc" ? "desc" : "asc");
+
   const hideLastColumnOnSignOff =
     status === "unauthenticated" || status === "loading" ? -1 : undefined;
 

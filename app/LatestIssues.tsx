@@ -4,19 +4,19 @@ import {
   Card,
   Flex,
   Heading,
-  IconButton,
+  Button,
   Separator,
   Table,
 } from "@radix-ui/themes";
 import React from "react";
 import { IssueStatusBadge } from "./components";
 import Link from "next/link";
-import { AiFillFileAdd, AiOutlineNotification } from "react-icons/ai";
+import { AiFillFileAdd, AiFillNotification } from "react-icons/ai";
 
 const LatestIssues = async () => {
   const issues = await prisma.issue.findMany({
     orderBy: { createdAt: "desc" },
-    take: 5,
+    take: 6,
     include: {
       assignedToUser: true,
     },
@@ -24,23 +24,11 @@ const LatestIssues = async () => {
 
   return (
     <Card>
-      <Flex width="100%" justify="between" align="center">
-        <Flex align="center" gap="3">
-          <AiOutlineNotification size="25" />
-          <Flex gap="1" className="uppercase">
-            <Heading size="6" weight="bold">
-              Latest
-            </Heading>
-            <Heading size="6" weight="light">
-              Issues
-            </Heading>
-          </Flex>
-        </Flex>
-        <Link href="/issues/new">
-          <IconButton>
-            <AiFillFileAdd />
-          </IconButton>
-        </Link>
+      <Flex width="100%" align="center" gap="3">
+        <AiFillNotification size="20" />
+        <Heading size="3" weight="bold">
+          Latest issues
+        </Heading>
       </Flex>
       <Separator mt="2" size="4" />
       <Table.Root>
@@ -49,7 +37,7 @@ const LatestIssues = async () => {
             <Table.Row key={issue.id}>
               <Table.Cell>
                 <Flex justify="between" align="center">
-                  <Flex direction="row" align="center" height="8" gap="2">
+                  <Flex direction="row" align="center" height="5" gap="2">
                     <IssueStatusBadge status={issue.status} />
                     <Link href={`/issues/${issue.id}`}>{issue.title}</Link>
                   </Flex>
@@ -67,6 +55,15 @@ const LatestIssues = async () => {
           ))}
         </Table.Body>
       </Table.Root>
+
+      <Flex justify="end">
+        <Link href="/issues/new" className="mt-3">
+          <Button>
+            <AiFillFileAdd />
+            Create new issue
+          </Button>
+        </Link>
+      </Flex>
     </Card>
   );
 };
