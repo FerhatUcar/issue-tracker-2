@@ -40,11 +40,11 @@ const SearchField: FC<SearchFieldProps> = ({
 );
 
 const IssueActions = () => {
-  const [isSearchOpen, setSearchOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [text, setText] = useRecoilState(searchState);
 
   const handleToggleSearch = () => {
-    setSearchOpen(!isSearchOpen);
+      setIsSearchOpen(!isSearchOpen);
     setText("");
   };
 

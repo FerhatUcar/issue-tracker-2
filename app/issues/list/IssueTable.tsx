@@ -92,7 +92,7 @@ const IssueTable: FC<IssueTableProps> = ({
         {filteredList.map((issue) => (
           <Table.Row
             key={issue.id}
-            className="h-16 hover:bg-gray-800 text-pink-100 transition-colors"
+            className="hover:bg-sky-800/10 transition-colors"
           >
             <Table.Cell>
               <Flex align="center" justify="between">

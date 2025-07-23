@@ -20,7 +20,7 @@ body {
 
 @layer utilities {
   .nav-link {
-    @apply text-pink-50 hover:text-pink-200 transition-colors;
+    @apply text-sky-50 hover:text-sky-400 transition-colors;
   }
 }
 

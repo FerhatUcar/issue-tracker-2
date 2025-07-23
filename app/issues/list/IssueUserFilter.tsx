@@ -4,7 +4,7 @@ import { Select } from "@radix-ui/themes";
 import React from "react";
 import { Skeleton } from "@/app/components";
 import { deduplicateByProperty } from "@/app/helpers/utils";
-import { useDataQuery } from "@/app/helpers/hooks";
+import { useDataQuery } from "@/app/hooks";
 import { User } from "next-auth";
 import { useRouter, useSearchParams } from "next/navigation";
 
@@ -12,7 +12,6 @@ type UniqueUserIssues = {
   assignedToUserId: string | null;
 };
 type UserName = string | null | undefined;
-type UserId = string;
 type AssignedUser = {
   name: UserName;
   assignedToUserId: UniqueUserIssues["assignedToUserId"];
@@ -27,7 +26,7 @@ const IssueUserFilter = () => {
     isLoading,
   } = useDataQuery<UniqueUserIssues>("issues");
   const { data: users } = useDataQuery<User>("users");
-  const nameMapping: Record<UserId, UserName> = {};
+  const nameMapping: Record<string, UserName> = {};
   const assignedUser: AssignedUser[] = [];
 
   if (users) {
@@ -37,7 +36,7 @@ const IssueUserFilter = () => {
   }
 
   if (issues) {
-    issues.map((issue) =>
+    issues.forEach((issue) =>
       assignedUser.push({
         ...issue,
         name: nameMapping[issue.assignedToUserId ?? ""],

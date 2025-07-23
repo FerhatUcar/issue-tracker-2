@@ -3,10 +3,10 @@
 import { RecoilRoot } from "recoil";
 import { ReactNode } from "react";
 
-export default function RecoilContextProvider({
+export const RecoilContextProvider = ({
   children,
 }: {
   children: ReactNode;
-}) {
+}) => {
   return <RecoilRoot>{children}</RecoilRoot>;
-}
+};

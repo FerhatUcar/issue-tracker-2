@@ -8,7 +8,7 @@ import { Skeleton } from "@/app/components";
 import { Issue } from "@prisma/client";
 import toast, { Toaster } from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import { useDataQuery } from "@/app/helpers/hooks";
+import { useDataQuery } from "@/app/hooks";
 
 const AssigneeSelect = ({ issue }: { issue: Issue }) => {
   const router = useRouter();

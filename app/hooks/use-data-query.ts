@@ -6,9 +6,9 @@ import axios from "axios";
  * @param path the name of the endpoint
  */
 export const useDataQuery = <T>(path: string) =>
-  useQuery<T[]>({
-    queryKey: [path],
-    queryFn: () => axios.get(`/api/${path}`).then((res) => res.data),
-    staleTime: 60 * 1000, //60s
-    retry: 3,
-  });
+    useQuery<T[]>({
+        queryKey: [path],
+        queryFn: () => axios.get(`/api/${path}`).then((res) => res.data),
+        staleTime: 60 * 1000, //60s
+        retry: 3,
+    });
