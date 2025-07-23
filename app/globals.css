@@ -2,58 +2,98 @@
 @tailwind components;
 @tailwind utilities;
 
+/* =====================
+   🌐 Global CSS Variables
+===================== */
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  /* LIGHT MODE */
+  --color-bg-editor: #ffffff;
+  --color-bg-toolbar: #f8f9fa;
+  --color-text-editor: #000000;
+  --color-cursor: #000000;
+
+  --color-bg-table-row: #ffffff;
+  --color-border-input: #ced4da;
+  --color-bg-card: rgba(255, 255, 255, 0.8);
+
+  --color-text-link: #0ea5e9;
+  --color-text-link-hover: #38bdf8;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --foreground-rgb: 255, 255, 255;
+    /* DARK MODE */
+    --color-bg-editor: #141414;
+    --color-bg-toolbar: #1a1a1a;
+    --color-text-editor: #ffffff;
+    --color-cursor: #ffffff;
+
+    --color-bg-table-row: #1e1e1e;
+    --color-border-input: #444;
+    --color-bg-card: rgba(44, 44, 44, 0.8);
+
+    --color-text-link: #bae6fd;
+    --color-text-link-hover: #7dd3fc;
   }
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
+  color: var(--color-text-editor);
+  background-color: var(--color-bg-editor);
 }
 
+/* =====================
+   🧩 Utilities
+===================== */
 @layer utilities {
   .nav-link {
-    @apply text-sky-50 hover:text-sky-400 transition-colors;
+    @apply transition-colors;
+    color: var(--color-text-link);
+  }
+
+  .nav-link:hover {
+    color: var(--color-text-link-hover);
   }
 }
 
+/* =====================
+   🧠 Editor Styling
+===================== */
 .EasyMDEContainer .CodeMirror {
-  background: #141414;
-  color: white;
+  background-color: var(--color-bg-editor);
+  color: var(--color-text-editor);
 }
 
 .EasyMDEContainer .CodeMirror-cursor {
-  border-left: 1px solid #ffffff;
+  border-left: 1px solid var(--color-cursor);
 }
 
 .editor-toolbar {
-  background: #1a1a1a;
+  background: var(--color-bg-toolbar);
 }
 
-.editor-toolbar button:hover {
-  background: #1a1a1a !important;
-}
-
+.editor-toolbar button:hover,
 .editor-toolbar button.active {
-  background: #1a1a1a !important;
+  background: var(--color-bg-toolbar) !important;
 }
 
+/* =====================
+   🧱 UI Elements (Radix Themes)
+===================== */
 .rt-TextFieldRoot {
-  border: solid 1px #ced4da;
+  border: 1px solid var(--color-border-input);
   border-radius: 0.5rem;
 }
 
 .rt-TableRow {
+  background-color: var(--color-bg-table-row);
   vertical-align: middle !important;
 }
 
 .rt-BaseMenuItem {
   cursor: pointer !important;
+}
+
+.rt-CardInner {
+  background: var(--color-bg-card);
 }
