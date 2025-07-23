@@ -22,12 +22,16 @@ const IssueUserFilter = () => {
   const searchParams = useSearchParams();
   const {
     data: issues,
-    error,
+    isError: isIssuesError,
     isLoading,
   } = useDataQuery<UniqueUserIssues>("issues");
-  const { data: users } = useDataQuery<User>("users");
+  const { data: users, isError: isUsersError } = useDataQuery<User>("users");
   const nameMapping: Record<string, UserName> = {};
   const assignedUser: AssignedUser[] = [];
+
+  if (isUsersError) {
+    return null;
+  }
 
   if (users) {
     users.forEach((user) => {
@@ -48,7 +52,7 @@ const IssueUserFilter = () => {
     return <Skeleton />;
   }
 
-  if (error) {
+  if (isIssuesError) {
     return null;
   }
 
@@ -80,11 +84,13 @@ const IssueUserFilter = () => {
       <Select.Trigger placeholder="Filter by user" />
       <Select.Content>
         <Select.Item value="All">All</Select.Item>
+
         {filteredIssuesArray.map(({ name, assignedToUserId }, i) => (
           <Select.Item key={i} value={assignedToUserId || "No user"}>
             {name}
           </Select.Item>
         ))}
+
       </Select.Content>
     </Select.Root>
   );

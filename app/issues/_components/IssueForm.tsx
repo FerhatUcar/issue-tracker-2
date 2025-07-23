@@ -1,19 +1,20 @@
 "use client";
 
+import { useMemo, useState } from "react";
+import { z } from "zod";
 import ErrorMessage from "@/app/components/ErrorMessage";
 import Spinner from "@/app/components/Spinner";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Issue } from "@prisma/client";
 import { Box, Button, Callout, Flex, TextField } from "@radix-ui/themes";
-import axios from "axios";
 import "easymde/dist/easymde.min.css";
 import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { z } from "zod";
 import { issueSchema } from "@/app/validationSchema";
 import SimpleMDE from "react-simplemde-editor";
 import type { Options } from "easymde";
+import { AiOutlineSend } from "react-icons/ai";
+import { useIssueMutation } from "@/app/hooks";
 
 type IssueFormData = z.infer<typeof issueSchema>;
 
@@ -23,6 +24,7 @@ const simpleMdeOptions: Options = {
 
 const IssueForm = ({ issue }: { issue?: Issue }) => {
   const router = useRouter();
+  const { mutateAsync } = useIssueMutation();
   const {
     register,
     control,
@@ -40,17 +42,18 @@ const IssueForm = ({ issue }: { issue?: Issue }) => {
     try {
       setIsSubmitting(true);
 
-      if (issue) {
-        await axios.patch("/api/issues/" + issue.id, data);
-      } else {
-        await axios.post("/api/issues", data);
-      }
+      await mutateAsync({ ...data, id: issue?.id }, {
+        onSuccess: () => {
+          router.push("/issues/list");
+          router.refresh();
+          setIsSubmitting(false);
+        }
+      })
 
-      router.push("/issues/list");
-      router.refresh();
     } catch (error) {
+      setError(`An unexpected error occurred: ${error}`);
+    } finally {
       setIsSubmitting(false);
-      setError("An unexpected error occurred.");
     }
   });
 
@@ -78,9 +81,10 @@ const IssueForm = ({ issue }: { issue?: Issue }) => {
           name="description"
           control={control}
           defaultValue={defaultDescription}
-          render={({ field: { value } }) => (
+          render={({ field: { onChange, value } }) => (
             <SimpleMDE
               value={value}
+              onChange={onChange}
               options={simpleMdeOptions}
               placeholder="Description"
             />
@@ -88,6 +92,7 @@ const IssueForm = ({ issue }: { issue?: Issue }) => {
         />
         <ErrorMessage>{errors.description?.message}</ErrorMessage>
         <Button disabled={isSubmitting}>
+          <AiOutlineSend />
           {issue ? "Update Issue" : "Submit New Issue"}
           {isSubmitting && <Spinner />}
         </Button>
