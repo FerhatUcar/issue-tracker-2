@@ -78,10 +78,9 @@ const IssueForm = ({ issue }: { issue?: Issue }) => {
           name="description"
           control={control}
           defaultValue={defaultDescription}
-          render={({ field: { onChange, value } }) => (
+          render={({ field: { value } }) => (
             <SimpleMDE
               value={value}
-              onChange={onChange}
               options={simpleMdeOptions}
               placeholder="Description"
             />
@@ -89,7 +88,7 @@ const IssueForm = ({ issue }: { issue?: Issue }) => {
         />
         <ErrorMessage>{errors.description?.message}</ErrorMessage>
         <Button disabled={isSubmitting}>
-          {issue ? "Update Issue" : "Submit New Issue"}{" "}
+          {issue ? "Update Issue" : "Submit New Issue"}
           {isSubmitting && <Spinner />}
         </Button>
       </form>

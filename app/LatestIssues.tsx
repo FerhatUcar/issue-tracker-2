@@ -11,7 +11,7 @@ import {
 import React from "react";
 import { IssueStatusBadge } from "./components";
 import Link from "next/link";
-import { AiFillFileAdd, AiFillNotification } from "react-icons/ai";
+import { AiFillNotification, AiFillPlusCircle } from "react-icons/ai";
 
 const LatestIssues = async () => {
   const issues = await prisma.issue.findMany({
@@ -56,14 +56,12 @@ const LatestIssues = async () => {
         </Table.Body>
       </Table.Root>
 
-      <Flex justify="end">
-        <Link href="/issues/new" className="mt-3">
-          <Button>
-            <AiFillFileAdd />
+        <Link href="/issues/new">
+          <Button className="w-full justify-start mt-3" variant="soft" size="3">
+            <AiFillPlusCircle />
             Create new issue
           </Button>
         </Link>
-      </Flex>
     </Card>
   );
 };
