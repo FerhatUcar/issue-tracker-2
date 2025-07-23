@@ -19,7 +19,7 @@ const IssueStatus = ({ issue }: { issue?: Issue }) => {
 
   if (!issue) notFound();
 
-  const handleOnChange = (status: string) => {
+  const handleOnChange = async (status: string) => {
     return axios
       .patch("/api/issues/" + issue.id, {
         status,

@@ -4,33 +4,41 @@ import ErrorMessage from "@/app/components/ErrorMessage";
 import Spinner from "@/app/components/Spinner";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Issue } from "@prisma/client";
-import { Button, Callout, Flex, TextField } from "@radix-ui/themes";
+import { Box, Button, Callout, Flex, TextField } from "@radix-ui/themes";
 import axios from "axios";
 import "easymde/dist/easymde.min.css";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useMemo, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import { issueSchema } from "@/app/validationSchema";
+import SimpleMDE from "react-simplemde-editor";
+import type { Options } from "easymde";
 
 type IssueFormData = z.infer<typeof issueSchema>;
+
+const simpleMdeOptions: Options = {
+  hideIcons: ["fullscreen", "side-by-side", "preview", "guide"] as const,
+};
 
 const IssueForm = ({ issue }: { issue?: Issue }) => {
   const router = useRouter();
   const {
     register,
-    // control,
+    control,
     handleSubmit,
     formState: { errors },
   } = useForm<IssueFormData>({
     resolver: zodResolver(issueSchema),
   });
   const [error, setError] = useState("");
-  const [isSubmitting, setSubmitting] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const defaultDescription = useMemo(() => issue?.description ?? "", [issue]);
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      setSubmitting(true);
+      setIsSubmitting(true);
 
       if (issue) {
         await axios.patch("/api/issues/" + issue.id, data);
@@ -41,13 +49,13 @@ const IssueForm = ({ issue }: { issue?: Issue }) => {
       router.push("/issues/list");
       router.refresh();
     } catch (error) {
-      setSubmitting(false);
+      setIsSubmitting(false);
       setError("An unexpected error occurred.");
     }
   });
 
   return (
-    <div className="max-w-xl">
+    <Box className="max-w-xl">
       {error && (
         <Callout.Root color="red" className="mb-5">
           <Callout.Text>{error}</Callout.Text>
@@ -66,41 +74,26 @@ const IssueForm = ({ issue }: { issue?: Issue }) => {
           </Flex>
         </TextField.Root>
         <ErrorMessage>{errors.title?.message}</ErrorMessage>
-        {/*<Controller*/}
-        {/*  name="description"*/}
-        {/*  control={control}*/}
-        {/*  defaultValue={issue?.description}*/}
-        {/*  render={({ field }) => {*/}
-        {/*    console.log(field.value);*/}
-        {/*    return (*/}
-        {/*      <SimpleMDE*/}
-        {/*        options={{*/}
-        {/*          hideIcons: ["fullscreen", "side-by-side", "preview", "guide"],*/}
-        {/*        }}*/}
-        {/*        placeholder="Description"*/}
-        {/*        {...field}*/}
-        {/*      />*/}
-        {/*    );*/}
-        {/*  }}*/}
-        {/*/>*/}
-        <TextField.Root>
-          <Flex align="center">
-            <span className="pl-3">Description</span>
-            <TextField.Input
-              defaultValue={issue?.description}
-              size="3"
-              placeholder="Issue details..."
-              {...register("description")}
+        <Controller
+          name="description"
+          control={control}
+          defaultValue={defaultDescription}
+          render={({ field: { onChange, value } }) => (
+            <SimpleMDE
+              value={value}
+              onChange={onChange}
+              options={simpleMdeOptions}
+              placeholder="Description"
             />
-          </Flex>
-        </TextField.Root>
+          )}
+        />
         <ErrorMessage>{errors.description?.message}</ErrorMessage>
         <Button disabled={isSubmitting}>
           {issue ? "Update Issue" : "Submit New Issue"}{" "}
           {isSubmitting && <Spinner />}
         </Button>
       </form>
-    </div>
+    </Box>
   );
 };
 

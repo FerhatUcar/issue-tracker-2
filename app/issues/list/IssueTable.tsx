@@ -19,11 +19,6 @@ export type IssueQuery = {
   sortBy: "asc" | "desc";
   page: string;
 };
-export type Column = {
-  label: string;
-  value: keyof Issue;
-  className?: string;
-};
 
 type IssueTableProps = {
   searchParams: IssueQuery;
@@ -34,8 +29,8 @@ const IssueTable: FC<IssueTableProps> = ({
   searchParams,
   issuesWithAssigning,
 }) => {
-  const [sort, setSort] = useState("asc");
   const { status } = useSession();
+  const [sort, setSort] = useState("asc");
   const searchValue = useRecoilValue(searchValueState);
   const [filteredList, setFilteredList] = useState(issuesWithAssigning);
 

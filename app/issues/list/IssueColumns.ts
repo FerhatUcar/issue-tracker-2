@@ -1,4 +1,10 @@
-import { Column } from "@/app/issues/list/IssueTable";
+import { Issue } from "@prisma/client";
+
+type Column = {
+  label: string;
+  value: keyof Issue;
+  className?: string;
+};
 
 export const columns: Column[] = [
   { label: "Issue", value: "title" },
