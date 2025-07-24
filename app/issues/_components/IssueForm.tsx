@@ -5,8 +5,9 @@ import { z } from "zod";
 import ErrorMessage from "@/app/components/ErrorMessage";
 import Spinner from "@/app/components/Spinner";
 import { zodResolver } from "@hookform/resolvers/zod";
+import toast from "react-hot-toast";
 import { Issue } from "@prisma/client";
-import { Box, Button, Callout, Flex, TextField } from "@radix-ui/themes";
+import { Card, Button, Callout, Flex, TextField } from "@radix-ui/themes";
 import "easymde/dist/easymde.min.css";
 import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
@@ -44,9 +45,10 @@ const IssueForm = ({ issue }: { issue?: Issue }) => {
 
       await mutateAsync({ ...data, id: issue?.id }, {
         onSuccess: () => {
+          toast.success('Issue submitted successfully!');
+          setIsSubmitting(false);
           router.push("/issues/list");
           router.refresh();
-          setIsSubmitting(false);
         }
       })
 
@@ -58,13 +60,14 @@ const IssueForm = ({ issue }: { issue?: Issue }) => {
   });
 
   return (
-    <Box className="max-w-xl">
+    <Card className="md:max-w-xl">
       {error && (
         <Callout.Root color="red" className="mb-5">
           <Callout.Text>{error}</Callout.Text>
         </Callout.Root>
       )}
-      <form className="space-y-3" onSubmit={onSubmit}>
+      <form className="space-y-2" onSubmit={onSubmit}>
+        <ErrorMessage>{errors.title?.message}</ErrorMessage>
         <TextField.Root>
           <Flex align="center">
             <span className="pl-3">Title</span>
@@ -76,7 +79,7 @@ const IssueForm = ({ issue }: { issue?: Issue }) => {
             />
           </Flex>
         </TextField.Root>
-        <ErrorMessage>{errors.title?.message}</ErrorMessage>
+        <ErrorMessage>{errors.description?.message}</ErrorMessage>
         <Controller
           name="description"
           control={control}
@@ -90,14 +93,16 @@ const IssueForm = ({ issue }: { issue?: Issue }) => {
             />
           )}
         />
-        <ErrorMessage>{errors.description?.message}</ErrorMessage>
-        <Button disabled={isSubmitting}>
-          <AiOutlineSend />
-          {issue ? "Update Issue" : "Submit New Issue"}
-          {isSubmitting && <Spinner />}
-        </Button>
+
+        <Flex justify="end">
+          <Button disabled={isSubmitting}>
+            <AiOutlineSend />
+            {issue ? "Update Issue" : "Submit New Issue"}
+            {isSubmitting && <Spinner />}
+          </Button>
+        </Flex>
       </form>
-    </Box>
+    </Card>
   );
 };
 

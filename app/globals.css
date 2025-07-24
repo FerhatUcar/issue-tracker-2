@@ -13,7 +13,7 @@
   --color-cursor: #000000;
 
   --color-bg-table-row: #ffffff;
-  --color-border-input: #ced4da;
+  --color-border-input: #ffffff;
   --color-bg-card: rgba(255, 255, 255, 0.8);
 
   --color-text-link: #0ea5e9;
@@ -59,32 +59,33 @@ body {
 /* =====================
    🧠 Editor Styling
 ===================== */
-.EasyMDEContainer .CodeMirror {
-  background-color: var(--color-bg-editor);
-  color: var(--color-text-editor);
-}
+.EasyMDEContainer {
+  .CodeMirror {
+    background-color: var(--color-bg-editor);
+    color: var(--color-text-editor);
+    border: 1px solid var(--color-border-input) !important;
+  }
 
-.EasyMDEContainer .CodeMirror-cursor {
-  border-left: 1px solid var(--color-cursor);
+  .CodeMirror-cursor {
+    border-left: 2px solid var(--color-cursor);
+  }
 }
 
 .editor-toolbar {
+  border-top: 1px solid var(--color-border-input) !important;
+  border-left: 1px solid var(--color-border-input) !important;
+  border-right: 1px solid var(--color-border-input) !important;
   background: var(--color-bg-toolbar);
-}
 
-.editor-toolbar button:hover,
-.editor-toolbar button.active {
-  background: var(--color-bg-toolbar) !important;
+  button:hover,
+  button.active {
+    background: var(--color-bg-toolbar) !important;
+  }
 }
 
 /* =====================
    🧱 UI Elements (Radix Themes)
 ===================== */
-.rt-TextFieldRoot {
-  border: 1px solid var(--color-border-input);
-  border-radius: 0.5rem;
-}
-
 .rt-TableRow {
   background-color: var(--color-bg-table-row);
   vertical-align: middle !important;
