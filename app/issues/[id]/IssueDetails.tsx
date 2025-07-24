@@ -6,41 +6,48 @@ import React from "react";
 import { getServerSession } from "next-auth";
 import prisma from "@/prisma/client";
 
-const IssueDetails = async ({ issue }: { issue: Issue }) => {
-  let userId;
-  const session = await getServerSession();
-  const getUserId = await prisma.user.findMany({
-    select: {
-      id: true,
-    },
-  });
+type IssueDetailsProps = {
+  /**
+   * The issue object containing details about the issue.
+   */
+  issue: Issue;
+};
 
-  getUserId.forEach(({ id }) => (userId = id));
+const IssueDetails = async ({ issue }: IssueDetailsProps) => {
+  const session = await getServerSession();
+
+  const currentUser = session?.user?.email
+    ? await prisma.user.findUnique({
+        where: { email: session.user.email },
+        select: { id: true },
+      })
+    : null;
+
+  const isAssignedToCurrentUser = issue.assignedToUserId === currentUser?.id;
 
   return (
-    <>
-      <Heading className="uppercase pb-3">{issue.title}</Heading>
-      <Card>
-        <Flex justify="between" align="center">
-          <Flex justify="between" className="space-x-3" my="2">
-            <IssueStatusBadge status={issue.status} />
-            <Text>{issue.createdAt.toDateString()}</Text>
-          </Flex>
-          {issue.assignedToUserId === userId && (
-            <Avatar
-              src={session!.user!.image!}
-              fallback="?"
-              size="2"
-              radius="full"
-              referrerPolicy="no-referrer"
-            />
-          )}
+    <Card>
+      <Flex justify="between" align="center" py="2">
+        <Flex align="center" gap="3">
+          <IssueStatusBadge status={issue.status} />
+          <Text size="2" color="gray">
+            {issue.createdAt.toDateString()}
+          </Text>
         </Flex>
-      </Card>
-      <Card className="prose max-w-full text-white" mt="4">
-        <ReactMarkdown>{issue.description}</ReactMarkdown>
-      </Card>
-    </>
+
+        {isAssignedToCurrentUser && session?.user?.image && (
+          <Avatar
+            src={session.user.image}
+            fallback="?"
+            size="2"
+            radius="full"
+            referrerPolicy="no-referrer"
+          />
+        )}
+      </Flex>
+      <Heading>{issue.title}</Heading>
+      <ReactMarkdown>{issue.description}</ReactMarkdown>
+    </Card>
   );
 };
 

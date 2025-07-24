@@ -21,7 +21,14 @@ export type IssueQuery = {
 };
 
 type IssueTableProps = {
+  /**
+   * The search parameters used to filter and sort the issues.
+   */
   searchParams: IssueQuery;
+
+  /**
+   * The list of issues with their assigned user information.
+   */
   issuesWithAssigning: IssuesWithAssigning;
 };
 
