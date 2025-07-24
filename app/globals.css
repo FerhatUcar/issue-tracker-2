@@ -6,40 +6,45 @@
    🌐 Global CSS Variables
 ===================== */
 :root {
+  --border-radius: 0.375rem;
+}
+
+.light {
   /* LIGHT MODE */
-  --color-bg-editor: #ffffff;
+  --color-bg-body: rgba(216, 216, 216, 0.8);
+  --color-bg-nav: #ffffff;
+
+  --color-bg-editor: #f3f3f3;
+  --color-bg-editor-title: #cacaca;
   --color-bg-toolbar: #f8f9fa;
   --color-text-editor: #000000;
   --color-cursor: #000000;
 
   --color-bg-table-row: #ffffff;
-  --color-border-input: #ffffff;
-  --color-bg-card: rgba(255, 255, 255, 0.8);
+  --color-border-input: #cacaca;
+  --color-bg-card: rgba(243, 243, 243, 0.8);
 
   --color-text-link: white;
   --color-text-link-hover: #38bdf8;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    /* DARK MODE */
-    --color-bg-editor: #141414;
-    --color-bg-toolbar: #1a1a1a;
-    --color-text-editor: #ffffff;
-    --color-cursor: #ffffff;
+.dark {
+  /* DARK MODE */
+  --color-bg-body: rgba(27, 27, 27, 0.8);
+  --color-bg-nav: rgba(44, 44, 44, 0.8);
 
-    --color-bg-table-row: #1e1e1e;
-    --color-border-input: #444;
-    --color-bg-card: rgba(44, 44, 44, 0.8);
+  --color-bg-editor: #141414;
+  --color-bg-editor-title: #141414;
+  --color-bg-toolbar: #1a1a1a;
+  --color-text-editor: #ffffff;
+  --color-cursor: #ffffff;
 
-    --color-text-link: white;
-    --color-text-link-hover: #7dd3fc;
-  }
-}
+  --color-bg-table-row: #1e1e1e;
+  --color-border-input: #3e3e3e;
+  --color-bg-card: rgba(44, 44, 44, 0.8);
 
-body {
-  color: var(--color-text-editor);
-  background-color: var(--color-bg-editor);
+  --color-text-link: white;
+  --color-text-link-hover: #7dd3fc;
 }
 
 /* =====================
@@ -87,8 +92,12 @@ body {
    🧱 UI Elements (Radix Themes)
 ===================== */
 .rt-TableRow {
-  background-color: var(--color-bg-table-row);
   vertical-align: middle !important;
+}
+
+.rt-TextFieldRoot {
+  background-color: var(--color-bg-editor-title);
+  border-radius: var(--border-radius) !important;
 }
 
 .rt-BaseMenuItem {
@@ -96,5 +105,20 @@ body {
 }
 
 .rt-CardInner {
-  background: var(--color-bg-card);
+  background-color: var(--color-bg-card);
+  box-shadow:
+    0 3px 10px rgba(0, 0, 0, 0.1),
+    0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+/* =====================
+   🖼️ Layout Specific Styles
+=====================
+ */
+nav {
+  background-color: var(--color-bg-nav);
+}
+
+body {
+  background-color: var(--color-bg-body) !important;
 }

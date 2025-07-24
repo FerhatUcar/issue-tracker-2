@@ -11,16 +11,19 @@ import {
   Flex,
   Text,
 } from "@radix-ui/themes";
-import { PersonIcon } from "@radix-ui/react-icons";
+import { MoonIcon, PersonIcon, SunIcon } from "@radix-ui/react-icons";
 import Skeleton from "react-loading-skeleton";
+import { BsTicketDetailedFill } from "react-icons/bs";
+import { useThemeToggle } from "../providers";
 
 type Props = {
-  userId: string
-  count: number
-}
+  userId: string;
+  count: number;
+};
 
-export const  AuthStatus = ({ userId, count }: Props) => {
+export const AuthStatus = ({ userId, count }: Props) => {
   const { status, data: session } = useSession();
+  const { appearance, toggleAppearance } = useThemeToggle();
 
   if (status === "loading") {
     return <Skeleton width="3rem" />;
@@ -53,10 +56,21 @@ export const  AuthStatus = ({ userId, count }: Props) => {
           <DropdownMenu.Label>
             <Text size="2">{session!.user!.email}</Text>
           </DropdownMenu.Label>
+
+          <DropdownMenu.Item onClick={toggleAppearance}>
+            <Flex direction="row" align="center" gap="2">
+              {appearance === 'dark' ? <SunIcon /> : <MoonIcon />}
+              <Text>{appearance === 'dark' ? 'Light' : 'Dark'} mode</Text>
+            </Flex>
+          </DropdownMenu.Item>
+
           <Link href={`/issues/list?assignedToUserId=${userId}`}>
             <DropdownMenu.Item>
               <Flex justify="between" width="100%">
-                <Text>My issues</Text>
+                <Flex direction="row" align="center" gap="2">
+                  <BsTicketDetailedFill />
+                  <Text>My issues</Text>
+                </Flex>
                 {count >= 1 && (
                   <Badge variant="solid" radius="full" color="red">
                     {count}
@@ -73,4 +87,4 @@ export const  AuthStatus = ({ userId, count }: Props) => {
       </DropdownMenu.Root>
     </Box>
   );
-}
+};

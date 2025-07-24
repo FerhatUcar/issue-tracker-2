@@ -57,7 +57,7 @@ const LatestIssues = async () => {
       </Table.Root>
 
         <Link href="/issues/new">
-          <Button className="w-full justify-start mt-3" variant="soft" size="3">
+          <Button className="w-full justify-start mt-3" variant="soft" size="3" mt="3">
             <AiFillPlusCircle />
             Create new issue
           </Button>

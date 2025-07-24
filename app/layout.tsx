@@ -4,9 +4,9 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import React, { ReactNode } from "react";
-import { Container, Theme } from "@radix-ui/themes";
+import { Container } from "@radix-ui/themes";
 import AuthProvider from "@/app/auth/Provider";
-import { QueryClientProvider, RecoilContextProvider } from "@/app/providers";
+import { QueryClientProvider, RecoilContextProvider, ThemeProvider } from "@/app/providers";
 import { NavbarWrapper } from "@/app/components";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -22,12 +22,12 @@ const RootLayout = async ({ children }: { children: ReactNode }) => (
       <QueryClientProvider>
         <AuthProvider>
           <RecoilContextProvider>
-            <Theme appearance="dark" accentColor="sky">
-              <NavbarWrapper />
-              <main className="p-5">
-                <Container>{children}</Container>
-              </main>
-            </Theme>
+            <ThemeProvider>
+                <NavbarWrapper />
+                <main className="p-5">
+                  <Container>{children}</Container>
+                </main>
+            </ThemeProvider>
           </RecoilContextProvider>
         </AuthProvider>
       </QueryClientProvider>

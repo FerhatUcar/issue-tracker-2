@@ -21,7 +21,7 @@ export const Navbar = ({ data: { userId, count } }: Props) => {
     count === 0 || status === "unauthenticated" || status === "loading";
 
   return (
-    <nav className="px-5 py-3 bg-neutral-800">
+    <nav className="px-5 py-3">
       <Container>
         <Flex justify="between">
           <Flex align="center" gap="3">

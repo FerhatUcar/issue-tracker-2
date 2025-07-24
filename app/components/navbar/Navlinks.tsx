@@ -21,7 +21,6 @@ export const NavLinks = () => {
           <li key={link.href}>
             <Link
               className={classnames({
-                "nav-link": true,
                 "!text-sky-400": link.href === currentPath,
                 "font-bold": link.href === currentPath,
               })}
