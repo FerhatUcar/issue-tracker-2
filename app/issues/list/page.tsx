@@ -1,10 +1,9 @@
-import React from "react";
 import prisma from "@/prisma/client";
 import IssueActions from "@/app/issues/list/IssueActions";
 import { Issue, Status } from "@prisma/client";
 import Pagination from "@/app/components/Pagination";
 import IssueTable, { IssueQuery } from "@/app/issues/list/IssueTable";
-import { Flex } from "@radix-ui/themes";
+import { Card, Flex } from "@radix-ui/themes";
 import { columns } from "@/app/issues/list/IssueColumns";
 
 type IssuePageProps = {
@@ -34,11 +33,11 @@ const IssuesPage = async ({ searchParams }: IssuePageProps) => {
   const where = { status, assignedToUserId };
   const columnNames = columns.map((column) => column.value);
 
-  const sortOrder: 'asc' | 'desc' =
-    searchParams.sortBy === 'asc' ? 'asc' : 'desc';
+  const sortOrder: "asc" | "desc" =
+    searchParams.sortBy === "asc" ? "asc" : "desc";
 
   const orderBy: {
-    [key: string]: 'asc' | 'desc';
+    [key: string]: "asc" | "desc";
   } =
     columnNames.includes(searchParams.orderBy) && searchParams.sortBy
       ? { [searchParams.orderBy]: sortOrder }
@@ -60,18 +59,20 @@ const IssuesPage = async ({ searchParams }: IssuePageProps) => {
   const issueCount = await prisma.issue.count({ where });
 
   return (
-    <Flex direction="column" gap="3">
-      <IssueActions />
-      <IssueTable
-        searchParams={searchParams}
-        issuesWithAssigning={issuesWithAssigning}
-      />
-      <Pagination
-        itemCount={issueCount}
-        pageSize={pageSize}
-        currentPage={page}
-      />
-    </Flex>
+    <Card>
+      <Flex direction="column" gap="3">
+        <IssueActions />
+        <IssueTable
+          searchParams={searchParams}
+          issuesWithAssigning={issuesWithAssigning}
+        />
+        <Pagination
+          itemCount={issueCount}
+          pageSize={pageSize}
+          currentPage={page}
+        />
+      </Flex>
+    </Card>
   );
 };
 

@@ -1,50 +1,22 @@
 "use client";
 
-import React, { FC, useState } from "react";
-import { Button, Flex, IconButton, TextField } from "@radix-ui/themes";
+import React, { useState } from "react";
+import { Button, Flex, IconButton } from "@radix-ui/themes";
 import Link from "next/link";
 import IssueStatusFilter from "@/app/issues/list/IssueStatusFilter";
-import { AiFillFileAdd } from "react-icons/ai";
+import { AiFillPlusCircle } from "react-icons/ai";
 import IssueUserFilter from "@/app/issues/list/IssueUserFilter";
-import { MagnifyingGlassIcon, Cross2Icon } from "@radix-ui/react-icons";
-import { SetterOrUpdater, useRecoilState } from "recoil";
+import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
+import { useRecoilState } from "recoil";
 import { searchState } from "@/app/state/selectors";
-
-type SearchFieldProps = {
-  value: string;
-  setText: SetterOrUpdater<string>;
-  handleToggleSearch: () => void;
-};
-
-const SearchField: FC<SearchFieldProps> = ({
-  value,
-  setText,
-  handleToggleSearch,
-}) => (
-  <TextField.Root>
-    <TextField.Slot>
-      <MagnifyingGlassIcon height="16" width="16" />
-    </TextField.Slot>
-    <TextField.Input
-      value={value}
-      onChange={(e) => setText(e.target.value)}
-      size="3"
-      placeholder="Search issues.."
-    />
-    <TextField.Slot pr="3">
-      <IconButton onClick={handleToggleSearch} size="2" variant="ghost">
-        <Cross2Icon height="16" width="16" />
-      </IconButton>
-    </TextField.Slot>
-  </TextField.Root>
-);
+import { SearchField } from "./components";
 
 const IssueActions = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [text, setText] = useRecoilState(searchState);
 
   const handleToggleSearch = () => {
-      setIsSearchOpen(!isSearchOpen);
+    setIsSearchOpen(!isSearchOpen);
     setText("");
   };
 
@@ -61,13 +33,16 @@ const IssueActions = () => {
         <IssueUserFilter />
       </Flex>
       <Flex gap="3">
-        <IconButton onClick={handleToggleSearch}>
+        <IconButton variant="soft" size="3" onClick={handleToggleSearch}>
           <MagnifyingGlassIcon width="18" height="18" />
         </IconButton>
-        <Button>
-          <AiFillFileAdd />
-          <Link href="/issues/new">New Issue</Link>
-        </Button>
+
+        <Link href="/issues/new">
+          <Button variant="soft" size="3">
+            <AiFillPlusCircle />
+            Create new issue
+          </Button>
+        </Link>
       </Flex>
     </Flex>
   );
