@@ -1,3 +1,5 @@
+'use client';
+
 import React from "react";
 import { Select } from "@radix-ui/themes";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -17,11 +19,11 @@ const IssueStatusFilter = () => {
     }
 
     if (assignedToUserId) {
-      params.append("assignedToUserId", assignedToUserId!);
+      params.append("assignedToUserId", assignedToUserId);
     }
 
     if (orderBy) {
-      params.append("orderBy", orderBy!);
+      params.append("orderBy", orderBy);
     }
 
     const query = params.size ? "?" + params.toString() : "";
