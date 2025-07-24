@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import { Button, Flex, IconButton } from "@radix-ui/themes";
 import Link from "next/link";
 import IssueStatusFilter from "@/app/issues/list/IssueStatusFilter";
@@ -29,8 +29,10 @@ const IssueActions = () => {
   ) : (
     <Flex justify="between">
       <Flex gap="3" align="center">
-        <IssueStatusFilter />
-        <IssueUserFilter />
+        <Suspense>
+          <IssueStatusFilter />
+          <IssueUserFilter />
+        </Suspense>
       </Flex>
       <Flex gap="3">
         <IconButton variant="soft" size="3" onClick={handleToggleSearch}>

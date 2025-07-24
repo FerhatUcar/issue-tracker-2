@@ -1,3 +1,4 @@
+import React, { Suspense } from "react";
 import prisma from "@/prisma/client";
 import IssueActions from "@/app/issues/list/IssueActions";
 import { Issue, Status } from "@prisma/client";
@@ -66,11 +67,13 @@ const IssuesPage = async ({ searchParams }: IssuePageProps) => {
           searchParams={searchParams}
           issuesWithAssigning={issuesWithAssigning}
         />
-        <Pagination
-          itemCount={issueCount}
-          pageSize={pageSize}
-          currentPage={page}
-        />
+        <Suspense>
+          <Pagination
+            itemCount={issueCount}
+            pageSize={pageSize}
+            currentPage={page}
+          />
+        </Suspense>
       </Flex>
     </Card>
   );
