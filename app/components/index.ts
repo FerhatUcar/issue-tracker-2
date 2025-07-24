@@ -6,3 +6,4 @@ export { default as Skeleton } from "./Skeleton";
 export { IssueStatus } from "./IssueStatus";
 export { AuthStatus } from "./AuthStatus";
 export { NavbarWrapper } from "./navbar";
+export { NoIssuesPlaceholder } from "./placeholder";
