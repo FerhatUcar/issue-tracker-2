@@ -24,8 +24,6 @@ const LatestIssues = async () => {
 
   const hasIssues = issues.length > 0;
 
-  console.log('test');
-
   return (
     <Card>
       <Flex width="100%" align="center" gap="3">
