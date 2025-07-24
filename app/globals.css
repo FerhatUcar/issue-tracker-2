@@ -16,7 +16,7 @@
   --color-border-input: #ffffff;
   --color-bg-card: rgba(255, 255, 255, 0.8);
 
-  --color-text-link: #0ea5e9;
+  --color-text-link: white;
   --color-text-link-hover: #38bdf8;
 }
 
@@ -32,7 +32,7 @@
     --color-border-input: #444;
     --color-bg-card: rgba(44, 44, 44, 0.8);
 
-    --color-text-link: #bae6fd;
+    --color-text-link: white;
     --color-text-link-hover: #7dd3fc;
   }
 }
