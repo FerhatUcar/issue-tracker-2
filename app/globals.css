@@ -21,6 +21,8 @@
   --color-cursor: #000000;
 
   --color-bg-table-row: #ffffff;
+  --color-bg-table-row-hover: #f1f1f1;
+
   --color-border-input: #cacaca;
   --color-bg-card: rgba(243, 243, 243, 0.8);
 
@@ -40,6 +42,8 @@
   --color-cursor: #ffffff;
 
   --color-bg-table-row: #1a1a1a;
+  --color-bg-table-row-hover: #232323;
+
   --color-border-input: #3e3e3e;
   --color-bg-card: rgba(44, 44, 44, 0.8);
 
@@ -91,9 +95,17 @@
 /* =====================
    🧱 UI Elements (Radix Themes)
 ===================== */
+.rt-TableHeader {
+  --table-row-background: transparent !important;
+}
+
 .rt-TableRow {
   background-color: var(--color-bg-table-row);
   vertical-align: middle !important;
+}
+
+.rt-TableRoot.rt-variant-surface .rt-TableRow:hover {
+  background-color: var(--color-bg-table-row-hover);
 }
 
 .rt-TextFieldRoot {

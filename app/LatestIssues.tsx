@@ -36,7 +36,7 @@ const LatestIssues = async () => {
       <Separator mt="2" size="4" />
 
       {hasIssues ? (
-        <Table.Root>
+        <Table.Root className="h-[calc(100%-84px)]">
           <Table.Body>
             {issues.map((issue) => (
               <Table.Row key={issue.id}>

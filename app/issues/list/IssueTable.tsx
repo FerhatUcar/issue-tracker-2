@@ -63,7 +63,7 @@ const IssueTable: FC<IssueTableProps> = ({
 
   return (
     <Table.Root variant="surface">
-      <Table.Header>
+    <Table.Header>
         <Table.Row>
           {columns.slice(0, hideLastColumnOnSignOff).map((column) => (
             <Table.ColumnHeaderCell
@@ -113,7 +113,7 @@ const IssueTable: FC<IssueTableProps> = ({
             </Table.Cell>
             {status === "authenticated" && (
               <Table.Cell>
-                {issue.assignedToUserId && (
+                {issue.assignedToUserId ? (
                   <Avatar
                     src={issue.assignedToUser?.image!}
                     fallback="?"
@@ -121,7 +121,7 @@ const IssueTable: FC<IssueTableProps> = ({
                     radius="full"
                     referrerPolicy="no-referrer"
                   />
-                )}
+                ) : "Unassigned"}
               </Table.Cell>
             )}
           </Table.Row>
