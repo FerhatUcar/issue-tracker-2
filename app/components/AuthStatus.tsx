@@ -11,7 +11,13 @@ import {
   Flex,
   Text,
 } from "@radix-ui/themes";
-import { MoonIcon, PersonIcon, SunIcon } from "@radix-ui/react-icons";
+import {
+  MoonIcon,
+  PersonIcon,
+  SunIcon,
+  ExitIcon,
+  AvatarIcon,
+} from "@radix-ui/react-icons";
 import Skeleton from "react-loading-skeleton";
 import { BsTicketDetailedFill } from "react-icons/bs";
 import { useThemeToggle } from "../providers";
@@ -54,13 +60,16 @@ export const AuthStatus = ({ userId, count }: Props) => {
         </DropdownMenu.Trigger>
         <DropdownMenu.Content>
           <DropdownMenu.Label>
-            <Text size="2">{session!.user!.email}</Text>
+            <Flex direction="row" align="center" gap="2">
+              <AvatarIcon />
+              <Text size="2">{session!.user!.email}</Text>
+            </Flex>
           </DropdownMenu.Label>
 
           <DropdownMenu.Item onClick={toggleAppearance}>
             <Flex direction="row" align="center" gap="2">
-              {appearance === 'dark' ? <SunIcon /> : <MoonIcon />}
-              <Text>{appearance === 'dark' ? 'Light' : 'Dark'} mode</Text>
+              {appearance === "dark" ? <SunIcon /> : <MoonIcon />}
+              <Text>{appearance === "dark" ? "Light" : "Dark"} mode</Text>
             </Flex>
           </DropdownMenu.Item>
 
@@ -81,7 +90,10 @@ export const AuthStatus = ({ userId, count }: Props) => {
           </Link>
           <DropdownMenu.Separator />
           <DropdownMenu.Item>
-            <Link href="/api/auth/signout">Log out</Link>
+            <Flex direction="row" align="center" gap="2">
+              <ExitIcon />
+              <Link href="/api/auth/signout">Log out</Link>
+            </Flex>
           </DropdownMenu.Item>
         </DropdownMenu.Content>
       </DropdownMenu.Root>
