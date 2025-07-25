@@ -21,10 +21,7 @@ const IssueActions = () => {
     setText("");
   }, [isSearchOpen, setText]);
 
-  useEscapeKey(() => {
-    setIsSearchOpen(false);
-    setText("");
-  }, isSearchOpen);
+  useEscapeKey(() => handleToggleSearch(), isSearchOpen);
 
   return isSearchOpen ? (
     <SearchField
