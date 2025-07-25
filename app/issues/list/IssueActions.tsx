@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, Suspense } from "react";
+import React, { useState, Suspense, useCallback } from "react";
 import { Button, Flex, IconButton } from "@radix-ui/themes";
 import Link from "next/link";
 import IssueStatusFilter from "@/app/issues/list/IssueStatusFilter";
@@ -10,15 +10,21 @@ import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import { useRecoilState } from "recoil";
 import { searchState } from "@/app/state/selectors";
 import { SearchField } from "./components";
+import { useEscapeKey } from "./hooks";
 
 const IssueActions = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [text, setText] = useRecoilState(searchState);
 
-  const handleToggleSearch = () => {
+  const handleToggleSearch = useCallback(() => {
     setIsSearchOpen(!isSearchOpen);
     setText("");
-  };
+  }, [isSearchOpen, setText]);
+
+  useEscapeKey(() => {
+    setIsSearchOpen(false);
+    setText("");
+  }, isSearchOpen);
 
   return isSearchOpen ? (
     <SearchField
