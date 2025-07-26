@@ -134,3 +134,7 @@ nav {
 body {
   background-color: var(--color-bg-body) !important;
 }
+
+.rt-BaseMenuViewport {
+    background-color: var(--color-bg-nav);
+}
