@@ -11,7 +11,7 @@ import { useDataQuery, useIssueMutation } from "@/app/hooks";
 
 type Props = {
   issue: Issue;
-}
+};
 
 const AssigneeSelect = ({ issue }: Props) => {
   const router = useRouter();
@@ -36,15 +36,18 @@ const AssigneeSelect = ({ issue }: Props) => {
     }
 
     try {
-      await mutateAsync({
-        id: issue.id,
-        assignedToUserId,
-      } , {
-        onSuccess: () => {
-          router.push("/issues/list");
-          router.refresh();
-        }
-      });
+      await mutateAsync(
+        {
+          id: issue.id,
+          assignedToUserId,
+        },
+        {
+          onSuccess: () => {
+            router.push("/issues/list");
+            router.refresh();
+          },
+        },
+      );
     } catch {
       toast.error("Changes could not be saved.");
     }
@@ -56,7 +59,10 @@ const AssigneeSelect = ({ issue }: Props) => {
         defaultValue={issue.assignedToUserId || "unassigned"}
         onValueChange={handleOnValueChange}
       >
-        <Select.Trigger placeholder="Assign..." />
+        <Select.Trigger
+          className="w-full selectTriggerSmall"
+          placeholder="Assign..."
+        />
         <Select.Content>
           <Select.Group>
             <Select.Label>Suggestions</Select.Label>

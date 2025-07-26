@@ -36,7 +36,10 @@ const IssueStatus = ({ issue }: { issue?: Issue }) => {
   return (
     <>
       <Select.Root defaultValue={issue?.status} onValueChange={handleOnChange}>
-        <Select.Trigger placeholder="Status..." />
+        <Select.Trigger
+          className="w-full selectTriggerSmall"
+          placeholder="Status..."
+        />
         <Select.Content>
           <Select.Group>
             <Select.Label>Choose status</Select.Label>

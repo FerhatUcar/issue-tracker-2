@@ -110,8 +110,11 @@ const IssueForm = ({ issue }: Props) => {
                 onValueChange={(val) => field.onChange(val)}
                 {...register("assignedToUserId")}
               >
-                <Select.Trigger placeholder="Assign user..." />
-                <Select.Content>
+                <Select.Trigger
+                  className="w-full selectTriggerSmall"
+                  placeholder="Assign user..."
+                />
+                <Select.Content className="bg-neutral-500 dark:bg-neutral-900">
                   <Select.Group>
                     <Select.Label>Suggestions</Select.Label>
                     <Select.Item value="unassigned">Unassigned</Select.Item>

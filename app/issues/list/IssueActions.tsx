@@ -37,16 +37,14 @@ const IssueActions = () => {
           <IssueUserFilter />
         </Suspense>
       </Flex>
-      <Flex gap="3">
+      <Flex gap="2">
         <IconButton variant="soft" size="3" onClick={handleToggleSearch}>
           <MagnifyingGlassIcon width="18" height="18" />
         </IconButton>
-
         <Link href="/issues/new">
-          <Button variant="soft" size="3">
+          <IconButton variant="soft" size="3">
             <AiFillPlusCircle />
-            Create new issue
-          </Button>
+          </IconButton>
         </Link>
       </Flex>
     </Flex>

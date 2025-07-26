@@ -96,6 +96,11 @@
   }
 }
 
+.selectTriggerSmall {
+  height: 2.5rem !important;
+    border-radius: 0.5rem !important;
+}
+
 /* =====================
    🧱 UI Elements (Radix Themes)
 ===================== */
