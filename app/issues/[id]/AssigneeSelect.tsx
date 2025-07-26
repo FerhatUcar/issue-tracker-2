@@ -3,16 +3,18 @@
 import React from "react";
 import { Select } from "@radix-ui/themes";
 import { User } from "next-auth";
-import axios from "axios";
 import { Skeleton } from "@/app/components";
 import { Issue } from "@prisma/client";
 import toast, { Toaster } from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import { useDataQuery } from "@/app/hooks";
+import { useDataQuery, useIssueMutation } from "@/app/hooks";
 
 const AssigneeSelect = ({ issue }: { issue: Issue }) => {
   const router = useRouter();
   const { data: users, error, isLoading } = useDataQuery<User>("users");
+  const {
+    upsertIssue: { mutateAsync },
+  } = useIssueMutation();
 
   if (isLoading) {
     return <Skeleton />;
@@ -22,25 +24,32 @@ const AssigneeSelect = ({ issue }: { issue: Issue }) => {
     return null;
   }
 
-  const handleOnValueChange = (userId: string) => {
+  const handleOnValueChange = async (userId: string) => {
     const assignedToUserId = userId === "unassigned" ? null : userId;
-    return axios
-      .patch(`/api/issues/${issue.id}`, {
+
+    if (issue.assignedToUserId === assignedToUserId) {
+      return;
+    }
+
+    try {
+      await mutateAsync({
+        id: issue.id,
         assignedToUserId,
-      })
-      .then(() => {
-        router.push("/issues/list");
-        router.refresh();
-      })
-      .catch(() => {
-        toast.error("Changes could not be saved.");
+      } , {
+        onSuccess: () => {
+          router.push("/issues/list");
+          router.refresh();
+        }
       });
+    } catch {
+      toast.error("Changes could not be saved.");
+    }
   };
 
   return (
     <>
       <Select.Root
-        defaultValue={issue.assignedToUserId || "Unassigned"}
+        defaultValue={issue.assignedToUserId || "unassigned"}
         onValueChange={handleOnValueChange}
       >
         <Select.Trigger placeholder="Assign..." />

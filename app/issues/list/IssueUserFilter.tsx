@@ -1,6 +1,6 @@
 "use client";
 
-import { Select } from "@radix-ui/themes";
+import { Box, Flex, Select } from "@radix-ui/themes";
 import React from "react";
 import { Skeleton } from "@/app/components";
 import { deduplicateByProperty } from "@/app/helpers/utils";
@@ -77,22 +77,24 @@ const IssueUserFilter = () => {
   };
 
   return (
-    <Select.Root
-      defaultValue={searchParams.get("assignedToUserId") || "All"}
-      onValueChange={handleOnValueChange}
-    >
-      <Select.Trigger placeholder="Filter by user" />
-      <Select.Content>
-        <Select.Item value="All">All</Select.Item>
+    <Flex align="center" gap="3">
+      <Box>Filter by user:</Box>
+      <Select.Root
+        defaultValue={searchParams.get("assignedToUserId") || "All"}
+        onValueChange={handleOnValueChange}
+      >
+        <Select.Trigger placeholder="Filter by user" />
+        <Select.Content>
+          <Select.Item value="All">All</Select.Item>
 
-        {filteredIssuesArray.map(({ name, assignedToUserId }, i) => (
-          <Select.Item key={i} value={assignedToUserId || "No user"}>
-            {name}
-          </Select.Item>
-        ))}
-
-      </Select.Content>
-    </Select.Root>
+          {filteredIssuesArray.map(({ name, assignedToUserId }, i) => (
+            <Select.Item key={i} value={assignedToUserId || "No user"}>
+              {name}
+            </Select.Item>
+          ))}
+        </Select.Content>
+      </Select.Root>
+    </Flex>
   );
 };
 

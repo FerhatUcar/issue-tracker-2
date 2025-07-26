@@ -1,7 +1,7 @@
 'use client';
 
 import React from "react";
-import { Select } from "@radix-ui/themes";
+import { Box, Flex, Select } from "@radix-ui/themes";
 import { useRouter, useSearchParams } from "next/navigation";
 import { statuses } from "@/app/issues/_components/IssueStatus";
 
@@ -31,6 +31,8 @@ const IssueStatusFilter = () => {
   };
 
   return (
+    <Flex align="center" gap="3">
+      <Box>Filter by status:</Box>
     <Select.Root
       defaultValue={searchParams.get("status") || "All"}
       onValueChange={handleOnValueChange}
@@ -44,6 +46,7 @@ const IssueStatusFilter = () => {
         ))}
       </Select.Content>
     </Select.Root>
+    </Flex>
   );
 };
 

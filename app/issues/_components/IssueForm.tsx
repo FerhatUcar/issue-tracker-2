@@ -22,7 +22,9 @@ const simpleMdeOptions: Options = {
 
 const IssueForm = ({ issue }: { issue?: Issue }) => {
   const router = useRouter();
-  const { mutateAsync } = useIssueMutation();
+  const {
+    upsertIssue: { mutateAsync },
+  } = useIssueMutation();
   const {
     register,
     control,
@@ -36,13 +38,16 @@ const IssueForm = ({ issue }: { issue?: Issue }) => {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      await mutateAsync({ ...data, id: issue?.id }, {
-        onSuccess: () => {
-          toast.success('Issue submitted successfully!');
-          router.push("/issues/list");
-          router.refresh();
-        }
-      })
+      await mutateAsync(
+        { ...data, id: issue?.id },
+        {
+          onSuccess: () => {
+            toast.success("Issue submitted successfully!");
+            router.push("/issues/list");
+            router.refresh();
+          },
+        },
+      );
     } catch (error) {
       toast.error(`An unexpected error occurred: ${error}`);
     }
@@ -52,7 +57,9 @@ const IssueForm = ({ issue }: { issue?: Issue }) => {
     <Card className="md:max-w-xl">
       {(errors.title?.message || errors.description?.message) && (
         <Callout.Root color="red" className="mb-5">
-          <Callout.Text>{errors.title?.message || errors.description?.message}</Callout.Text>
+          <Callout.Text>
+            {errors.title?.message || errors.description?.message}
+          </Callout.Text>
         </Callout.Root>
       )}
 
@@ -82,7 +89,10 @@ const IssueForm = ({ issue }: { issue?: Issue }) => {
           )}
         />
         <Flex justify="end">
-          <Button disabled={isSubmitting || !!errors.title && !!errors.description} type="submit">
+          <Button
+            disabled={isSubmitting || (!!errors.title && !!errors.description)}
+            type="submit"
+          >
             <AiOutlineSend />
             {issue ? "Update Issue" : "Submit New Issue"}
             {isSubmitting && <Spinner />}

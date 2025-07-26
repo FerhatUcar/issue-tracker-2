@@ -1,20 +1,11 @@
-"use client";
-
-import { Badge, HoverCard } from "@radix-ui/themes";
-
 type Props = {
-  count?: number;
+  count: number;
 }
 
 export const IssueStatus = ({ count }: Props) => {
+  if (count === 0) return null;
+
   return (
-    <HoverCard.Root>
-      <HoverCard.Trigger>
-        <Badge variant="solid" radius="full" color="red">
-          {count}
-        </Badge>
-      </HoverCard.Trigger>
-      <HoverCard.Content>Open issue(s) on your name: {count}</HoverCard.Content>
-    </HoverCard.Root>
+    <div className="absolute top-0 right-0 w-3 h-3 bg-red-600 rounded-full border-2 border-white shadow-md" />
   );
-}
+};

@@ -24,7 +24,7 @@ export function ThemeProvider({ children }: Readonly<{ children: ReactNode }>) {
 
   return (
     <ThemeContext.Provider value={{ appearance, toggleAppearance }}>
-      <Theme appearance={appearance} accentColor="sky">
+      <Theme appearance={appearance} accentColor="sky" radius="large">
         {children}
       </Theme>
     </ThemeContext.Provider>

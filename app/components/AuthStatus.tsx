@@ -49,14 +49,19 @@ export const AuthStatus = ({ userId, count }: Props) => {
     <Box>
       <DropdownMenu.Root>
         <DropdownMenu.Trigger>
-          <Avatar
-            src={session!.user!.image!}
-            fallback="?"
-            size="2"
-            radius="full"
-            className="cursor-pointer hover:border-2 border-gray-300 transition-all"
-            referrerPolicy="no-referrer"
-          />
+          <div className="relative inline-block">
+            <Avatar
+              src={session!.user!.image!}
+              fallback="?"
+              size="2"
+              radius="full"
+              className="cursor-pointer hover:border-2 border-gray-300 transition-all"
+              referrerPolicy="no-referrer"
+            />
+            {count > 0 && (
+              <Box className="absolute top-0 right-0 w-2 h-2 bg-red-600 rounded-full shadow-md z-10" />
+            )}
+          </div>
         </DropdownMenu.Trigger>
         <DropdownMenu.Content>
           <DropdownMenu.Label>
