@@ -15,6 +15,7 @@ const config: Config = {
       },
     },
   },
+  darkMode: "class",
   plugins: [
     require("@tailwindcss/typography"),
     require("tailwindcss/nesting")(require("postcss-nesting")),

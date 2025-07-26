@@ -23,8 +23,6 @@ export const Navbar = ({ data: { userId, count } }: Props) => (
             <Image src="/logo.png" alt="Logo" width={60} height={60} />
           </Link>
           <NavLinks />
-
-
         </Flex>
         <AuthStatus userId={userId} count={count} />
       </Flex>

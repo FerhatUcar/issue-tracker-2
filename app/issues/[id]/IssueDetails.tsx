@@ -27,7 +27,7 @@ const IssueDetails = async ({ issue }: IssueDetailsProps) => {
 
   return (
     <Card>
-      <Box className="bg-black/20 px-4 rounded-lg">
+      <Box className="  bg-gray-100 dark:bg-black/20 px-4 rounded-lg">
         <Flex justify="between" align="center" py="2">
           <Flex align="center" gap="3">
             <IssueStatusBadge status={issue.status} />

@@ -11,7 +11,8 @@ import {
 import React from "react";
 import { IssueStatusBadge, NoIssuesPlaceholder } from "./components";
 import Link from "next/link";
-import { AiFillNotification, AiFillPlusCircle } from "react-icons/ai";
+import { AiFillPlusCircle } from "react-icons/ai";
+import { IoTicketOutline } from "react-icons/io5";
 
 const LatestIssues = async () => {
   const issues = await prisma.issue.findMany({
@@ -27,7 +28,7 @@ const LatestIssues = async () => {
   return (
     <Card>
       <Flex width="100%" align="center" gap="3">
-        <AiFillNotification size="20" />
+        <IoTicketOutline size="20" />
         <Heading size="3" weight="bold">
           Latest issues
         </Heading>

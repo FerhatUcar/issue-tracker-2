@@ -9,7 +9,11 @@ import toast, { Toaster } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { useDataQuery, useIssueMutation } from "@/app/hooks";
 
-const AssigneeSelect = ({ issue }: { issue: Issue }) => {
+type Props = {
+  issue: Issue;
+}
+
+const AssigneeSelect = ({ issue }: Props) => {
   const router = useRouter();
   const { data: users, error, isLoading } = useDataQuery<User>("users");
   const {

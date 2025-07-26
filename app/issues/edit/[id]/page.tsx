@@ -10,7 +10,7 @@ const IssueForm = dynamic(() => import("@/app/issues/_components/IssueForm"), {
   loading: () => <IssueFormSkeleton />,
 });
 
-interface Props {
+type Props = {
   params: { id: string };
 }
 
@@ -19,7 +19,9 @@ const EditIssuePage = async ({ params }: Props) => {
     where: { id: parseInt(params.id) },
   });
 
-  if (!issue) notFound();
+  if (!issue) {
+    notFound();
+  }
 
   return (
     <Grid columns={{ initial: "1", sm: "5" }} gap="5">

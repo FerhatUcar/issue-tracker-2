@@ -6,48 +6,73 @@ import Spinner from "@/app/components/Spinner";
 import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
 import { Issue } from "@prisma/client";
-import { Box, Card, Button, Callout, Flex, TextField } from "@radix-ui/themes";
+import {
+  Card,
+  Button,
+  Callout,
+  Flex,
+  TextField,
+  Select,
+} from "@radix-ui/themes";
 import "easymde/dist/easymde.min.css";
 import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
-import { issueSchema } from "@/app/validationSchema";
+import { patchIssueSchema } from "@/app/validationSchema";
 import SimpleMDE from "react-simplemde-editor";
 import type { Options } from "easymde";
 import { AiOutlineSend } from "react-icons/ai";
-import { useIssueMutation } from "@/app/hooks";
+import { useIssueMutation, useDataQuery } from "@/app/hooks";
+import { User } from "next-auth";
 
 const simpleMdeOptions: Options = {
   hideIcons: ["fullscreen", "side-by-side", "preview", "guide"] as const,
 };
 
-const IssueForm = ({ issue }: { issue?: Issue }) => {
+type Props = {
+  issue?: Issue;
+};
+
+const IssueForm = ({ issue }: Props) => {
   const router = useRouter();
   const {
     upsertIssue: { mutateAsync },
   } = useIssueMutation();
+  const { data: users, isLoading: isLoadingUsers } =
+    useDataQuery<User>("users");
+
   const {
     register,
     control,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<z.infer<typeof issueSchema>>({
-    resolver: zodResolver(issueSchema),
+  } = useForm<z.infer<typeof patchIssueSchema>>({
+    resolver: zodResolver(patchIssueSchema),
+    defaultValues: {
+      title: issue?.title || "",
+      description: issue?.description || "",
+      assignedToUserId: issue?.assignedToUserId ?? "unassigned",
+    },
   });
 
   const defaultDescription = useMemo(() => issue?.description ?? "", [issue]);
 
   const onSubmit = handleSubmit(async (data) => {
+    const assignedToUserId =
+      data.assignedToUserId === "unassigned" ? null : data.assignedToUserId;
+
+    const payload = {
+      ...data,
+      assignedToUserId,
+    };
+
     try {
-      await mutateAsync(
-        { ...data, id: issue?.id },
-        {
-          onSuccess: () => {
-            toast.success("Issue submitted successfully!");
-            router.push("/issues/list");
-            router.refresh();
-          },
+      await mutateAsync(payload, {
+        onSuccess: () => {
+          toast.success("Issue submitted successfully!");
+          router.push("/issues/list");
+          router.refresh();
         },
-      );
+      });
     } catch (error) {
       toast.error(`An unexpected error occurred: ${error}`);
     }
@@ -66,7 +91,6 @@ const IssueForm = ({ issue }: { issue?: Issue }) => {
       <form className="space-y-4" onSubmit={onSubmit}>
         <TextField.Root>
           <Flex align="center">
-            <Box className="pl-3">Title</Box>
             <TextField.Input
               defaultValue={issue?.title}
               size="3"
@@ -75,6 +99,35 @@ const IssueForm = ({ issue }: { issue?: Issue }) => {
             />
           </Flex>
         </TextField.Root>
+
+        {!isLoadingUsers && (
+          <Controller
+            name="assignedToUserId"
+            control={control}
+            render={({ field }) => (
+              <Select.Root
+                value={field.value || "unassigned"}
+                onValueChange={(val) => field.onChange(val)}
+                {...register("assignedToUserId")}
+              >
+                <Select.Trigger placeholder="Assign user..." />
+                <Select.Content>
+                  <Select.Group>
+                    <Select.Label>Suggestions</Select.Label>
+                    <Select.Item value="unassigned">Unassigned</Select.Item>
+                    <Select.Separator />
+                    {users?.map(({ id, name }) => (
+                      <Select.Item key={id} value={id}>
+                        {name}
+                      </Select.Item>
+                    ))}
+                  </Select.Group>
+                </Select.Content>
+              </Select.Root>
+            )}
+          />
+        )}
+
         <Controller
           name="description"
           control={control}
@@ -88,10 +141,12 @@ const IssueForm = ({ issue }: { issue?: Issue }) => {
             />
           )}
         />
+
         <Flex justify="end">
           <Button
             disabled={isSubmitting || (!!errors.title && !!errors.description)}
             type="submit"
+            variant="soft"
           >
             <AiOutlineSend />
             {issue ? "Update Issue" : "Submit New Issue"}

@@ -5,13 +5,13 @@ import { usePathname } from "next/navigation";
 import { Flex, Separator } from "@radix-ui/themes";
 import Link from "next/link";
 import classnames from "classnames";
-import { HomeIcon } from "@radix-ui/react-icons";
+import { FaHome } from "react-icons/fa";
 
 export const NavLinks = () => {
   const currentPath = usePathname();
 
   const links = [
-    { label: <HomeIcon />, href: "/" },
+    { label: <FaHome />, href: "/" },
     { label: "Issues", href: "/issues/list" },
   ];
 
