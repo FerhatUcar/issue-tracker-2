@@ -2,14 +2,13 @@ import prisma from "@/prisma/client";
 import IssueSummary from "./IssueSummary";
 import LatestIssues from "./LatestIssues";
 import IssueChart from "./IssueChart";
-import { Box, Button, Card, Flex, Grid, Heading, Text } from "@radix-ui/themes";
+import { Box, Flex, Grid } from "@radix-ui/themes";
 import { Metadata } from "next";
 import { Status } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import authOptions from "@/app/auth/authOptions";
 import React from "react";
 import Image from "next/image";
-import Link from "next/link";
 
 const getIssueStatus = (status: Status) =>
   prisma.issue.count({
@@ -30,29 +29,29 @@ export default async function Home() {
 
   if (!session) {
     return (
-      <Box width="100%" className="flex items-center justify-center">
-        <Card className="p-8">
-          <Flex direction="column" gap="3" align="center">
-            <Heading size="7">Please login</Heading>
-            <Link className="hover:cursor-pointer" href="/api/auth/signin">
-              <Button
-                size="4"
-                className="p-8 hover:cursor-pointer"
-                color="gray"
-              >
-                <Flex justify="between" align="center">
-                  <Text size="4">Login with</Text>
-                  <Image
-                    src="/google.png"
-                    alt="Google Logo"
-                    width={40}
-                    height={40}
-                  />
-                </Flex>
-              </Button>
-            </Link>
-          </Flex>
-        </Card>
+      <Box className="flex items-center">
+        <Box className="max-w-7xl w-full flex flex-col md:flex-row items-center justify-between">
+          <Box className="text-left flex-1">
+            <h1 className="text-5xl md:text-6xl font-extrabold mb-6 leading-tight">
+              Create <span className="text-cyan-500">rocket</span> fast issues..
+            </h1>
+            <p className="text-lg md:text-xl ">
+              And manage your tickets like a pro with our sleek, modern
+              interface.
+            </p>
+          </Box>
+
+          <Box className="flex-1 flex justify-center">
+            <Image
+              src="/homepage.png"
+              alt="Rocket illustration"
+              width={400}
+              height={400}
+              className="md:w-[400px] h-auto drop-shadow-xl"
+              priority
+            />
+          </Box>
+        </Box>
       </Box>
     );
   }

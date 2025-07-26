@@ -38,7 +38,7 @@ export const AuthStatus = ({ userId, count }: Props) => {
   if (status === "unauthenticated")
     return (
       <Link className="hover:cursor-pointer nav-link" href="/api/auth/signin">
-        <Button className="hover:cursor-pointer">
+        <Button className="hover:cursor-pointer" variant="soft">
           <PersonIcon />
           Log in
         </Button>
