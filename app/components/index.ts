@@ -7,3 +7,4 @@ export { IssueStatus } from "./IssueStatus";
 export { AuthStatus } from "./AuthStatus";
 export { NavbarWrapper } from "./navbar";
 export { NoIssuesPlaceholder } from "./placeholder";
+export { PublicHome } from "./public";

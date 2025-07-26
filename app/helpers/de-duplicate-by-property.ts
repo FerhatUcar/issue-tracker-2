@@ -1,3 +1,8 @@
+/**
+ * Utility functions for various operations.
+ * @param arr Array of items to deduplicate.
+ * @param property The property to check for uniqueness.
+ */
 export const deduplicateByProperty = <T>(
   arr: T[] | undefined,
   property: keyof T,

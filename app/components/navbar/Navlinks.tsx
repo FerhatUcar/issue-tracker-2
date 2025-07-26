@@ -5,13 +5,13 @@ import { usePathname } from "next/navigation";
 import { Flex, Separator } from "@radix-ui/themes";
 import Link from "next/link";
 import classnames from "classnames";
-import { FaHome } from "react-icons/fa";
+import { RiDashboard2Line } from "react-icons/ri";
 
 export const NavLinks = () => {
   const currentPath = usePathname();
 
   const links = [
-    { label: <FaHome />, href: "/" },
+    { label: <RiDashboard2Line />, href: "/" },
     { label: "Issues", href: "/issues/list" },
   ];
 

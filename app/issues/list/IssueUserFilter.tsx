@@ -3,7 +3,7 @@
 import { Box, Flex, Select } from "@radix-ui/themes";
 import React from "react";
 import { Skeleton } from "@/app/components";
-import { deduplicateByProperty } from "@/app/helpers/utils";
+import { deduplicateByProperty } from "@/app/helpers";
 import { useDataQuery } from "@/app/hooks";
 import { User } from "next-auth";
 import { useRouter, useSearchParams } from "next/navigation";
