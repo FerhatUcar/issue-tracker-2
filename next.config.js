@@ -10,4 +10,13 @@ const nextConfig = {
   },
 };
 
-module.exports = nextConfig;
+const isProd = process.env.NODE_ENV === 'production';
+
+const withPWA = require('next-pwa')({
+  dest: 'public',
+  register: true,
+  disable: !isProd,
+  skipWaiting: true,
+});
+
+module.exports = withPWA(nextConfig);
