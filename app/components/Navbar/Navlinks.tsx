@@ -11,7 +11,7 @@ export const NavLinks = () => {
   const currentPath = usePathname();
 
   const links = [
-    { label: <RiDashboard2Line />, href: "/" },
+    { label: <RiDashboard2Line size={18} />, href: "/" },
     { label: "Issues", href: "/issues/list" },
   ];
 

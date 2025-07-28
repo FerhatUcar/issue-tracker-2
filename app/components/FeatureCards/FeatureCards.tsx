@@ -1,8 +1,8 @@
-import { Card, Box, Text, Heading, Flex } from "@radix-ui/themes";
+import { Box, Flex } from "@radix-ui/themes";
+import { IoTicketOutline } from "react-icons/io5";
 import { BsKanban } from "react-icons/bs";
 import { HiOutlineMoon } from "react-icons/hi2";
-import { IoTicketOutline } from "react-icons/io5";
-import { ReactNode } from "react";
+import { FeatureCard } from "./FeatureCard";
 
 export const FeatureCards = () => (
   <Box className="max-w-7xl mx-auto py-6">
@@ -24,25 +24,4 @@ export const FeatureCards = () => (
       />
     </Flex>
   </Box>
-);
-
-type FeatureCardProps = {
-  title: string;
-  description: string;
-  icon: ReactNode;
-};
-
-const FeatureCard = ({ title, description, icon }: FeatureCardProps) => (
-  <Card className="flex-1 shadow-sm hover:shadow-md transition-shadow duration-200">
-    <Box p="4">
-      <Flex align="center" gap="2" mb="4">
-        {icon}
-        <Heading>
-          {title}
-        </Heading>
-      </Flex>
-
-      <Text size="3">{description}</Text>
-    </Box>
-  </Card>
 );

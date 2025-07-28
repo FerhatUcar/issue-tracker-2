@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, Suspense, useCallback } from "react";
-import { Button, Flex, IconButton } from "@radix-ui/themes";
+import { Flex, IconButton } from "@radix-ui/themes";
 import Link from "next/link";
 import IssueStatusFilter from "@/app/issues/list/IssueStatusFilter";
 import { AiFillPlusCircle } from "react-icons/ai";

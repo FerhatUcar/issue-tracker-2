@@ -1,1 +1,0 @@
-export { NoIssuesPlaceholder } from "./Placeholder";

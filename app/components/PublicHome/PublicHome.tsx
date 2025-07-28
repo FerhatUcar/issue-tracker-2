@@ -1,6 +1,6 @@
 import { Box } from "@radix-ui/themes";
 import Image from "next/image";
-import { FeatureCards } from "./FeatureCard";
+import { FeatureCards } from "@/app/components/FeatureCards";
 
 export const PublicHome = () => (
   <>

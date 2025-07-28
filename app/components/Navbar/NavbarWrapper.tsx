@@ -1,5 +1,5 @@
 import prisma from "@/prisma/client";
-import { Navbar } from "@/app/components/navbar/Navbar";
+import { Navbar } from "@/app/components/Navbar/Navbar";
 
 export default async function NavbarWrapper() {
   const users = await prisma.user.findMany({ select: { id: true } });

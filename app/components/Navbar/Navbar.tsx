@@ -1,11 +1,11 @@
 "use client";
 
 import React from "react";
-import { NavLinks } from "./Navlinks";
 import Link from "next/link";
 import { Container, Flex } from "@radix-ui/themes";
 import Image from "next/image";
 import { AuthStatus } from "@/app/components";
+import { NavLinks } from "./Navlinks";
 
 type Props = {
   data: {
