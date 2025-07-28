@@ -24,7 +24,7 @@ export default async function Home() {
   const issueCounts = await getIssueStatusCounts();
 
   return (
-    <Grid columns={{ initial: "1", md: "2" }} gap="5" className="mt-6">
+    <Grid columns={{ initial: "1", md: "2" }} gap="5">
       <Flex direction="column" gap="5">
         <Summary {...issueCounts} />
         <IssueChart {...issueCounts} />

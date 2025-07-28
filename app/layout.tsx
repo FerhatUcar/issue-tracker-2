@@ -32,8 +32,8 @@ const RootLayout = async ({ children }: { children: ReactNode }) => (
       <RecoilContextProvider>
         <ThemeProvider>
           <NavbarWrapper />
-          <main className="p-5">
-            <Container>{children}</Container>
+          <main>
+            <Container className="p-5">{children}</Container>
           </main>
         </ThemeProvider>
       </RecoilContextProvider>

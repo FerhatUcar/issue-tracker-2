@@ -45,7 +45,7 @@ const IssueStatusFilter = () => {
         value={currentStatus}
         onValueChange={handleOnValueChange}
       >
-        <Select.Trigger placeholder="Filter by status" />
+        <Select.Trigger placeholder="Filter by status" className="selectTriggerSmall truncate max-w-[85px] sm:max-w-none" />
         <Select.Content>
           {statuses.map((status, i) => (
             <Select.Item key={i} value={status.value || "ALL"}>

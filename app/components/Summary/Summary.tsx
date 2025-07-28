@@ -26,7 +26,7 @@ export const Summary = ({ open, inProgress, closed }: Props) => {
 
   return (
     <Card>
-      <Flex gap="4" direction={{ initial: "column", sm: "row" }}>
+      <Flex gap="3">
         {items.map(({ label, value, status, color }) => (
           <Box
             key={label}
@@ -36,7 +36,7 @@ export const Summary = ({ open, inProgress, closed }: Props) => {
             )}
           >
             <Link href={`/issues/list?status=${status}`}>
-              <Box p="4">
+              <Box p="2">
                 <Text size="2" weight="medium" className="block mb-1">
                   {label}
                 </Text>
