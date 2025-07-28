@@ -20,10 +20,17 @@ import {
 } from "@radix-ui/react-icons";
 import Skeleton from "react-loading-skeleton";
 import { BsTicketDetailedFill } from "react-icons/bs";
-import { useThemeToggle } from "../providers";
+import { useThemeToggle } from "@/app/providers";
 
 type Props = {
+  /**
+   * The ID of the user to filter issues by
+   */
   userId: string;
+
+  /**
+   * The count of issues assigned to the user
+   */
   count: number;
 };
 

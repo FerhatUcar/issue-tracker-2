@@ -1,7 +1,7 @@
 import prisma from "@/prisma/client";
 import { Avatar, Card, Flex, Heading, Button, Box } from "@radix-ui/themes";
 import React from "react";
-import { IssueStatusBadge, NoIssuesPlaceholder } from "@/app/components";
+import { StatusBadge, NoIssuesPlaceholder } from "@/app/components";
 import Link from "next/link";
 import { AiFillPlusCircle } from "react-icons/ai";
 import { IoTicketOutline } from "react-icons/io5";
@@ -36,7 +36,7 @@ export const LatestIssues = async () => {
               >
                 <Flex justify="between" align="center">
                   <Flex direction="row" align="center" height="5" gap="2">
-                    <IssueStatusBadge status={issue.status} />
+                    <StatusBadge status={issue.status} />
                     {issue.title}
                   </Flex>
                   {issue.assignedToUser && (

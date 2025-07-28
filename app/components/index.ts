@@ -1,10 +1,9 @@
-export { default as Link } from "./Link";
-export { default as ErrorMessage } from "./ErrorMessage";
-export { default as IssueStatusBadge } from "./IssuesStatusBadge";
-export { default as Spinner } from "./Spinner";
-export { default as Skeleton } from "./Skeleton";
-export { IssueStatus } from "./IssueStatus";
-export { AuthStatus } from "./AuthStatus";
+export { default as Skeleton } from "./Skeleton/Skeleton";
+export { StatusBadge } from "./StatusBadge";
+export { ErrorMessage } from "./ErrorMessage";
+export { Link } from "./Link";
+export { Spinner } from "./Spinner";
+export { IssueStatus, AuthStatus } from "./Status";
 export { NavbarWrapper } from "./Navbar";
 export { NoIssuesPlaceholder } from "./Placeholder";
 export { PublicHome } from "./PublicHome";

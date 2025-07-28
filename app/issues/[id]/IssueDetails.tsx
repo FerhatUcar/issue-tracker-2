@@ -1,4 +1,4 @@
-import { IssueStatusBadge } from "@/app/components";
+import { StatusBadge } from "@/app/components";
 import { Issue } from "@prisma/client";
 import { Avatar, Box, Card, Flex, Heading, Text } from "@radix-ui/themes";
 import ReactMarkdown from "react-markdown";
@@ -30,7 +30,7 @@ const IssueDetails = async ({ issue }: IssueDetailsProps) => {
       <Box className="  bg-gray-100 dark:bg-black/20 px-4 rounded-lg">
         <Flex justify="between" align="center" py="2">
           <Flex align="center" gap="3">
-            <IssueStatusBadge status={issue.status} />
+            <StatusBadge status={issue.status} />
             <Text size="2" color="gray">
               {issue.createdAt.toDateString()}
             </Text>

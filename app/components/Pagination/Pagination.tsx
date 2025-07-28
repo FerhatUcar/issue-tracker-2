@@ -11,12 +11,23 @@ import {
 } from "@radix-ui/react-icons";
 
 type PaginationProps = {
+  /**
+   * Total number of items
+   */
   itemCount: number;
+
+  /**
+   * Number of items per page
+   */
   pageSize: number;
+
+  /**
+   * Current page number
+   */
   currentPage: number;
 };
 
-const Pagination: FC<PaginationProps> = ({
+export const Pagination: FC<PaginationProps> = ({
   itemCount,
   pageSize,
   currentPage,
@@ -76,5 +87,3 @@ const Pagination: FC<PaginationProps> = ({
     </Flex>
   );
 };
-
-export default Pagination;

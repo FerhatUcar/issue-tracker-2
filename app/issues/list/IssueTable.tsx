@@ -4,7 +4,7 @@ import React, { FC, useEffect, useState } from "react";
 import { Avatar, Flex, Table } from "@radix-ui/themes";
 import NextLink from "next/link";
 import { ArrowDownIcon, ArrowUpIcon } from "@radix-ui/react-icons";
-import { IssueStatusBadge, Link } from "@/app/components";
+import { StatusBadge, Link } from "@/app/components";
 import { Issue, Status } from "@prisma/client";
 import { columns } from "@/app/issues/list/IssueColumns";
 import { useSession } from "next-auth/react";
@@ -106,7 +106,7 @@ const IssueTable: FC<IssueTableProps> = ({
               </Flex>
             </Table.Cell>
             <Table.Cell>
-              <IssueStatusBadge status={issue.status} />
+              <StatusBadge status={issue.status} />
             </Table.Cell>
             <Table.Cell className="hidden md:table-cell">
               {issue.createdAt.toDateString()}
