@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC } from "react";
+import React from "react";
 import { Button, Flex, Text } from "@radix-ui/themes";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
@@ -10,7 +10,7 @@ import {
   DoubleArrowRightIcon,
 } from "@radix-ui/react-icons";
 
-type PaginationProps = {
+type Props = {
   /**
    * Total number of items
    */
@@ -27,11 +27,11 @@ type PaginationProps = {
   currentPage: number;
 };
 
-export const Pagination: FC<PaginationProps> = ({
+export const Pagination = ({
   itemCount,
   pageSize,
   currentPage,
-}) => {
+}: Props) => {
   const router = useRouter();
   const searchParams = useSearchParams();
 

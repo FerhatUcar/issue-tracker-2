@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { z } from "zod";
-import Spinner from "@/app/components/Spinner";
+import { Spinner } from "@/app/components";
 import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
 import { Issue } from "@prisma/client";

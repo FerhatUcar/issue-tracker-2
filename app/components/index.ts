@@ -10,3 +10,4 @@ export { PublicHome } from "./PublicHome";
 export { Summary } from "./Summary";
 export { LatestIssues } from "./Latest";
 export { IssueChart } from "./Chart";
+export { Pagination } from "./Pagination";

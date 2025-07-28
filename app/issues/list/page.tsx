@@ -2,7 +2,7 @@ import React, { Suspense } from "react";
 import prisma from "@/prisma/client";
 import IssueActions from "@/app/issues/list/IssueActions";
 import { Issue, Status } from "@prisma/client";
-import Pagination from "@/app/components/Pagination";
+import { Pagination } from "@/app/components";
 import IssueTable, { IssueQuery } from "@/app/issues/list/IssueTable";
 import { Card, Flex } from "@radix-ui/themes";
 import { columns } from "@/app/issues/list/IssueColumns";
