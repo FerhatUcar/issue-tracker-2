@@ -36,7 +36,7 @@ export const Summary = ({ open, inProgress, closed }: Props) => {
             )}
           >
             <Link href={`/issues/list?status=${status}`}>
-              <Box p="2">
+              <Box className="p-2 md:p-4">
                 <Text size="2" weight="medium" className="block mb-1">
                   {label}
                 </Text>
