@@ -1,51 +1,59 @@
-'use client';
+"use client";
 
-import React from "react";
-import { Box, Flex, Select } from "@radix-ui/themes";
-import { useRouter, useSearchParams } from "next/navigation";
+import React, { useMemo } from "react";
+import { Flex, Select } from "@radix-ui/themes";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { statuses } from "@/app/issues/_components/IssueStatus";
 
 const IssueStatusFilter = () => {
   const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
+
   const assignedToUserId = searchParams.get("assignedToUserId");
   const orderBy = searchParams.get("orderBy");
+
+  const statusParam = searchParams.get("status");
+  const currentStatus = statusParam ?? undefined;
+
+  const key = useMemo(() => `status-${statusParam ?? "ALL"}`, [statusParam]);
 
   const handleOnValueChange = (status: string) => {
     const params = new URLSearchParams();
 
-    if (status) {
-      params.append("status", status);
+    if (status !== "ALL") {
+      params.set("status", status);
+    } else {
+      params.set("status", "ALL");
     }
 
     if (assignedToUserId) {
-      params.append("assignedToUserId", assignedToUserId);
+      params.set("assignedToUserId", assignedToUserId);
     }
 
     if (orderBy) {
-      params.append("orderBy", orderBy);
+      params.set("orderBy", orderBy);
     }
 
-    const query = params.size ? "?" + params.toString() : "";
-    router.push("/issues/list" + query);
+    router.push(`${pathname}?${params.toString()}`);
   };
 
   return (
     <Flex align="center" gap="3">
-      <Box>Filter by status:</Box>
-    <Select.Root
-      defaultValue={searchParams.get("status") || "All"}
-      onValueChange={handleOnValueChange}
-    >
-      <Select.Trigger placeholder="Filter by status" />
-      <Select.Content>
-        {statuses.map((status, i) => (
-          <Select.Item key={i} value={status.value || "All"}>
-            {status.label}
-          </Select.Item>
-        ))}
-      </Select.Content>
-    </Select.Root>
+      <Select.Root
+        key={key}
+        value={currentStatus}
+        onValueChange={handleOnValueChange}
+      >
+        <Select.Trigger placeholder="Filter by status" />
+        <Select.Content>
+          {statuses.map((status, i) => (
+            <Select.Item key={i} value={status.value || "ALL"}>
+              {status.label}
+            </Select.Item>
+          ))}
+        </Select.Content>
+      </Select.Root>
     </Flex>
   );
 };

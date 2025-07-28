@@ -3,9 +3,9 @@
 import React from "react";
 import { Select } from "@radix-ui/themes";
 import { Issue, Status } from "@prisma/client";
-import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 import { notFound, useRouter } from "next/navigation";
+import { useIssueMutation } from "@/app/hooks";
 
 export const statuses: { label: string; value?: Status }[] = [
   { label: "All" },
@@ -14,23 +14,43 @@ export const statuses: { label: string; value?: Status }[] = [
   { label: "Closed", value: "CLOSED" },
 ];
 
-const IssueStatus = ({ issue }: { issue?: Issue }) => {
-  const router = useRouter();
+type Props = {
+  issue?: Issue;
+};
 
-  if (!issue) notFound();
+const IssueStatus = ({ issue }: Props) => {
+  const router = useRouter();
+  const {
+    upsertIssue: { mutateAsync },
+  } = useIssueMutation();
+
+  if (!issue) {
+    notFound();
+  }
 
   const handleOnChange = async (status: string) => {
-    return axios
-      .patch("/api/issues/" + issue.id, {
-        status,
-      })
-      .then(() => {
-        router.push("/issues/list");
-        router.refresh();
-      })
-      .catch(() => {
-        toast.error("Changes could not be saved.");
-      });
+    if (!issue.id) {
+      toast.error("Issue ID is missing");
+      return;
+    }
+
+    try {
+      await mutateAsync(
+        {
+          id: issue.id,
+          status: status as Status,
+        },
+        {
+          onSuccess: () => {
+            toast.success("Issue status updated successfully");
+            router.refresh();
+          },
+        },
+      );
+    } catch (error) {
+      console.error("Error updating issue status:", error);
+      toast.error("Failed to update issue status");
+    }
   };
 
   return (
@@ -43,8 +63,8 @@ const IssueStatus = ({ issue }: { issue?: Issue }) => {
         <Select.Content>
           <Select.Group>
             <Select.Label>Choose status</Select.Label>
-            {statuses.slice(1).map((status, i) => (
-              <Select.Item key={i} value={status.value || "OPEN"}>
+            {statuses.slice(1).map((status) => (
+              <Select.Item key={status.value} value={status.value || "OPEN"}>
                 {status.label}
               </Select.Item>
             ))}

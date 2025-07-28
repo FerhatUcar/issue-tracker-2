@@ -32,7 +32,7 @@ export const LatestIssues = async () => {
             <Link href={`/issues/${issue.id}`} key={issue.id}>
               <Box
                 mb="3"
-                className="bg-neutral-200/40 dark:bg-neutral-900/50 rounded-lg px-4 py-2"
+                className="bg-neutral-200/40 hover:bg-neutral-200 dark:bg-neutral-900/50 dark:hover:bg-neutral-900 transition rounded-lg px-4 py-2 min-h-[48px] content-center"
               >
                 <Flex justify="between" align="center">
                   <Flex direction="row" align="center" height="5" gap="2">
