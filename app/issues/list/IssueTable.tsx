@@ -10,7 +10,7 @@ import { columns } from "@/app/issues/list/IssueColumns";
 import { useSession } from "next-auth/react";
 import { IssuesWithAssigning } from "@/app/issues/list/page";
 import { useRecoilValue } from "recoil";
-import { searchValueState } from "@/app/state/selectors";
+import { searchValueState } from "@/app/state";
 
 export type IssueQuery = {
   status: Status;

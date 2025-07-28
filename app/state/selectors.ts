@@ -7,7 +7,5 @@ export const searchState = atom({
 
 export const searchValueState = selector({
   key: "searchValueState",
-  get: ({ get }) => {
-    return get(searchState);
-  },
+  get: ({ get }) => get(searchState)
 });
