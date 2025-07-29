@@ -11,7 +11,7 @@ type Props = {
   issueId: number;
 };
 
-export const Comments = async ({ issueId }: Props) => {
+export const Comments = ({ issueId }: Props) => {
   const { data: comments = [], isLoading } = useComments(issueId);
   const { data: session } = useSession();
 
@@ -20,7 +20,7 @@ export const Comments = async ({ issueId }: Props) => {
   }
 
   return (
-    <Card mt="6">
+    <Card mt="5">
       <h4 className="mb-4">
         <Flex direction="row" gap="2" align="center" content="center">
           <span>💬</span> <span>Comments</span>
@@ -31,17 +31,19 @@ export const Comments = async ({ issueId }: Props) => {
         <Box className="text-sm text-gray-500">No comments yet.</Box>
       ) : (
         <Flex direction="row" gap="2" content="center" align="start">
-          <Avatar
-            src={session!.user!.image!}
-            fallback="?"
-            size="2"
-            radius="full"
-            className="cursor-pointer hover:border-2 border-gray-300 transition-all"
-            referrerPolicy="no-referrer"
-          />
-          <Box className="space-y-3 w-full">
+          <Box className="space-y-4 w-full">
             {comments.map((comment) => (
-              <Comment key={comment.id} comment={comment} issueId={issueId} />
+              <Flex direction="row" gap="2" key={comment.id}>
+                <Avatar
+                  src={session!.user!.image!}
+                  fallback="?"
+                  size="2"
+                  radius="full"
+                  className="cursor-pointer hover:border-2 border-gray-300 transition-all"
+                  referrerPolicy="no-referrer"
+                />
+                <Comment comment={comment} issueId={issueId} />
+              </Flex>
             ))}
           </Box>
         </Flex>

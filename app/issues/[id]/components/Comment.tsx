@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { ChangeEvent, useState } from "react";
 import {
   Box,
   Text,
@@ -16,7 +16,14 @@ import toast from "react-hot-toast";
 import { DeleteConfirmationDialog } from "./DeleteConfirmationDialog";
 
 type Props = {
+  /**
+   * The comment object containing details like id, content, authorId, and timestamps.
+   */
   comment: CommentType;
+
+  /**
+   * The ID of the issue to which this comment belongs.
+   */
   issueId: number;
 };
 
@@ -43,11 +50,15 @@ export const Comment = ({ comment, issueId }: Props) => {
     }
   };
 
+  const handleEditedContentChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    setEditedContent(e.target.value);
+  }
+
   return (
-    <Box className="bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg p-4 shadow-sm space-y-3">
+    <Box className="bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg p-4 shadow-sm w-full">
       <Flex justify="between" align="start">
         <Box className="flex-1 space-y-1">
-          <Flex direction="column" mb="2">
+          <Flex direction="column" mb="4">
             <Text className="text-sm font-medium text-gray-800 dark:text-gray-100">
               {comment.authorId ?? "Anonymous"}
             </Text>
@@ -63,11 +74,10 @@ export const Comment = ({ comment, issueId }: Props) => {
           </Flex>
 
           {isEditing ? (
-            <Box mt="2">
+            <Box>
               <TextArea
                 value={editedContent}
-                onChange={(e) => setEditedContent(e.target.value)}
-                className="w-full"
+                onChange={handleEditedContentChange}
               />
               <Flex justify="end" mt="2">
                 <Button
@@ -87,7 +97,7 @@ export const Comment = ({ comment, issueId }: Props) => {
           )}
         </Box>
 
-        <Box className="ml-4 p-2 space-y-2 w-10 flex flex-col items-center shadow-sm">
+        <Box className="flex flex-col items-center shadow-sm space-y-2 ml-4">
           {isEditing ? (
             <IconButton
               size="1"
