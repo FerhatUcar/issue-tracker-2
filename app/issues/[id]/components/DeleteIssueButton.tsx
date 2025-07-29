@@ -26,6 +26,7 @@ export const DeleteIssueButton = ({ issueId }: Props) => {
   const handleDeleteIssue = async () => {
     try {
       setIsPending(true);
+
       await mutateAsync(issueId, {
         onSuccess: () => {
           setIsPending(false);
