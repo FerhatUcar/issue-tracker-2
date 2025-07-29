@@ -2,13 +2,18 @@ import prisma from "@/prisma/client";
 import { notFound } from "next/navigation";
 import { Box, Card, Grid, Flex } from "@radix-ui/themes";
 import IssueDetails from "@/app/issues/[id]/IssueDetails";
-import { DeleteIssueButton, EditIssueButton, Comments } from "@/app/issues/[id]/components";
+import {
+  DeleteIssueButton,
+  EditIssueButton,
+  Comments,
+} from "@/app/issues/[id]/components";
 import { Issue } from "@prisma/client";
 import React, { cache } from "react";
 import { getServerSession } from "next-auth";
 import authOptions from "@/app/auth/authOptions";
 import AssigneeSelect from "@/app/issues/[id]/AssigneeSelect";
 import IssueStatus from "@/app/issues/_components/IssueStatus";
+import { LuFlipVertical } from "react-icons/lu";
 
 type Props = {
   params: { id: string };
@@ -36,7 +41,7 @@ const IssueDetailPage = async ({ params }: Props) => {
   }
 
   return (
-    <Grid columns={{ initial: "1", sm: "5" }} gap="5">
+    <Grid columns={{ initial: "1", sm: "5" }} gap="4">
       <Box className="md:col-span-4">
         <IssueDetails issue={issue} />
         <Comments issueId={issue.id} />
@@ -45,6 +50,9 @@ const IssueDetailPage = async ({ params }: Props) => {
       {session && (
         <Card>
           <Flex direction="column" gap="3">
+            <Flex direction="row" gap="1" align="center">
+              <LuFlipVertical /> Actions
+            </Flex>
             <AssigneeSelect issue={issue} />
             <IssueStatus issue={issue} />
             <EditIssueButton issueId={issue.id} />
