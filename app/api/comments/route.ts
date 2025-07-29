@@ -22,3 +22,21 @@ export async function POST(request: NextRequest) {
 
   return NextResponse.json(comment, { status: 201 });
 }
+
+export async function GET(req: NextRequest) {
+  const { searchParams } = new URL(req.url);
+  const issueId = searchParams.get("id");
+
+  if (!issueId) {
+    return NextResponse.json({ error: "Missing issueId" }, { status: 400 });
+  }
+
+  const comments = await prisma.comment.findMany({
+    where: { issueId: parseInt(issueId) },
+    include: { author: true },
+    orderBy: { createdAt: "asc" },
+  });
+
+  return NextResponse.json(comments);
+}
+

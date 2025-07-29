@@ -1,19 +1,26 @@
+"use client";
+
 import { notFound } from "next/navigation";
 import { CommentForm } from "@/app/components";
-import { getComments } from "@/app/helpers";
 import { Avatar, Box, Card, Flex } from "@radix-ui/themes";
-import { getServerSession } from "next-auth";
-import authOptions from "@/app/auth/authOptions";
-import { type Comment as CommentType } from "@prisma/client";
 import { Comment } from "./Comment";
+import { useComments } from "@/app//hooks";
+import { Spinner } from "@/app//components";
+import { useSession } from "next-auth/react";
 
 type Props = {
   issueId: number;
 };
 
 export const Comments = async ({ issueId }: Props) => {
-  const comments: CommentType[] = await getComments(issueId);
-  const session = await getServerSession(authOptions);
+  const { data: comments = [], isLoading } = useComments(issueId);
+  const {  data: session } = useSession();
+
+  console.log(comments);
+
+  if (isLoading) {
+    return <Spinner />;
+  }
 
   if (!comments) {
     notFound();
@@ -40,8 +47,8 @@ export const Comments = async ({ issueId }: Props) => {
             referrerPolicy="no-referrer"
           />
           <Box className="space-y-3 w-full">
-            {comments.map((comment: CommentType) => (
-              <Comment key={comment.id} comment={comment} />
+            {comments.map((comment) => (
+              <Comment key={comment.id} comment={comment} issueId={issueId} />
             ))}
           </Box>
         </Flex>

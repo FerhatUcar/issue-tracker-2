@@ -6,13 +6,11 @@ import axios from "axios";
  * @param path the name of the endpoint
  * @param params optional parameters to be passed to the endpoint
  */
-export const useDataQuery = <T>(path: string, params?: Record<string, unknown>) =>
+export const useDataQuery = <T>(path: string, params?: string | number) =>
   useQuery<T[]>({
     queryKey: [path, params],
     queryFn: () =>
-      axios
-        .get(`/api/${path}`, { params })
-        .then((res) => res.data),
+      axios.get(`/api/${path}?id=${params}`).then((res) => res.data),
     staleTime: 60 * 1000,
     retry: 3,
   });

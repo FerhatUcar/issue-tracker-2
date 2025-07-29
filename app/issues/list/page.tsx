@@ -35,12 +35,12 @@ const IssuesPage = async ({ searchParams }: IssuePageProps) => {
       : { createdAt: "desc" };
 
   const page = parseInt(searchParams.page) || 1;
-  const issues: IssuesWithAssigning = await getPaginatedIssuesWithAssignedUser({
+  const issues = await getPaginatedIssuesWithAssignedUser({
     where,
     orderBy,
     page: (page - 1) * 10,
     pageSize: 10,
-  });
+  }) as IssuesWithAssigning;
 
   const issueCount = await prisma.issue.count({ where });
 
