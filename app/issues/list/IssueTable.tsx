@@ -8,7 +8,7 @@ import { StatusBadge, Link } from "@/app/components";
 import { Issue, Status } from "@prisma/client";
 import { columns } from "@/app/issues/list/IssueColumns";
 import { useSession } from "next-auth/react";
-import { IssuesWithAssigning } from "@/app/issues/list/page";
+import { type IssuesWithAssigning } from "@/app/types/types";
 import { useRecoilValue } from "recoil";
 import { searchValueState } from "@/app/state";
 

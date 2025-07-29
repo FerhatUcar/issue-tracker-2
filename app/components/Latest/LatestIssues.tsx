@@ -1,20 +1,14 @@
-import prisma from "@/prisma/client";
 import { Avatar, Card, Flex, Heading, Button, Box, Text } from "@radix-ui/themes";
 import React from "react";
 import { StatusBadge, NoIssuesPlaceholder } from "@/app/components";
 import Link from "next/link";
 import { AiFillPlusCircle } from "react-icons/ai";
 import { IoTicketOutline } from "react-icons/io5";
+import { getLatestIssues } from "@/app/helpers";
+import { type IssuesWithAssigning } from "@/app/types/types";
 
 export const LatestIssues = async () => {
-  const issues = await prisma.issue.findMany({
-    orderBy: { createdAt: "desc" },
-    take: 6,
-    include: {
-      assignedToUser: true,
-    },
-  });
-
+  const issues: IssuesWithAssigning = await getLatestIssues();
   const hasIssues = issues.length > 0;
 
   return (
@@ -43,6 +37,7 @@ export const LatestIssues = async () => {
                       {issue.title}
                     </Text>
                   </Flex>
+
                   {issue.assignedToUser && (
                     <Avatar
                       src={issue.assignedToUser.image!}
@@ -51,6 +46,7 @@ export const LatestIssues = async () => {
                       radius="full"
                     />
                   )}
+
                 </Flex>
               </Box>
             </Link>

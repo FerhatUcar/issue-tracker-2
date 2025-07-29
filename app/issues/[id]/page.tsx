@@ -14,6 +14,15 @@ type Props = {
   params: { id: string };
 };
 
+export async function generateMetadata({ params }: Props) {
+  const issue = await fetchUser(parseInt(params.id));
+
+  return {
+    title: issue?.title,
+    description: "Details of issue " + issue?.id,
+  };
+}
+
 const fetchUser = cache((issueId: number) =>
   prisma.issue.findUnique({ where: { id: issueId } }),
 );
@@ -45,14 +54,5 @@ const IssueDetailPage = async ({ params }: Props) => {
     </Grid>
   );
 };
-
-export async function generateMetadata({ params }: Props) {
-  const issue = await fetchUser(parseInt(params.id));
-
-  return {
-    title: issue?.title,
-    description: "Details of issue " + issue?.id,
-  };
-}
 
 export default IssueDetailPage;

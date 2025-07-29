@@ -1,25 +1,16 @@
 import React, { Suspense } from "react";
 import prisma from "@/prisma/client";
 import IssueActions from "@/app/issues/list/IssueActions";
-import { Issue, Status } from "@prisma/client";
+import { Status } from "@prisma/client";
 import { Pagination } from "@/app/components";
 import IssueTable, { IssueQuery } from "@/app/issues/list/IssueTable";
 import { Card, Flex } from "@radix-ui/themes";
 import { columns } from "@/app/issues/list/IssueColumns";
+import { getPaginatedIssuesWithAssignedUser } from "@/app/helpers";
+import { IssuesWithAssigning } from "../../types/types";
 
 type IssuePageProps = {
   searchParams: IssueQuery;
-};
-
-export type IssuesWithAssigning = (Issue & AssignedToUser)[];
-export type AssignedToUser = {
-  assignedToUser: {
-    id: string;
-    name: string | null;
-    email: string | null;
-    image: string | null;
-    emailVerified: Date | null;
-  } | null;
 };
 
 const IssuesPage = async ({ searchParams }: IssuePageProps) => {
@@ -33,7 +24,6 @@ const IssuesPage = async ({ searchParams }: IssuePageProps) => {
       : searchParams.assignedToUserId;
   const where = { status, assignedToUserId };
   const columnNames = columns.map((column) => column.value);
-
   const sortOrder: "asc" | "desc" =
     searchParams.sortBy === "asc" ? "asc" : "desc";
 
@@ -45,16 +35,11 @@ const IssuesPage = async ({ searchParams }: IssuePageProps) => {
       : { createdAt: "desc" };
 
   const page = parseInt(searchParams.page) || 1;
-  const pageSize = 10;
-
-  const issuesWithAssigning: IssuesWithAssigning = await prisma.issue.findMany({
+  const issues: IssuesWithAssigning = await getPaginatedIssuesWithAssignedUser({
     where,
     orderBy,
-    skip: (page - 1) * pageSize,
-    take: pageSize,
-    include: {
-      assignedToUser: true,
-    },
+    page: (page - 1) * 10,
+    pageSize: 10,
   });
 
   const issueCount = await prisma.issue.count({ where });
@@ -65,12 +50,12 @@ const IssuesPage = async ({ searchParams }: IssuePageProps) => {
         <IssueActions />
         <IssueTable
           searchParams={searchParams}
-          issuesWithAssigning={issuesWithAssigning}
+          issuesWithAssigning={issues}
         />
         <Suspense>
           <Pagination
             itemCount={issueCount}
-            pageSize={pageSize}
+            pageSize={10}
             currentPage={page}
           />
         </Suspense>
