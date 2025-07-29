@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { CommentForm } from "@/app/components";
 import { getComments } from "@/app/helpers";
-import { Avatar, Box, Card, Flex, Heading } from "@radix-ui/themes";
+import { Avatar, Box, Card, Flex } from "@radix-ui/themes";
 import { getServerSession } from "next-auth";
 import authOptions from "@/app/auth/authOptions";
 import { type Comment as CommentType } from "@prisma/client";
@@ -21,11 +21,11 @@ export const Comments = async ({ issueId }: Props) => {
 
   return (
     <Card mt="6">
-      <Heading mb="6">
+      <h4 className="mb-4">
         <Flex direction="row" gap="2" align="center" content="center">
           <span>💬</span> <span>Comments</span>
         </Flex>
-      </Heading>
+      </h4>
 
       {comments.length === 0 ? (
         <Box className="text-sm text-gray-500">No comments yet.</Box>

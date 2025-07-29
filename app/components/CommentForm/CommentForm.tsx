@@ -47,7 +47,7 @@ export const CommentForm = ({ issueId }: Props) => {
       <Button
         type="submit"
         variant="soft"
-        className="text-sm font-medium px-4 py-2 rounded shadow-sm disabled:opacity-50"
+        className="text-sm font-medium px-4 py-2 rounded shadow-sm disabled:opacity-50 float-right w-full md:w-[150px]"
         disabled={isLoading || !content.trim()}
       >
         {isLoading ? "Posting..." : "Post Comment"}
