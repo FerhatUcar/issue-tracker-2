@@ -1,6 +1,7 @@
 import { Issue } from "@prisma/client";
 
 export type IssuesWithAssigning = (Issue & AssignedToUser)[];
+
 export type AssignedToUser = {
   assignedToUser: {
     id: string;

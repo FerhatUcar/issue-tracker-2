@@ -1,15 +1,19 @@
-import Image from "next/image";
 import { notFound } from "next/navigation";
 import { CommentForm } from "@/app/components";
 import { getComments } from "@/app/helpers";
-import { Box, Card, Heading } from "@radix-ui/themes";
+import { Avatar, Box, Card, Flex, Heading } from "@radix-ui/themes";
+import { getServerSession } from "next-auth";
+import authOptions from "@/app/auth/authOptions";
+import { type Comment as CommentType } from "@prisma/client";
+import { Comment } from "./Comment";
 
 type Props = {
   issueId: number;
 };
 
 export const Comments = async ({ issueId }: Props) => {
-  const comments = await getComments(issueId);
+  const comments: CommentType[] = await getComments(issueId);
+  const session = await getServerSession(authOptions);
 
   if (!comments) {
     notFound();
@@ -17,40 +21,30 @@ export const Comments = async ({ issueId }: Props) => {
 
   return (
     <Card mt="6">
-      <Heading mb="4">💬 Comments</Heading>
+      <Heading mb="6">
+        <Flex direction="row" gap="2" align="center" content="center">
+          <span>💬</span> <span>Comments</span>
+        </Flex>
+      </Heading>
 
       {comments.length === 0 ? (
         <Box className="text-sm text-gray-500">No comments yet.</Box>
       ) : (
-        <Box className="space-y-3">
-          {comments.map((comment) => (
-            <Box
-              key={comment.id}
-              className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg p-4 shadow-sm"
-            >
-              <Box className="flex items-center gap-3 mb-2">
-                {comment.author?.image && (
-                  <Image
-                    src={comment.author.image}
-                    alt="Avatar"
-                    width={24}
-                    height={24}
-                    className="rounded-full"
-                  />
-                )}
-                <Box className="text-sm font-medium text-gray-800 dark:text-gray-100">
-                  {comment.authorId ?? "Anonymous"}
-                </Box>
-                <span className="text-xs text-gray-500 ml-auto">
-                  {new Date(comment.createdAt).toLocaleString()}
-                </span>
-              </Box>
-              <p className="text-sm text-gray-700 dark:text-gray-300">
-                {comment.content}
-              </p>
-            </Box>
-          ))}
-        </Box>
+        <Flex direction="row" gap="2" content="center" align="start">
+          <Avatar
+            src={session!.user!.image!}
+            fallback="?"
+            size="2"
+            radius="full"
+            className="cursor-pointer hover:border-2 border-gray-300 transition-all"
+            referrerPolicy="no-referrer"
+          />
+          <Box className="space-y-3 w-full">
+            {comments.map((comment: CommentType) => (
+              <Comment key={comment.id} comment={comment} />
+            ))}
+          </Box>
+        </Flex>
       )}
 
       <CommentForm issueId={issueId} />
