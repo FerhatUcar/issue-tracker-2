@@ -1,6 +1,5 @@
 "use client";
 
-import { notFound } from "next/navigation";
 import { CommentForm } from "@/app/components";
 import { Avatar, Box, Card, Flex } from "@radix-ui/themes";
 import { Comment } from "./Comment";
@@ -14,16 +13,10 @@ type Props = {
 
 export const Comments = async ({ issueId }: Props) => {
   const { data: comments = [], isLoading } = useComments(issueId);
-  const {  data: session } = useSession();
-
-  console.log(comments);
+  const { data: session } = useSession();
 
   if (isLoading) {
     return <Spinner />;
-  }
-
-  if (!comments) {
-    notFound();
   }
 
   return (
