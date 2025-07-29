@@ -2,7 +2,7 @@ import prisma from "@/prisma/client";
 import { notFound } from "next/navigation";
 import { Box, Card, Grid, Flex } from "@radix-ui/themes";
 import IssueDetails from "@/app/issues/[id]/IssueDetails";
-import { DeleteIssueButton, EditIssueButton } from "@/app/issues/[id]/components";
+import { DeleteIssueButton, EditIssueButton, Comments } from "@/app/issues/[id]/components";
 import { Issue } from "@prisma/client";
 import React, { cache } from "react";
 import { getServerSession } from "next-auth";
@@ -39,6 +39,7 @@ const IssueDetailPage = async ({ params }: Props) => {
     <Grid columns={{ initial: "1", sm: "5" }} gap="5">
       <Box className="md:col-span-4">
         <IssueDetails issue={issue} />
+        <Comments issueId={issue.id} />
       </Box>
 
       {session && (

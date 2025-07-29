@@ -1,4 +1,12 @@
-import { Avatar, Card, Flex, Heading, Button, Box, Text } from "@radix-ui/themes";
+import {
+  Avatar,
+  Card,
+  Flex,
+  Heading,
+  Button,
+  Box,
+  Text,
+} from "@radix-ui/themes";
 import React from "react";
 import { StatusBadge, NoIssuesPlaceholder } from "@/app/components";
 import Link from "next/link";
@@ -46,14 +54,15 @@ export const LatestIssues = async () => {
                       radius="full"
                     />
                   )}
-
                 </Flex>
               </Box>
             </Link>
           ))}
         </Box>
       ) : (
-        <NoIssuesPlaceholder />
+        <Box className="h-[calc(100%-95px)]">
+          <NoIssuesPlaceholder />
+        </Box>
       )}
 
       <Link href="/issues/new">

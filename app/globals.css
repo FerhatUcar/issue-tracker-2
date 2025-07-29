@@ -68,18 +68,16 @@
 /* =====================
    🧠 Editor Styling
 ===================== */
-.EasyMDEContainer {
-  .CodeMirror {
-    background-color: var(--color-bg-editor);
-    color: var(--color-text-editor);
-    border: 1px solid var(--color-border-input) !important;
-    border-bottom-left-radius: 1rem !important;
-    border-bottom-right-radius: 1rem !important;
-  }
+.EasyMDEContainer .CodeMirror {
+  background-color: var(--color-bg-editor);
+  color: var(--color-text-editor);
+  border: 1px solid var(--color-border-input) !important;
+  border-bottom-left-radius: 1rem !important;
+  border-bottom-right-radius: 1rem !important;
+}
 
-  .CodeMirror-cursor {
-    border-left: 2px solid var(--color-cursor);
-  }
+.EasyMDEContainer .CodeMirror-cursor {
+  border-left: 2px solid var(--color-cursor);
 }
 
 .editor-toolbar {
@@ -87,18 +85,13 @@
   border-left: 1px solid var(--color-border-input) !important;
   border-right: 1px solid var(--color-border-input) !important;
   border-top-left-radius: 1rem !important;
-    border-top-right-radius: 1rem !important;
+  border-top-right-radius: 1rem !important;
   background: var(--color-bg-toolbar);
-
-  button:hover,
-  button.active {
-    background: var(--color-bg-toolbar) !important;
-  }
 }
 
-.selectTriggerSmall {
-  height: 2.5rem !important;
-    border-radius: 0.5rem !important;
+.editor-toolbar button:hover,
+.editor-toolbar button.active {
+  background: var(--color-bg-toolbar) !important;
 }
 
 /* =====================
