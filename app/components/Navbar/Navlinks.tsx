@@ -6,13 +6,28 @@ import { Flex, Separator } from "@radix-ui/themes";
 import Link from "next/link";
 import classnames from "classnames";
 import { RiDashboard2Line } from "react-icons/ri";
+import { IoTicketOutline } from "react-icons/io5";
 
 export const NavLinks = () => {
   const currentPath = usePathname();
 
   const links = [
-    { label: <RiDashboard2Line size={18} />, href: "/" },
-    { label: "Issues", href: "/issues/list" },
+    {
+      label: (
+        <Flex direction="row" gap="2" align="center">
+          <RiDashboard2Line /> Home
+        </Flex>
+      ),
+      href: "/",
+    },
+    {
+      label: (
+        <Flex direction="row" gap="2" align="center">
+          <IoTicketOutline /> Issues
+        </Flex>
+      ),
+      href: "/issues/list",
+    },
   ];
 
   return (
@@ -30,7 +45,7 @@ export const NavLinks = () => {
               {link.label}
             </Link>
           </li>
-          <Separator orientation="vertical" />
+          {i < links.length - 1 && <Separator orientation="vertical" />}
         </Flex>
       ))}
     </ul>

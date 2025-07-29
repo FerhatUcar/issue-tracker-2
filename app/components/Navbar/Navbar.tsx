@@ -20,7 +20,7 @@ export const Navbar = ({ data: { userId, count } }: Props) => (
       <Flex justify="between" align="center">
         <Flex align="center" gap="3">
           <Link href="/" className="relative inline-block">
-            <Image src="/logo.png" alt="Logo" width={60} height={60} priority style={{
+            <Image src="/logo.png" alt="Logo" width={50} height={50} priority style={{
               objectFit: "contain",
               width: "auto",
               height: "auto",

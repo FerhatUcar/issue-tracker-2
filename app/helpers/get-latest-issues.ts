@@ -6,5 +6,6 @@ export const getLatestIssues = async () =>
     take: 6,
     include: {
       assignedToUser: true,
+      Comment: true,
     },
   });

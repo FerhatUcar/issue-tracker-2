@@ -6,6 +6,7 @@ import {
   Button,
   Box,
   Text,
+  Badge,
 } from "@radix-ui/themes";
 import React from "react";
 import { StatusBadge, NoIssuesPlaceholder } from "@/app/components";
@@ -41,19 +42,29 @@ export const LatestIssues = async () => {
                     <Box className="w-16">
                       <StatusBadge status={issue.status} />
                     </Box>
-                    <Text className="truncate max-w-[150px]">
-                      {issue.title}
-                    </Text>
+
+                    <Box
+                      className="truncate max-w-[180px]"
+                    >
+                      <Text className="truncate">{issue.title}</Text>
+                    </Box>
                   </Flex>
 
-                  {issue.assignedToUser && (
-                    <Avatar
-                      src={issue.assignedToUser.image!}
-                      fallback="?"
-                      size="2"
-                      radius="full"
-                    />
-                  )}
+                  <Flex gap="2">
+                    {issue.Comment.length > 0 && (
+                      <Badge variant="soft" color="gray">
+                        💬 {issue.Comment.length}
+                      </Badge>
+                    )}
+                    {issue.assignedToUser && (
+                      <Avatar
+                        src={issue.assignedToUser.image!}
+                        fallback="?"
+                        size="2"
+                        radius="full"
+                      />
+                    )}
+                  </Flex>
                 </Flex>
               </Box>
             </Link>

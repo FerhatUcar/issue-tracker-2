@@ -1,13 +1,9 @@
-import { Issue } from "@prisma/client";
+import { Issue, Comment } from "@prisma/client";
+import { User } from "next-auth";
 
 export type IssuesWithAssigning = (Issue & AssignedToUser)[];
 
 export type AssignedToUser = {
-  assignedToUser: {
-    id: string;
-    name: string | null;
-    email: string | null;
-    image: string | null;
-    emailVerified: Date | null;
-  } | null;
+  assignedToUser: User | null;
+  Comment: Comment[];
 };

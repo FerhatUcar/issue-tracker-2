@@ -7,7 +7,7 @@ import IssueTable, { IssueQuery } from "@/app/issues/list/IssueTable";
 import { Card, Flex } from "@radix-ui/themes";
 import { columns } from "@/app/issues/list/IssueColumns";
 import { getPaginatedIssuesWithAssignedUser } from "@/app/helpers";
-import { IssuesWithAssigning } from "../../types/types";
+import { IssuesWithAssigning } from "@/app/types/types";
 
 type IssuePageProps = {
   searchParams: IssueQuery;

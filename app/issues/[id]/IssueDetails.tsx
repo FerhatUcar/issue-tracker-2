@@ -49,7 +49,7 @@ const IssueDetails = async ({ issue }: IssueDetailsProps) => {
       </Box>
 
       <Box className="p-2 py-4">
-        <Heading >{issue.title}</Heading>
+        <Heading mb="2">{issue.title}</Heading>
         <ReactMarkdown>{issue.description}</ReactMarkdown>
       </Box>
     </Card>

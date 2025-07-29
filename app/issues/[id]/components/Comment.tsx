@@ -3,6 +3,9 @@ import { Box, Text } from "@radix-ui/themes";
 import { type Comment as CommentType } from "@prisma/client";
 
 type Props = {
+  /**
+   * The comment object containing details about the comment.
+   */
   comment: CommentType;
 };
 
