@@ -12,5 +12,5 @@ const statusMap: StatusMap = {
 };
 
 export const StatusBadge = ({ status }: { status: Status }) => (
-  <Badge color={statusMap[status].color}>{statusMap[status].label}</Badge>
+  <Badge className="min-w-[60px] justify-center" color={statusMap[status].color}>{statusMap[status].label}</Badge>
 );
