@@ -1,10 +1,12 @@
 import fetch from "node-fetch";
 import { JWT } from "google-auth-library";
-import { readFileSync } from "fs";
 import { pushToken } from "../token";
+import dotenv from "dotenv";
 
-const SERVICE_ACCOUNT_PATH = "./service-account.json";
-const serviceAccount = JSON.parse(readFileSync(SERVICE_ACCOUNT_PATH, "utf8"));
+dotenv.config();
+
+const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_JSON!);
+serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, "\n");
 
 const SCOPES = ["https://www.googleapis.com/auth/firebase.messaging"];
 const projectId = serviceAccount.project_id;
