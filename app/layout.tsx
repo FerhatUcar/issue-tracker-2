@@ -8,6 +8,11 @@ import { Container } from "@radix-ui/themes";
 import AuthProvider from "@/app/auth/Provider";
 import { QueryClientProvider, RecoilContextProvider, ThemeProvider } from "@/app/providers";
 import { NavbarWrapper } from "@/app/components";
+import dynamic from "next/dynamic";
+
+const PushNotifications = dynamic(() => import("@/app/components/PushNotificationInitializer"),
+  { ssr: false },
+);
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -31,6 +36,7 @@ const RootLayout = async ({ children }: { children: ReactNode }) => (
     <AuthProvider>
       <RecoilContextProvider>
         <ThemeProvider>
+          <PushNotifications />
           <NavbarWrapper />
           <main>
             <Container className="p-5">{children}</Container>

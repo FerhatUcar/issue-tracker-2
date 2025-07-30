@@ -19,8 +19,8 @@ import {
   AvatarIcon,
 } from "@radix-ui/react-icons";
 import Skeleton from "react-loading-skeleton";
-import { BsTicketDetailedFill } from "react-icons/bs";
 import { useThemeToggle } from "@/app/providers";
+import { IoTicketOutline } from "react-icons/io5";
 
 type Props = {
   /**
@@ -88,7 +88,7 @@ export const AuthStatus = ({ userId, count }: Props) => {
           <DropdownMenu.Item>
             <Flex justify="between" width="100%">
               <Flex direction="row" align="center" gap="2">
-                <BsTicketDetailedFill />
+                <IoTicketOutline />
                 <Text>My issues</Text>
                 {count >= 1 && (
                   <Badge

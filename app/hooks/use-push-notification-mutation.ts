@@ -1,0 +1,34 @@
+import { useMutation } from "@tanstack/react-query";
+
+type SendPushPayload = {
+  token: string;
+  title: string;
+  body: string;
+  url?: string;
+};
+
+export const usePushNotificationMutation = () =>
+  useMutation({
+    mutationFn: async (data: SendPushPayload) => {
+      const res = await fetch("/api/send-push", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      const json = await res.json();
+      console.log("📬 Push API response:", json);
+
+      if (!res.ok) {
+        const error = await res.json().catch(() => ({
+          error: "Failed to parse error response",
+          status: res.status,
+        }));
+
+        throw new Error(error?.error || "Push notification failed");
+      }
+
+      console.log("✅ Mutate push success hook called", data);
+      return json;
+    },
+  });

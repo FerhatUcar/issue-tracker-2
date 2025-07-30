@@ -38,3 +38,7 @@ next-env.d.ts
 
 # Sentry Config File
 .sentryclirc
+
+# Firebase Config Files
+service-account.json
+
