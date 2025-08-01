@@ -16,7 +16,11 @@ export const Comments = ({ issueId }: Props) => {
   const { data: session } = useSession();
 
   if (isLoading) {
-    return <Spinner />;
+    return (
+      <Box className="h-20 flex items-center justify-center">
+        <Spinner />
+      </Box>
+    );
   }
 
   return (
@@ -34,14 +38,16 @@ export const Comments = ({ issueId }: Props) => {
           <Box className="space-y-4 w-full">
             {comments.map((comment) => (
               <Flex direction="row" gap="2" key={comment.id}>
-                <Avatar
-                  src={session!.user!.image!}
-                  fallback="?"
-                  size="2"
-                  radius="full"
-                  className="cursor-pointer hover:border-2 border-gray-300 transition-all"
-                  referrerPolicy="no-referrer"
-                />
+                {session ? (
+                  <Avatar
+                    src={session.user?.image ?? ''}
+                    fallback="?"
+                    size="2"
+                    radius="full"
+                    className="cursor-pointer hover:border-2 border-gray-300 transition-all"
+                    referrerPolicy="no-referrer"
+                  />
+                ) : null}
                 <Comment comment={comment} issueId={issueId} />
               </Flex>
             ))}

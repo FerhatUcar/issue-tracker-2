@@ -9,7 +9,10 @@ export async function POST(request: Request) {
     const { token } = await request.json();
 
     if (!token) {
-      return NextResponse.json({ error: "Geen token meegegeven" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Geen token meegegeven" },
+        { status: 400 },
+      );
     }
 
     let tokens: string[] = [];
@@ -18,7 +21,6 @@ export async function POST(request: Request) {
       const content = await readFile(FILE, "utf-8");
 
       tokens = JSON.parse(content);
-
     } catch (e) {}
     if (!tokens.includes(token)) {
       tokens.push(token);

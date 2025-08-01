@@ -19,8 +19,12 @@ type Props = {
   params: { id: string };
 };
 
+const fetchIssue = cache((issueId: number) =>
+  prisma.issue.findUnique({ where: { id: issueId } }),
+);
+
 export async function generateMetadata({ params }: Props) {
-  const issue = await fetchUser(parseInt(params.id));
+  const issue = await fetchIssue(parseInt(params.id));
 
   return {
     title: issue?.title,
@@ -28,13 +32,9 @@ export async function generateMetadata({ params }: Props) {
   };
 }
 
-const fetchUser = cache((issueId: number) =>
-  prisma.issue.findUnique({ where: { id: issueId } }),
-);
-
 const IssueDetailPage = async ({ params }: Props) => {
   const session = await getServerSession(authOptions);
-  const issue: Issue | null = await fetchUser(parseInt(params.id));
+  const issue: Issue | null = await fetchIssue(parseInt(params.id));
 
   if (!issue) {
     notFound();

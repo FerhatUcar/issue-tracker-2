@@ -131,7 +131,7 @@ const IssueForm = ({ issue }: Props) => {
                 {...register("assignedToUserId")}
               >
                 <Select.Trigger
-                  className="w-full selectTriggerSmall"
+                  className="w-full"
                   placeholder="Assign user..."
                 />
                 <Select.Content className="bg-neutral-500 dark:bg-neutral-900">

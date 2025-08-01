@@ -60,7 +60,7 @@ const AssigneeSelect = ({ issue }: Props) => {
         onValueChange={handleOnValueChange}
       >
         <Select.Trigger
-          className="w-full selectTriggerSmall"
+          className="w-full"
           placeholder="Assign..."
         />
         <Select.Content>

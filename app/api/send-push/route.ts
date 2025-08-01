@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
     if (!token || !title || !body) {
       return NextResponse.json(
         { error: "token, title en body zijn verplicht" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     return NextResponse.json(
       { error: "Push mislukt", detail: (error as Error).message },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

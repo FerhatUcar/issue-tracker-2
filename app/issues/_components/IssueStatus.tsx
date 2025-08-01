@@ -57,7 +57,7 @@ const IssueStatus = ({ issue }: Props) => {
     <>
       <Select.Root defaultValue={issue?.status} onValueChange={handleOnChange}>
         <Select.Trigger
-          className="w-full selectTriggerSmall"
+          className="w-full"
           placeholder="Status..."
         />
         <Select.Content>

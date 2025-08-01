@@ -115,6 +115,7 @@
 }
 
 .rt-CardInner {
+  width: 100%;
   background-color: var(--color-bg-card);
   box-shadow:
     0 1px 5px rgba(0, 0, 0, 0.05),
@@ -135,4 +136,8 @@ body {
 
 .rt-BaseMenuViewport {
     background-color: var(--color-bg-nav);
+}
+
+.rt-SelectTrigger {
+  height: 2.5rem !important;
 }
