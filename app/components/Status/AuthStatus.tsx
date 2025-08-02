@@ -21,6 +21,7 @@ import {
 import Skeleton from "react-loading-skeleton";
 import { useThemeToggle } from "@/app/providers";
 import { IoTicketOutline } from "react-icons/io5";
+import { useParams } from "next/navigation";
 
 type Props = {
   /**
@@ -36,6 +37,7 @@ type Props = {
 
 export const AuthStatus = ({ userId, count }: Props) => {
   const { status, data: session } = useSession();
+  const params = useParams();
   const { appearance, toggleAppearance } = useThemeToggle();
 
   if (status === "loading") {
@@ -84,7 +86,7 @@ export const AuthStatus = ({ userId, count }: Props) => {
           </Flex>
         </DropdownMenu.Item>
 
-        <Link href={`/issues/list?assignedToUserId=${userId}`}>
+        <Link href={`/workspaces/${params.workspaceId}/issues/list?assignedToUserId=${userId}`}>
           <DropdownMenu.Item>
             <Flex justify="between" width="100%">
               <Flex direction="row" align="center" gap="2">

@@ -4,10 +4,11 @@ import Link from "next/link";
 
 type Props = {
   issueId: number;
-}
+  workspaceId: string;
+};
 
-export const EditIssueButton = ({ issueId }: Props) => (
-  <Link href={`/issues/edit/${issueId}`}>
+export const EditIssueButton = ({ issueId, workspaceId }: Props) => (
+  <Link href={`/workspaces/${workspaceId}/issues/edit/${issueId}`}>
     <Button className="w-full" variant="soft">
       <Pencil2Icon />
       Edit

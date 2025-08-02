@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation";
 import { Flex, Separator } from "@radix-ui/themes";
 import Link from "next/link";
 import classnames from "classnames";
-import { RiDashboard2Line } from "react-icons/ri";
 import { IoTicketOutline } from "react-icons/io5";
 
 export const NavLinks = () => {
@@ -15,18 +14,10 @@ export const NavLinks = () => {
     {
       label: (
         <Flex direction="row" gap="2" align="center">
-          <RiDashboard2Line /> Home
+          <IoTicketOutline /> Workspaces
         </Flex>
       ),
-      href: "/",
-    },
-    {
-      label: (
-        <Flex direction="row" gap="2" align="center">
-          <IoTicketOutline /> Issues
-        </Flex>
-      ),
-      href: "/issues/list",
+      href: "/workspaces",
     },
   ];
 

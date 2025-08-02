@@ -15,7 +15,7 @@ import {
   Select,
 } from "@radix-ui/themes";
 import "easymde/dist/easymde.min.css";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { patchIssueSchema } from "@/app/validationSchema";
 import SimpleMDE from "react-simplemde-editor";
@@ -39,12 +39,14 @@ type Props = {
 
 const IssueForm = ({ issue }: Props) => {
   const router = useRouter();
+  const params = useParams();
   const { mutateAsync: mutatePush } = usePushNotificationMutation();
   const {
     upsertIssue: { mutateAsync },
   } = useIssueMutation();
   const { data: users, isLoading: isLoadingUsers } =
     useDataQuery<User>("users");
+  const workspaceId = Array.isArray(params?.workspaceId) ? params?.workspaceId[0] : params?.workspaceId;
 
   const {
     register,
@@ -69,6 +71,7 @@ const IssueForm = ({ issue }: Props) => {
     const payload = {
       ...data,
       assignedToUserId,
+      workspaceId,
     };
 
     try {
@@ -89,7 +92,8 @@ const IssueForm = ({ issue }: Props) => {
           }
 
           toast.success("Issue submitted successfully!");
-          router.push("/issues/list");
+
+          router.push(`/workspaces/${workspaceId}`);
           router.refresh();
         },
       });
@@ -112,7 +116,6 @@ const IssueForm = ({ issue }: Props) => {
         <TextField.Root>
           <Flex align="center">
             <TextField.Input
-              defaultValue={issue?.title}
               size="3"
               placeholder="Issue title..."
               {...register("title")}
@@ -128,7 +131,6 @@ const IssueForm = ({ issue }: Props) => {
               <Select.Root
                 value={field.value || "unassigned"}
                 onValueChange={(val) => field.onChange(val)}
-                {...register("assignedToUserId")}
               >
                 <Select.Trigger
                   className="w-full"

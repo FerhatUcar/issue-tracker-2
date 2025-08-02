@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { Card, Flex, Text, Box } from "@radix-ui/themes";
 import Link from "next/link";
@@ -19,9 +21,14 @@ type Props = {
    * Number of closed issues
    */
   closed: number;
+
+  /**
+   * Workspace ID (nodig voor linkopbouw)
+   */
+  workspaceId: string;
 };
 
-export const Summary = ({ open, inProgress, closed }: Props) => {
+export const Summary = ({ open, inProgress, closed, workspaceId }: Props) => {
   const items: Item[] = getSummaryData(open, inProgress, closed);
 
   return (
@@ -35,7 +42,9 @@ export const Summary = ({ open, inProgress, closed }: Props) => {
               color,
             )}
           >
-            <Link href={`/issues/list?status=${status}`}>
+            <Link
+              href={`/workspaces/${workspaceId}/issues/list?status=${status}`}
+            >
               <Box className="p-2 md:p-4">
                 <Text size="2" weight="medium" className="block mb-1">
                   {label}

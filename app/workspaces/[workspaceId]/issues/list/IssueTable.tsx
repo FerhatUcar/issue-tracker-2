@@ -6,7 +6,7 @@ import NextLink from "next/link";
 import { ArrowDownIcon, ArrowUpIcon } from "@radix-ui/react-icons";
 import { StatusBadge, Link } from "@/app/components";
 import { Issue, Status } from "@prisma/client";
-import { columns } from "@/app/issues/list/IssueColumns";
+import { columns } from "@/app/workspaces/[workspaceId]/issues/list/IssueColumns";
 import { useSession } from "next-auth/react";
 import { type IssuesWithAssigning } from "@/app/types/types";
 import { useRecoilValue } from "recoil";
@@ -30,11 +30,13 @@ type IssueTableProps = {
    * The list of issues with their assigned user information.
    */
   issuesWithAssigning: IssuesWithAssigning;
+  workspaceId: string;
 };
 
 const IssueTable: FC<IssueTableProps> = ({
   searchParams,
   issuesWithAssigning,
+  workspaceId
 }) => {
   const { status } = useSession();
   const [sort, setSort] = useState("asc");
@@ -102,7 +104,7 @@ const IssueTable: FC<IssueTableProps> = ({
           >
             <Table.Cell>
               <Flex align="center" justify="between">
-                <Link href={`/issues/${issue.id}`}>{issue.title}</Link>
+                <Link href={`/workspaces/${workspaceId}/issues/${issue.id}`}>{issue.title}</Link>
               </Flex>
             </Table.Cell>
             <Table.Cell>

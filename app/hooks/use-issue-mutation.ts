@@ -9,10 +9,18 @@ export const useIssueMutation = () => {
 
   const upsertMutation = useMutation({
     mutationFn: async (data: Payload) => {
-      if (data.id) {
-        return axios.patch(`/api/issues/${data.id}`, data).then((res) => res.data);
+      const { id, ...rest } = data;
+
+      if (id) {
+        // Update issue
+        return axios
+          .patch(`/api/issues/${id}`, { ...rest })
+          .then((res) => res.data);
       } else {
-        return axios.post("/api/issues", data).then((res) => res.data);
+        // Create issue
+        return axios
+          .post(`/api/issues`, { ...rest })
+          .then((res) => res.data);
       }
     },
     onSuccess: () => {

@@ -3,8 +3,8 @@
 import { CommentForm } from "@/app/components";
 import { Avatar, Box, Card, Flex } from "@radix-ui/themes";
 import { Comment } from "./Comment";
-import { useComments } from "@/app//hooks";
-import { Spinner } from "@/app//components";
+import { useComments } from "@/app/hooks";
+import { Spinner } from "@/app/components";
 import { useSession } from "next-auth/react";
 
 type Props = {
@@ -44,7 +44,6 @@ export const Comments = ({ issueId }: Props) => {
                     fallback="?"
                     size="2"
                     radius="full"
-                    className="cursor-pointer hover:border-2 border-gray-300 transition-all"
                     referrerPolicy="no-referrer"
                   />
                 ) : null}

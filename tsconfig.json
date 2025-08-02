@@ -10,7 +10,7 @@
     "module": "esnext",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
-    "types": ["node"],
+    "types": ["node", "next-auth"],
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,

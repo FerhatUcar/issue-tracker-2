@@ -26,11 +26,18 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(validation.error.errors, { status: 400 });
   }
 
+  const { assignedToUserId, workspaceId, title, description } = body;
+
   const newIssue = await prisma.issue.create({
     data: {
-      title: body.title,
-      description: body.description,
-      assignedToUserId: body.assignedToUserId,
+      title,
+      description,
+      assignedToUser: assignedToUserId
+        ? { connect: { id: assignedToUserId } }
+        : undefined,
+      Workspace: {
+        connect: { id: workspaceId },
+      },
     },
   });
 

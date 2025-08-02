@@ -1,11 +1,11 @@
 import React from "react";
 import prisma from "@/prisma/client";
 import { notFound } from "next/navigation";
-import IssueFormSkeleton from "@/app/issues/_components/IssueFormSkeleton";
+import IssueFormSkeleton from "@/app/workspaces/[workspaceId]/issues/_components/IssueFormSkeleton";
 import dynamic from "next/dynamic";
 import { Box, Grid } from "@radix-ui/themes";
 
-const IssueForm = dynamic(() => import("@/app/issues/_components/IssueForm"), {
+const IssueForm = dynamic(() => import("@/app/workspaces/[workspaceId]/issues/_components/IssueForm"), {
   ssr: false,
   loading: () => <IssueFormSkeleton />,
 });

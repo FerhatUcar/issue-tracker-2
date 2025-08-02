@@ -3,7 +3,7 @@
 import React, { useMemo } from "react";
 import { Flex, Select } from "@radix-ui/themes";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { statuses } from "@/app/issues/_components/IssueStatus";
+import { statuses } from "@/app/workspaces/[workspaceId]/issues/_components/IssueStatus";
 
 const IssueStatusFilter = () => {
   const router = useRouter();

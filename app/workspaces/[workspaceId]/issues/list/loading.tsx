@@ -1,6 +1,5 @@
 import React from "react";
-import { Table } from "@radix-ui/themes";
-import IssueActions from "@/app/issues/list/IssueActions";
+import { Box, Table } from "@radix-ui/themes";
 import prisma from "@/prisma/client";
 import { Skeleton } from "@/app/components";
 
@@ -8,8 +7,7 @@ const LoadingIssuesPage = async () => {
   const issues = await prisma.issue.findMany();
 
   return (
-    <div>
-      <IssueActions />
+    <Box>
       <Table.Root variant="surface" className="mt-5">
         <Table.Header>
           <Table.Row>
@@ -37,7 +35,7 @@ const LoadingIssuesPage = async () => {
           ))}
         </Table.Body>
       </Table.Root>
-    </div>
+    </Box>
   );
 };
 

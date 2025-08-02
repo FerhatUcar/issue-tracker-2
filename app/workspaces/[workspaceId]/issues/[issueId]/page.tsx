@@ -1,22 +1,22 @@
 import prisma from "@/prisma/client";
 import { notFound } from "next/navigation";
 import { Box, Card, Grid, Flex } from "@radix-ui/themes";
-import IssueDetails from "@/app/issues/[id]/IssueDetails";
+import IssueDetails from "@/app/workspaces/[workspaceId]/issues/[issueId]/IssueDetails";
 import {
   DeleteIssueButton,
   EditIssueButton,
   Comments,
-} from "@/app/issues/[id]/components";
+} from "@/app/workspaces/[workspaceId]/issues/[issueId]/components";
 import { Issue } from "@prisma/client";
 import React, { cache } from "react";
 import { getServerSession } from "next-auth";
 import authOptions from "@/app/auth/authOptions";
-import AssigneeSelect from "@/app/issues/[id]/AssigneeSelect";
-import IssueStatus from "@/app/issues/_components/IssueStatus";
+import AssigneeSelect from "@/app/workspaces/[workspaceId]/issues/[issueId]/AssigneeSelect";
+import IssueStatus from "@/app/workspaces/[workspaceId]/issues/_components/IssueStatus";
 import { LuFlipVertical } from "react-icons/lu";
 
 type Props = {
-  params: { id: string };
+  params: { issueId: string; workspaceId: string };
 };
 
 const fetchIssue = cache((issueId: number) =>
@@ -24,7 +24,7 @@ const fetchIssue = cache((issueId: number) =>
 );
 
 export async function generateMetadata({ params }: Props) {
-  const issue = await fetchIssue(parseInt(params.id));
+  const issue = await fetchIssue(parseInt(params.issueId));
 
   return {
     title: issue?.title,
@@ -34,7 +34,7 @@ export async function generateMetadata({ params }: Props) {
 
 const IssueDetailPage = async ({ params }: Props) => {
   const session = await getServerSession(authOptions);
-  const issue: Issue | null = await fetchIssue(parseInt(params.id));
+  const issue: Issue | null = await fetchIssue(parseInt(params.issueId));
 
   if (!issue) {
     notFound();
@@ -55,7 +55,10 @@ const IssueDetailPage = async ({ params }: Props) => {
             </Flex>
             <AssigneeSelect issue={issue} />
             <IssueStatus issue={issue} />
-            <EditIssueButton issueId={issue.id} />
+            <EditIssueButton
+              issueId={issue.id}
+              workspaceId={params.workspaceId}
+            />
             <DeleteIssueButton issueId={issue.id} />
           </Flex>
         </Card>

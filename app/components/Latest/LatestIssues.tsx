@@ -16,8 +16,14 @@ import { IoTicketOutline } from "react-icons/io5";
 import { getLatestIssues } from "@/app/helpers";
 import { type IssuesWithAssigning } from "@/app/types/types";
 
-export const LatestIssues = async () => {
-  const issues: IssuesWithAssigning = await getLatestIssues();
+type Props = {
+  params: {
+    workspaceId: string;
+  };
+};
+
+export const LatestIssues = async ({ params: { workspaceId } }: Props) => {
+  const issues: IssuesWithAssigning = await getLatestIssues(workspaceId);
   const hasIssues = issues.length > 0;
 
   return (
@@ -32,7 +38,10 @@ export const LatestIssues = async () => {
       {hasIssues ? (
         <Box className="h-[calc(100%-90px)]">
           {issues.map((issue) => (
-            <Link href={`/issues/${issue.id}`} key={issue.id}>
+            <Link
+              href={`/workspaces/${workspaceId}/issues/${issue.id}`}
+              key={issue.id}
+            >
               <Box
                 mb="3"
                 className="bg-neutral-200/40 hover:bg-neutral-200 dark:bg-neutral-900/50 dark:hover:bg-neutral-900 transition rounded-lg px-4 py-2 min-h-[48px] content-center"
@@ -43,9 +52,7 @@ export const LatestIssues = async () => {
                       <StatusBadge status={issue.status} />
                     </Box>
 
-                    <Box
-                      className="truncate max-w-[180px]"
-                    >
+                    <Box className="truncate max-w-[180px]">
                       <Text className="truncate">{issue.title}</Text>
                     </Box>
                   </Flex>
@@ -76,7 +83,7 @@ export const LatestIssues = async () => {
         </Box>
       )}
 
-      <Link href="/issues/new">
+      <Link href={`/workspaces/${workspaceId}/issues/new`}>
         <Button
           className="w-full justify-start mt-3"
           variant="soft"
@@ -87,6 +94,7 @@ export const LatestIssues = async () => {
           Create new issue
         </Button>
       </Link>
+
     </Card>
   );
 };
