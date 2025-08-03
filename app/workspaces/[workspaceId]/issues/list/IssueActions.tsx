@@ -38,7 +38,7 @@ const IssueActions = ({ workspaceId }: Props) => {
       <Flex gap="3" align="center">
         <Suspense>
           <IssueStatusFilter />
-          <IssueUserFilter />
+          <IssueUserFilter workspaceId={workspaceId} />
         </Suspense>
       </Flex>
       <Flex gap="2">

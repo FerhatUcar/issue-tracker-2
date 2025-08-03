@@ -17,7 +17,11 @@ type AssignedUser = {
   assignedToUserId: UniqueUserIssues["assignedToUserId"];
 };
 
-const IssueUserFilter = () => {
+type Props = {
+  workspaceId: string;
+};
+
+const IssueUserFilter = ({ workspaceId }: Props) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const {
@@ -25,7 +29,10 @@ const IssueUserFilter = () => {
     isError: isIssuesError,
     isLoading,
   } = useDataQuery<UniqueUserIssues>("issues");
-  const { data: users, isError: isUsersError } = useDataQuery<User>("users");
+  const { data: users, error: isUsersError } = useDataQuery<User>(
+    "users",
+    workspaceId,
+  );
   const nameMapping: Record<string, UserName> = {};
   const assignedUser: AssignedUser[] = [];
 
@@ -82,7 +89,10 @@ const IssueUserFilter = () => {
         defaultValue={searchParams.get("assignedToUserId") ?? undefined}
         onValueChange={handleOnValueChange}
       >
-        <Select.Trigger placeholder="Filter by user" className="truncate max-w-[85px] sm:max-w-none" />
+        <Select.Trigger
+          placeholder="Filter by user"
+          className="truncate max-w-[85px] sm:max-w-none"
+        />
         <Select.Content>
           <Select.Item value="">All</Select.Item>
           {filteredIssuesArray.map(({ name, assignedToUserId }, i) => (
