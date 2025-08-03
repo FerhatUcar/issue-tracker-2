@@ -1,5 +1,3 @@
-// app/invite/accept/page.tsx
-
 import { getServerSession } from "next-auth";
 import authOptions from "@/app/auth/authOptions";
 import { redirect } from "next/navigation";
@@ -19,6 +17,7 @@ export default async function AcceptInvitePage({
   }
 
   const session = await getServerSession(authOptions);
+
   if (!session?.user?.email) {
     redirect(
       "/api/auth/signin?callbackUrl=/invite/accept?token=" + searchParams.token,
