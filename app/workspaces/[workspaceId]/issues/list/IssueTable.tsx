@@ -44,8 +44,15 @@ type IssueTableProps = {
    * Specifies the name of the workspace.
    * This variable holds a string representing the unique name assigned to the workspace.
    * Typically used to identify or label a specific workspace in applications or systems.
+   * When empty, the individual workspace name from each issue will be used.
    */
   workspaceName: string;
+
+  /**
+   * Optional prop to show workspace names from individual issues
+   * instead of using the single workspaceName prop
+   */
+  showWorkspacePerIssue?: boolean;
 };
 
 const IssueTable: FC<IssueTableProps> = ({
@@ -53,11 +60,12 @@ const IssueTable: FC<IssueTableProps> = ({
   issuesWithAssigning,
   workspaceId,
   workspaceName,
+  showWorkspacePerIssue = false,
 }) => {
   const { status } = useSession();
   const [sort, setSort] = useState("asc");
   const searchValue = useRecoilValue(searchValueState);
-  const [filteredList, setFilteredList] = useState(issuesWithAssigning);
+  const [filteredList, setFilteredList] = useState<IssuesWithAssigning>(issuesWithAssigning);
 
   let updatedList: IssuesWithAssigning = [...issuesWithAssigning];
 
@@ -78,6 +86,8 @@ const IssueTable: FC<IssueTableProps> = ({
 
   const hideLastColumnOnSignOff =
     status === "unauthenticated" || status === "loading" ? -1 : undefined;
+
+  const isCrossWorkspace = showWorkspacePerIssue || workspaceId === "";
 
   return (
     <Table.Root variant="surface">
@@ -120,7 +130,13 @@ const IssueTable: FC<IssueTableProps> = ({
           >
             <Table.Cell>
               <Flex align="center" justify="between">
-                <Link href={`/workspaces/${workspaceId}/issues/${issue.id}`}>
+                <Link
+                  href={
+                    isCrossWorkspace
+                      ? `/workspaces/${issue.workspaceId}/issues/${issue.id}`
+                      : `/workspaces/${workspaceId}/issues/${issue.id}`
+                  }
+                >
                   {issue.title}
                 </Link>
               </Flex>
@@ -129,7 +145,7 @@ const IssueTable: FC<IssueTableProps> = ({
               <StatusBadge status={issue.status} />
             </Table.Cell>
             <Table.Cell>
-              {workspaceName}
+              {isCrossWorkspace ? issue.Workspace?.name : workspaceName}
             </Table.Cell>
             <Table.Cell className="hidden md:table-cell">
               {issue.createdAt.toDateString()}

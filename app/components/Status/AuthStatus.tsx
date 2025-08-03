@@ -24,14 +24,7 @@ import { IoTicketOutline } from "react-icons/io5";
 import { useParams } from "next/navigation";
 
 type Props = {
-  /**
-   * The ID of the user to filter issues by
-   */
   userId: string;
-
-  /**
-   * The count of issues assigned to the user
-   */
   count: number;
 };
 
@@ -86,12 +79,13 @@ export const AuthStatus = ({ userId, count }: Props) => {
           </Flex>
         </DropdownMenu.Item>
 
-        <Link href={`/workspaces/${params.workspaceId}/issues/list?assignedToUserId=${userId}`}>
+        {/* Nieuwe link naar alle issues */}
+        <Link href={`/issues/list?assignedToUserId=${userId}`}>
           <DropdownMenu.Item>
             <Flex justify="between" width="100%">
               <Flex direction="row" align="center" gap="2">
                 <IoTicketOutline />
-                <Text>My issues</Text>
+                <Text>All my issues</Text>
                 {count >= 1 && (
                   <Badge
                     variant="solid"
@@ -106,6 +100,21 @@ export const AuthStatus = ({ userId, count }: Props) => {
             </Flex>
           </DropdownMenu.Item>
         </Link>
+
+        {/* Optioneel: behoud ook de workspace-specifieke link als je in een workspace bent */}
+        {params.workspaceId && (
+          <Link href={`/workspaces/${params.workspaceId}/issues/list?assignedToUserId=${userId}`}>
+            <DropdownMenu.Item>
+              <Flex justify="between" width="100%">
+                <Flex direction="row" align="center" gap="2">
+                  <IoTicketOutline />
+                  <Text>Workspace issues</Text>
+                </Flex>
+              </Flex>
+            </DropdownMenu.Item>
+          </Link>
+        )}
+
         <DropdownMenu.Separator />
         <DropdownMenu.Item>
           <Flex direction="row" align="center" gap="2">
