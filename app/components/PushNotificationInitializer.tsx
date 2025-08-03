@@ -25,8 +25,6 @@ const PushNotificationInitializer = () => {
           return;
         }
 
-        console.log("Push token:", token);
-
         await fetch("/api/save-push-token", {
           method: "POST",
           headers: {

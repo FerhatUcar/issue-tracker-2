@@ -7,7 +7,6 @@ import {
   EditIssueButton,
   Comments,
 } from "@/app/workspaces/[workspaceId]/issues/[issueId]/components";
-import { Issue } from "@prisma/client";
 import React, { cache } from "react";
 import { getServerSession } from "next-auth";
 import authOptions from "@/app/auth/authOptions";
@@ -20,7 +19,20 @@ type Props = {
 };
 
 const fetchIssue = cache((issueId: number) =>
-  prisma.issue.findUnique({ where: { id: issueId } }),
+  prisma.issue.findUnique({
+    where: { id: issueId },
+    include: {
+      Workspace: {
+        include: {
+          memberships: {
+            include: {
+              user: true,
+            },
+          },
+        },
+      },
+    },
+  }),
 );
 
 export async function generateMetadata({ params }: Props) {
@@ -34,9 +46,17 @@ export async function generateMetadata({ params }: Props) {
 
 const IssueDetailPage = async ({ params }: Props) => {
   const session = await getServerSession(authOptions);
-  const issue: Issue | null = await fetchIssue(parseInt(params.issueId));
+  const issue = await fetchIssue(parseInt(params.issueId));
 
   if (!issue) {
+    notFound();
+  }
+
+  const isMember = issue.Workspace?.memberships.some(
+    (membership) => membership.user.email === session?.user?.email
+  );
+
+  if (!isMember) {
     notFound();
   }
 

@@ -44,9 +44,15 @@ const IssueForm = ({ issue }: Props) => {
   const {
     upsertIssue: { mutateAsync },
   } = useIssueMutation();
-  const { data: users, isLoading: isLoadingUsers } =
-    useDataQuery<User>("users");
-  const workspaceId = Array.isArray(params?.workspaceId) ? params?.workspaceId[0] : params?.workspaceId;
+
+  const workspaceId = Array.isArray(params?.workspaceId)
+    ? params?.workspaceId[0]
+    : params?.workspaceId;
+
+  const { data: users, isLoading: isLoadingUsers } = useDataQuery<User>(
+    "users",
+    workspaceId
+  );
 
   const {
     register,

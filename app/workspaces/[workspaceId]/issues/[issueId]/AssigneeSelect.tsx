@@ -6,7 +6,7 @@ import { User } from "next-auth";
 import { Skeleton } from "@/app/components";
 import { Issue } from "@prisma/client";
 import toast, { Toaster } from "react-hot-toast";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useDataQuery, useIssueMutation } from "@/app/hooks";
 
 type Props = {
@@ -15,7 +15,11 @@ type Props = {
 
 const AssigneeSelect = ({ issue }: Props) => {
   const router = useRouter();
-  const { data: users, error, isLoading } = useDataQuery<User>("users");
+  const params = useParams();
+  const workspaceId = Array.isArray(params?.workspaceId)
+    ? params.workspaceId[0]
+    : params.workspaceId;
+  const { data: users, error, isLoading } = useDataQuery<User>("users", workspaceId);
   const {
     upsertIssue: { mutateAsync },
   } = useIssueMutation();
