@@ -23,7 +23,9 @@ type Props = {
   closed: number;
 
   /**
-   * Workspace ID (nodig voor linkopbouw)
+   * A unique identifier representing a specific workspace.
+   * This ID is typically used to differentiate between various workspaces
+   * within a system or application.
    */
   workspaceId: string;
 };

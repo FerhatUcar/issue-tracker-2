@@ -30,6 +30,12 @@ type IssueTableProps = {
    * The list of issues with their assigned user information.
    */
   issuesWithAssigning: IssuesWithAssigning;
+
+  /**
+   * A unique identifier representing a specific workspace.
+   * This ID is typically used to differentiate between various workspaces
+   * within a system or application.
+   */
   workspaceId: string;
 };
 
