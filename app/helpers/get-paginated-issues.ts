@@ -1,7 +1,7 @@
 import { Prisma } from "@prisma/client";
 import prisma from "@/prisma/client";
 
-type GetPaginatedIssuesParams = {
+type Params = {
   where?: Prisma.IssueWhereInput;
   orderBy?: Prisma.IssueOrderByWithRelationInput;
   page?: number;
@@ -16,7 +16,7 @@ export const getPaginatedIssuesWithAssignedUser = async ({
   orderBy,
   page = defaultPage,
   pageSize = defaultPageSize,
-}: GetPaginatedIssuesParams): Promise<
+}: Params): Promise<
   Prisma.IssueGetPayload<{ include: { assignedToUser: true } }>[]
 > =>
   await prisma.issue.findMany({

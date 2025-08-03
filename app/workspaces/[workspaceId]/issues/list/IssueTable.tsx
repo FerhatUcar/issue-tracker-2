@@ -12,10 +12,12 @@ import { type IssuesWithAssigning } from "@/app/types/types";
 import { useRecoilValue } from "recoil";
 import { searchValueState } from "@/app/state";
 
+export type OrderableIssueField = keyof Issue | "workspaceName";
+
 export type IssueQuery = {
   status: Status;
   assignedToUserId: string;
-  orderBy: keyof Issue;
+  orderBy: OrderableIssueField;
   sortBy: "asc" | "desc";
   page: string;
 };
@@ -37,12 +39,20 @@ type IssueTableProps = {
    * within a system or application.
    */
   workspaceId: string;
+
+  /**
+   * Specifies the name of the workspace.
+   * This variable holds a string representing the unique name assigned to the workspace.
+   * Typically used to identify or label a specific workspace in applications or systems.
+   */
+  workspaceName: string;
 };
 
 const IssueTable: FC<IssueTableProps> = ({
   searchParams,
   issuesWithAssigning,
-  workspaceId
+  workspaceId,
+  workspaceName,
 }) => {
   const { status } = useSession();
   const [sort, setSort] = useState("asc");
@@ -71,7 +81,7 @@ const IssueTable: FC<IssueTableProps> = ({
 
   return (
     <Table.Root variant="surface">
-    <Table.Header>
+      <Table.Header>
         <Table.Row>
           {columns.slice(0, hideLastColumnOnSignOff).map((column) => (
             <Table.ColumnHeaderCell
@@ -110,11 +120,16 @@ const IssueTable: FC<IssueTableProps> = ({
           >
             <Table.Cell>
               <Flex align="center" justify="between">
-                <Link href={`/workspaces/${workspaceId}/issues/${issue.id}`}>{issue.title}</Link>
+                <Link href={`/workspaces/${workspaceId}/issues/${issue.id}`}>
+                  {issue.title}
+                </Link>
               </Flex>
             </Table.Cell>
             <Table.Cell>
               <StatusBadge status={issue.status} />
+            </Table.Cell>
+            <Table.Cell>
+              {workspaceName}
             </Table.Cell>
             <Table.Cell className="hidden md:table-cell">
               {issue.createdAt.toDateString()}
@@ -129,7 +144,9 @@ const IssueTable: FC<IssueTableProps> = ({
                     radius="full"
                     referrerPolicy="no-referrer"
                   />
-                ) : "Unassigned"}
+                ) : (
+                  "Unassigned"
+                )}
               </Table.Cell>
             )}
           </Table.Row>

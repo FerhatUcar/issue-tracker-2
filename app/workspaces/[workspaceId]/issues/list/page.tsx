@@ -25,18 +25,22 @@ const IssuesPage = async ({ searchParams, params }: Props) => {
     searchParams.assignedToUserId === "All"
       ? undefined
       : searchParams.assignedToUserId;
-  const columnNames = columns.map((column) => column.value);
-  const sortOrder: "asc" | "desc" =
-    searchParams.sortBy === "asc" ? "asc" : "desc";
 
-  const orderBy: {
-    [key: string]: "asc" | "desc";
-  } =
-    columnNames.includes(searchParams.orderBy) && searchParams.sortBy
-      ? { [searchParams.orderBy]: sortOrder }
-      : { createdAt: "desc" };
+  const validOrderFields = columns.map((column) => column.value);
+  const sortBy = searchParams.sortBy === "asc" ? "asc" : "desc";
+
+  let orderBy: any = { createdAt: "desc" }; // default fallback
+
+  if (validOrderFields.includes(searchParams.orderBy)) {
+    if (searchParams.orderBy === "workspaceName") {
+      orderBy = { Workspace: { name: sortBy } };
+    } else {
+      orderBy = { [searchParams.orderBy]: sortBy };
+    }
+  }
 
   const page = parseInt(searchParams.page) || 1;
+
   const issues = (await getPaginatedIssuesWithAssignedUser({
     where: { status, assignedToUserId },
     orderBy,
@@ -48,11 +52,24 @@ const IssuesPage = async ({ searchParams, params }: Props) => {
     where: { status, assignedToUserId },
   });
 
+  const workspace = await prisma.workspace.findUnique({
+    where: { id: params.workspaceId },
+    include: {
+      issues: true,
+      memberships: true,
+    },
+  });
+
   return (
     <Card>
       <Flex direction="column" gap="3">
         <IssueActions workspaceId={params.workspaceId} />
-        <IssueTable searchParams={searchParams} issuesWithAssigning={issues} workspaceId={params.workspaceId} />
+        <IssueTable
+          searchParams={searchParams}
+          issuesWithAssigning={issues}
+          workspaceName={workspace?.name ?? ""}
+          workspaceId={params.workspaceId}
+        />
         <Suspense>
           <Pagination itemCount={issueCount} pageSize={10} currentPage={page} />
         </Suspense>

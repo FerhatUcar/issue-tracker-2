@@ -1,6 +1,6 @@
 import prisma from "@/prisma/client";
 import { notFound } from "next/navigation";
-import { Box, Button, Flex, Grid, Heading } from "@radix-ui/themes";
+import { Button, Flex, Grid, Heading } from "@radix-ui/themes";
 import { getServerSession } from "next-auth";
 import authOptions from "@/app/auth/authOptions";
 import { IssueChart, LatestIssues, Summary } from "@/app/components";
