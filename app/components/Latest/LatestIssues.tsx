@@ -14,14 +14,13 @@ import Link from "next/link";
 import { AiFillPlusCircle } from "react-icons/ai";
 import { IoTicketOutline } from "react-icons/io5";
 import { getLatestIssues } from "@/app/helpers";
-import { type IssuesWithAssigning } from "@/app/types/types";
 
 type Props = {
   workspaceId: string;
 };
 
 export const LatestIssues = async ({ workspaceId }: Props) => {
-  const issues: IssuesWithAssigning = await getLatestIssues(workspaceId);
+  const issues = await getLatestIssues(workspaceId);
   const hasIssues = issues.length > 0;
 
   return (
