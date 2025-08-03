@@ -2,10 +2,11 @@ import { getServerSession } from "next-auth";
 import authOptions from "@/app/auth/authOptions";
 import prisma from "@/prisma/client";
 import { redirect } from "next/navigation";
-import { Card, Flex, Heading, Grid, Box } from "@radix-ui/themes";
+import { Card, Heading, Grid, Box, Flex } from "@radix-ui/themes";
 import { PlusIcon } from "@radix-ui/react-icons";
 import { CreateWorkspace } from "@/app/workspaces/_components/CreateWorkspace";
 import { WorkspaceCard } from "@/app/workspaces/_components";
+import { MdOutlineWorkspaces } from "react-icons/md";
 
 const WorkspacesPage = async () => {
   const session = await getServerSession(authOptions);
@@ -48,12 +49,12 @@ const WorkspacesPage = async () => {
   const workspaces = memberships.map((m) => m.workspace);
 
   return (
-    <main className="p-6">
-      <Flex justify="between" align="center" mb="4">
-        <Heading as="h1" size="6">
-          Jouw Workspaces
-        </Heading>
-      </Flex>
+    <>
+      <Heading as="h1" size="6" mb="4">
+        <Flex direction="row" gap="2" align="center">
+          <MdOutlineWorkspaces /> Workspaces
+        </Flex>
+      </Heading>
 
       <Grid
         columns={{ initial: "1", sm: "3", md: "3", lg: "4" }}
@@ -72,7 +73,7 @@ const WorkspacesPage = async () => {
           </Card>
         </CreateWorkspace>
       </Grid>
-    </main>
+    </>
   );
 };
 

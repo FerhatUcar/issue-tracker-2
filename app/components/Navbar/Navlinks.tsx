@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { Flex, Separator } from "@radix-ui/themes";
 import Link from "next/link";
 import classnames from "classnames";
-import { IoTicketOutline } from "react-icons/io5";
+import { MdOutlineWorkspaces } from "react-icons/md";
 
 export const NavLinks = () => {
   const currentPath = usePathname();
@@ -14,7 +14,7 @@ export const NavLinks = () => {
     {
       label: (
         <Flex direction="row" gap="2" align="center">
-          <IoTicketOutline /> Workspaces
+          <MdOutlineWorkspaces /> Workspaces
         </Flex>
       ),
       href: "/workspaces",

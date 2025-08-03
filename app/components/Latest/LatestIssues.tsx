@@ -17,12 +17,10 @@ import { getLatestIssues } from "@/app/helpers";
 import { type IssuesWithAssigning } from "@/app/types/types";
 
 type Props = {
-  params: {
-    workspaceId: string;
-  };
+  workspaceId: string;
 };
 
-export const LatestIssues = async ({ params: { workspaceId } }: Props) => {
+export const LatestIssues = async ({ workspaceId }: Props) => {
   const issues: IssuesWithAssigning = await getLatestIssues(workspaceId);
   const hasIssues = issues.length > 0;
 
@@ -94,7 +92,6 @@ export const LatestIssues = async ({ params: { workspaceId } }: Props) => {
           Create new issue
         </Button>
       </Link>
-
     </Card>
   );
 };

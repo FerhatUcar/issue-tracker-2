@@ -60,6 +60,7 @@ model User {
   assignedIssues Issue[]
   Comment        Comment[]
   Membership     Membership[]
+  Invite         Invite[]
 }
 
 model VerificationToken {
@@ -95,6 +96,7 @@ model Workspace {
   updatedAt   DateTime     @updatedAt
   memberships Membership[]
   issues      Issue[]
+  Invite      Invite[]
 }
 
 model Membership {
@@ -107,6 +109,18 @@ model Membership {
   workspace Workspace @relation(fields: [workspaceId], references: [id])
 
   @@unique([userId, workspaceId])
+}
+
+model Invite {
+  id          String    @id @default(cuid())
+  email       String
+  token       String    @unique
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  invitedById String
+  invitedBy   User      @relation(fields: [invitedById], references: [id])
+  createdAt   DateTime  @default(now())
+  accepted    Boolean   @default(false)
 }
 
 enum Status {

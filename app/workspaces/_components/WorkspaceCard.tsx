@@ -20,21 +20,23 @@ export const WorkspaceCard = ({ workspace }: Props) => (
     <Card className="w-full">
       <Flex direction="column" justify="between" className="h-full">
         <Box>
-          <Heading size="4">{workspace.name?.charAt(0).toUpperCase() + workspace.name?.slice(1)}</Heading>
+          <Heading size="4">
+            {workspace.name?.charAt(0).toUpperCase() + workspace.name?.slice(1)}
+          </Heading>
           <Text size="2" color="gray">
             {workspace._count?.issues ?? 0} issue(s)
           </Text>
         </Box>
 
         <Flex justify="end" gap="1" mt="auto">
-          {workspace.memberships?.map((m, i) => (
+          {workspace.memberships?.map(({ user }, i) => (
             <Avatar
               key={i}
               size="1"
               fallback="?"
               radius="full"
-              src={m.user.image ?? ""}
-              title={m.user.name ?? ""}
+              src={user.image ?? ""}
+              title={user.name ?? ""}
             />
           ))}
         </Flex>
