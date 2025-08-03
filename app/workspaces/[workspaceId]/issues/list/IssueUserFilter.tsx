@@ -1,12 +1,12 @@
 "use client";
 
-import { Flex, Select } from "@radix-ui/themes";
 import React from "react";
+import { Flex, Select } from "@radix-ui/themes";
 import { Skeleton } from "@/app/components";
 import { deduplicateByProperty } from "@/app/helpers";
 import { useDataQuery } from "@/app/hooks";
 import { User } from "next-auth";
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 type UniqueUserIssues = {
   assignedToUserId: string | null;
@@ -23,6 +23,7 @@ type Props = {
 
 const IssueUserFilter = ({ workspaceId }: Props) => {
   const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
   const {
     data: issues,
@@ -79,8 +80,7 @@ const IssueUserFilter = ({ workspaceId }: Props) => {
       params.append("status", searchParams.get("status")!);
     }
 
-    const query = params.size ? "?" + params.toString() : "";
-    router.push("/issues/list" + query);
+    router.push(`${pathname}?${params.toString()}`);
   };
 
   return (
