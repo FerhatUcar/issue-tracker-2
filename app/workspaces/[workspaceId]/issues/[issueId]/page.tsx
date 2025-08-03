@@ -53,7 +53,7 @@ const IssueDetailPage = async ({ params }: Props) => {
   }
 
   const isMember = issue.Workspace?.memberships.some(
-    (membership) => membership.user.email === session?.user?.email
+    (membership) => membership.user.email === session?.user?.email,
   );
 
   if (!isMember) {
@@ -63,7 +63,7 @@ const IssueDetailPage = async ({ params }: Props) => {
   return (
     <Grid columns={{ initial: "1", sm: "5" }} gap="4">
       <Box className="md:col-span-4">
-        <IssueDetails issue={issue} />
+        <IssueDetails issue={issue} workspaceId={params.workspaceId} />
         <Comments issueId={issue.id} />
       </Box>
 
