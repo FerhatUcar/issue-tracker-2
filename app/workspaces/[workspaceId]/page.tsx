@@ -36,7 +36,9 @@ export default async function WorkspacePage({ params: {workspaceId} }: Props) {
   return (
     <>
       <Flex justify="between" align="center" mb="4">
-        <Heading size="4">{workspace.name}</Heading>
+        <Heading size="4">
+          {workspace.name?.charAt(0).toUpperCase() + workspace.name?.slice(1)}
+        </Heading>
         <InviteMember workspaceId={workspaceId}>
           <Button variant="soft" size="3">
             <PlusIcon /> Invite Member

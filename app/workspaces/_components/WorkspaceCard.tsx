@@ -28,8 +28,12 @@ export const WorkspaceCard = ({ workspace }: Props) => (
           </Text>
         </Box>
 
-        <Flex justify="end" gap="1" mt="auto">
-          {workspace.memberships?.map(({ user }, i) => (
+        <Flex
+          justify="end"
+          mt="auto"
+          style={{ position: "relative", height: "24px" }}
+        >
+          {workspace.memberships?.slice(0, 4).map(({ user }, i) => (
             <Avatar
               key={i}
               size="1"
@@ -37,8 +41,34 @@ export const WorkspaceCard = ({ workspace }: Props) => (
               radius="full"
               src={user.image ?? ""}
               title={user.name ?? ""}
+              style={{
+                position: "absolute",
+                right: `${i * 16}px`,
+                zIndex: 10 - i,
+                border: "1px solid grey",
+              }}
             />
           ))}
+
+          {workspace.memberships && workspace.memberships.length > 4 && (
+            <Flex
+              align="center"
+              justify="center"
+              style={{
+                position: "absolute",
+                right: `${4 * 16}px`,
+                zIndex: 0,
+                width: "24px",
+                height: "24px",
+                fontSize: "12px",
+                backgroundColor: "#ccc",
+                borderRadius: "9999px",
+                border: "2px solid white",
+              }}
+            >
+              +{workspace.memberships.length - 4}
+            </Flex>
+          )}
         </Flex>
       </Flex>
     </Card>

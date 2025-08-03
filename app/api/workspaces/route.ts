@@ -45,6 +45,17 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Naam is verplicht" }, { status: 400 });
   }
 
+  const existingWorkspace = await prisma.workspace.findFirst({
+    where: { name },
+  });
+
+  if (existingWorkspace) {
+    return NextResponse.json(
+      { error: "Workspace already exists" },
+      { status: 400 },
+    );
+  }
+
   const slug = slugify(name, { lower: true, strict: true });
 
   try {

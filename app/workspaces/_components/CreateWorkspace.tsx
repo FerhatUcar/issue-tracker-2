@@ -7,6 +7,8 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCreateWorkspace } from "@/app/hooks/use-create-workspace";
 import { useRouter } from "next/navigation";
+import axios from "axios";
+import { toast } from "react-hot-toast";
 
 const schema = z.object({
   name: z.string().min(3, "Naam moet minstens 3 tekens bevatten"),
@@ -22,6 +24,7 @@ export const CreateWorkspace = ({ children }: PropsWithChildren) => {
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors, isSubmitting },
   } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -36,7 +39,14 @@ export const CreateWorkspace = ({ children }: PropsWithChildren) => {
         },
       });
     } catch (err) {
-      console.error("Fout bij aanmaken van workspace:", err);
+      if (axios.isAxiosError(err) && err.response?.data?.error) {
+        setError("name", {
+          type: "manual",
+          message: "Er bestaat al een workspace met deze naam.",
+        });
+      } else {
+        toast.error("Onverwachte fout bij aanmaken");
+      }
     }
   });
 
