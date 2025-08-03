@@ -18,14 +18,14 @@ export const Accepted = ({ invite }: Props) => (
       <Flex direction="column" align="center" gap="4" className="p-6">
         <CheckCircledIcon className="w-16 h-16 text-green-500" />
         <Heading size="6" className="text-center">
-          Uitnodiging Al Geaccepteerd
+          Invitation already accepted
         </Heading>
         <Text size="3" className="text-center text-gray-600 dark:text-gray-400">
-          Je bent al lid van <strong>{invite.workspace.name}</strong>.
+          You are already a member of <strong>{invite.workspace.name}</strong>.
         </Text>
         <Button asChild>
           <Link href={`/workspaces/${invite.workspaceId}`}>
-            Ga naar Workspace
+            Go to Workspace
           </Link>
         </Button>
       </Flex>
