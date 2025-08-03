@@ -2,11 +2,10 @@ import { getServerSession } from "next-auth";
 import authOptions from "@/app/auth/authOptions";
 import prisma from "@/prisma/client";
 import { redirect } from "next/navigation";
-import { Card, Flex, Heading, Button } from "@radix-ui/themes";
+import { Card, Flex, Heading, Grid, Box } from "@radix-ui/themes";
 import { PlusIcon } from "@radix-ui/react-icons";
 import { CreateWorkspace } from "@/app/workspaces/_components/CreateWorkspace";
 import { WorkspaceCard } from "@/app/workspaces/_components";
-import { Workspace } from "@prisma/client";
 
 const WorkspacesPage = async () => {
   const session = await getServerSession(authOptions);
@@ -54,28 +53,25 @@ const WorkspacesPage = async () => {
         <Heading as="h1" size="6">
           Jouw Workspaces
         </Heading>
-        <CreateWorkspace>
-          <Button variant="soft">
-            <PlusIcon /> New workspace
-          </Button>
-        </CreateWorkspace>
       </Flex>
 
-      <Flex gap="4" wrap="wrap">
-        {workspaces.length === 0 ? (
-          <Card className="w-[250px] h-[150px] flex items-center justify-center border-dashed border-2 border-gray-400 text-gray-500">
-            <CreateWorkspace>
-              <Button variant="ghost" size="4">
-                <PlusIcon /> New Workspace
-              </Button>
-            </CreateWorkspace>
+      <Grid
+        columns={{ initial: "1", sm: "3", md: "3", lg: "4" }}
+        gap="4"
+        width="auto"
+      >
+        {workspaces.map((workspace) => (
+          <WorkspaceCard key={workspace.id} workspace={workspace} />
+        ))}
+
+        <CreateWorkspace>
+          <Card className="cursor-pointer">
+            <Box className="flex justify-center items-center h-full">
+              <PlusIcon className="w-14 h-14" />
+            </Box>
           </Card>
-        ) : (
-          workspaces.map((workspace) => (
-            <WorkspaceCard key={workspace.id} workspace={workspace} />
-          ))
-        )}
-      </Flex>
+        </CreateWorkspace>
+      </Grid>
     </main>
   );
 };
