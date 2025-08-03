@@ -1,18 +1,13 @@
 "use client";
 
 import { useState, PropsWithChildren } from "react";
-import {
-  Dialog,
-  Button,
-  Flex,
-  TextField,
-  Text,
-} from "@radix-ui/themes";
+import { Dialog, Button, Flex, TextField, Text } from "@radix-ui/themes";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { toast } from "react-hot-toast";
+import { useDataQuery, useInviteMember } from "@/app/hooks";
 
 const schema = z.object({
   email: z.string().email("Voer een geldig e-mailadres in"),
@@ -25,7 +20,13 @@ type Props = PropsWithChildren<{
 }>;
 
 export const InviteMember = ({ workspaceId, children }: Props) => {
+  const { mutateAsync } = useInviteMember();
+  const { data: members = [] } = useDataQuery<{
+    email: string;
+    accepted: boolean;
+  }>("workspace-members", workspaceId);
   const [open, setOpen] = useState(false);
+  const [apiError, setApiError] = useState("");
 
   const {
     register,
@@ -37,14 +38,40 @@ export const InviteMember = ({ workspaceId, children }: Props) => {
   });
 
   const onSubmit = handleSubmit(async (data) => {
+    setApiError("");
+
+    const existing = members.find(({ email }) => email === data.email);
+
+    if (existing?.accepted) {
+      setApiError("Deze gebruiker is al lid van deze workspace.");
+      return;
+    }
+
+    if (existing && !existing.accepted) {
+      setApiError(
+        "Deze gebruiker is al uitgenodigd maar heeft de uitnodiging nog niet geaccepteerd.",
+      );
+      return;
+    }
+
     try {
-      await axios.post(`/api/workspaces/${workspaceId}/invite`, data);
-      toast.success("Uitnodiging verstuurd!");
-      setOpen(false);
-      reset();
+      await mutateAsync(
+        { workspaceId, email: data.email },
+        {
+          onSuccess: () => {
+            toast.success("Uitnodiging verstuurd!");
+            setOpen(false);
+            reset();
+          },
+        },
+      );
     } catch (err) {
-      toast.error("Fout bij versturen van uitnodiging");
-      console.error(err);
+      // backup check when backend wants also to verify a user is added
+      if (axios.isAxiosError(err) && err.response?.data?.error) {
+        setApiError(err.response.data.error);
+      } else {
+        toast.error("Fout bij versturen van uitnodiging");
+      }
     }
   });
 
@@ -67,6 +94,12 @@ export const InviteMember = ({ workspaceId, children }: Props) => {
             {errors.email && (
               <Text color="red" size="1">
                 {errors.email.message}
+              </Text>
+            )}
+
+            {apiError && (
+              <Text color="red" size="1">
+                {apiError}
               </Text>
             )}
 

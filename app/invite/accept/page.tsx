@@ -24,7 +24,6 @@ export default async function AcceptInvitePage({
     );
   }
 
-  // check of user al lid is
   const existing = await prisma.membership.findFirst({
     where: {
       user: { email: session.user.email },

@@ -34,7 +34,7 @@ export default async function WorkspacePage({ params: {workspaceId} }: Props) {
   const issueCounts = await getIssueStatusCounts(workspaceId);
 
   return (
-    <Box>
+    <>
       <Flex justify="between" align="center" mb="4">
         <Heading size="4">{workspace.name}</Heading>
         <InviteMember workspaceId={workspaceId}>
@@ -51,6 +51,6 @@ export default async function WorkspacePage({ params: {workspaceId} }: Props) {
         </Flex>
         <LatestIssues workspaceId={workspaceId} />
       </Grid>
-    </Box>
+    </>
   );
 }
