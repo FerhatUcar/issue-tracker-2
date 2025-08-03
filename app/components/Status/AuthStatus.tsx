@@ -101,7 +101,6 @@ export const AuthStatus = ({ userId, count }: Props) => {
           </DropdownMenu.Item>
         </Link>
 
-        {/* Optioneel: behoud ook de workspace-specifieke link als je in een workspace bent */}
         {params.workspaceId && (
           <Link href={`/workspaces/${params.workspaceId}/issues/list?assignedToUserId=${userId}`}>
             <DropdownMenu.Item>

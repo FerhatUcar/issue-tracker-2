@@ -73,7 +73,7 @@ export async function POST(
       react: `
         Je bent uitgenodigd om deel te nemen aan een workspace in onze Rocket issues app.
         
-        <a href="${inviteUrl}">Accepteer uitnodiging</a>
+        Link: ${inviteUrl}
       `,
     });
 

@@ -3,8 +3,9 @@ import authOptions from "@/app/auth/authOptions";
 import { redirect } from "next/navigation";
 import prisma from "@/prisma/client";
 import { Card, Flex, Text, Box, Heading, Button } from "@radix-ui/themes";
-import { CheckCircledIcon, CrossCircledIcon } from "@radix-ui/react-icons";
+import { CheckCircledIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
+import { Accepted, NoInvite } from "@/app/invite/_components";
 
 type Props = {
   searchParams: {
@@ -13,6 +14,7 @@ type Props = {
 };
 
 export default async function AcceptInvitePage({ searchParams }: Props) {
+  const session = await getServerSession(authOptions);
   const invite = await prisma.invite.findUnique({
     where: { token: searchParams.token },
     include: {
@@ -31,62 +33,18 @@ export default async function AcceptInvitePage({ searchParams }: Props) {
     },
   });
 
-  if (!invite) {
-    return (
-      <Box className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-        <Card className="max-w-md w-full mx-4">
-          <Flex direction="column" align="center" gap="4" className="p-6">
-            <CrossCircledIcon className="w-16 h-16 text-red-500" />
-            <Heading size="6" className="text-center">
-              Ongeldige Uitnodiging
-            </Heading>
-            <Text
-              size="3"
-              className="text-center text-gray-600 dark:text-gray-400"
-            >
-              Deze uitnodiging bestaat niet of is verlopen.
-            </Text>
-            <Button asChild>
-              <Link href="/">Terug naar Home</Link>
-            </Button>
-          </Flex>
-        </Card>
-      </Box>
-    );
-  }
-
-  if (invite.accepted) {
-    return (
-      <Box className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-        <Card className="max-w-md w-full mx-4">
-          <Flex direction="column" align="center" gap="4" className="p-6">
-            <CheckCircledIcon className="w-16 h-16 text-green-500" />
-            <Heading size="6" className="text-center">
-              Uitnodiging Al Geaccepteerd
-            </Heading>
-            <Text
-              size="3"
-              className="text-center text-gray-600 dark:text-gray-400"
-            >
-              Je bent al lid van <strong>{invite.workspace.name}</strong>.
-            </Text>
-            <Button asChild>
-              <Link href={`/workspaces/${invite.workspaceId}`}>
-                Ga naar Workspace
-              </Link>
-            </Button>
-          </Flex>
-        </Card>
-      </Box>
-    );
-  }
-
-  const session = await getServerSession(authOptions);
-
   if (!session?.user?.email) {
     redirect(
       "/api/auth/signin?callbackUrl=/invite/accept?token=" + searchParams.token,
     );
+  }
+
+  if (!invite) {
+    return <NoInvite />;
+  }
+
+  if (invite.accepted) {
+    return <Accepted invite={invite} />;
   }
 
   const existing = await prisma.membership.findFirst({
@@ -111,7 +69,7 @@ export default async function AcceptInvitePage({ searchParams }: Props) {
   });
 
   return (
-    <Box className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+    <Box className="flex items-center justify-center mt-4">
       <Card className="max-w-md w-full mx-4">
         <Flex direction="column" align="center" gap="4" className="p-6">
           <CheckCircledIcon className="w-16 h-16 text-green-500" />
