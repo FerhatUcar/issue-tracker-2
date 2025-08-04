@@ -68,7 +68,8 @@ export const AuthStatus = ({ userId, count }: Props) => {
           )}
         </Box>
       </DropdownMenu.Trigger>
-      <DropdownMenu.Content>
+
+      <DropdownMenu.Content side="left" align="start">
         <DropdownMenu.Label>
           <Flex direction="row" align="center" gap="2">
             <AvatarIcon />
@@ -85,21 +86,25 @@ export const AuthStatus = ({ userId, count }: Props) => {
 
         <Link href={`/issues/list?assignedToUserId=${userId}`}>
           <DropdownMenu.Item>
-            <Flex justify="between" width="100%">
-              <Flex direction="row" align="center" gap="2">
-                <IoTicketOutline />
-                <Text>All my issues</Text>
-                {count >= 1 && (
-                  <Badge
-                    variant="solid"
-                    radius="full"
-                    color="red"
-                    className="h-4 w-3 justify-center"
-                  >
-                    {count}
-                  </Badge>
-                )}
-              </Flex>
+            <Flex
+              justify="between"
+              width="100%"
+              direction="row"
+              align="center"
+              gap="2"
+            >
+              <IoTicketOutline />
+              <Text>All my issues</Text>
+              {count >= 1 && (
+                <Badge
+                  variant="solid"
+                  radius="full"
+                  color="red"
+                  className="h-4 w-3 justify-center"
+                >
+                  {count}
+                </Badge>
+              )}
             </Flex>
           </DropdownMenu.Item>
         </Link>
@@ -109,11 +114,15 @@ export const AuthStatus = ({ userId, count }: Props) => {
             href={`/workspaces/${workspaceIdString}/issues/list?assignedToUserId=${userId}`}
           >
             <DropdownMenu.Item>
-              <Flex justify="between" width="100%">
-                <Flex direction="row" align="center" gap="2">
-                  <IoTicketOutline />
-                  <Text>Workspace issues</Text>
-                </Flex>
+              <Flex
+                justify="between"
+                width="100%"
+                direction="row"
+                align="center"
+                gap="2"
+              >
+                <IoTicketOutline />
+                <Text>Workspace issues</Text>
               </Flex>
             </DropdownMenu.Item>
           </Link>

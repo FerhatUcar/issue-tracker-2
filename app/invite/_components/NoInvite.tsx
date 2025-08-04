@@ -9,13 +9,13 @@ export const NoInvite = () => (
       <Flex direction="column" align="center" gap="4" className="p-6">
         <CrossCircledIcon className="w-16 h-16 text-red-500" />
         <Heading size="6" className="text-center">
-          Ongeldige Uitnodiging
+          Invalid Invitation
         </Heading>
         <Text size="3" className="text-center text-gray-600 dark:text-gray-400">
-          Deze uitnodiging bestaat niet of is verlopen.
+          This invitation does not exist or has expired.
         </Text>
         <Button asChild>
-          <Link href="/">Terug naar Home</Link>
+          <Link href="/">Back to home</Link>
         </Button>
       </Flex>
     </Card>

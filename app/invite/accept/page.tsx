@@ -2,7 +2,7 @@ import { getServerSession } from "next-auth";
 import authOptions from "@/app/auth/authOptions";
 import { redirect } from "next/navigation";
 import prisma from "@/prisma/client";
-import { Card, Flex, Text, Box, Heading, Button } from "@radix-ui/themes";
+import { Box, Button, Card, Flex, Heading, Text } from "@radix-ui/themes";
 import { CheckCircledIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
 import { Accepted, NoInvite } from "@/app/invite/_components";
@@ -81,18 +81,18 @@ export default async function AcceptInvitePage({ searchParams }: Props) {
               size="3"
               className="text-gray-600 dark:text-gray-400 block mb-2"
             >
-              Je bent succesvol toegevoegd door{" "}
+              You have been successfully added by{" "}
               <strong>{invite.invitedBy.name || invite.invitedBy.email}</strong>
               .
             </Text>
             <Text size="2" className="text-gray-500">
-              Je kunt nu beginnen met samenwerken in deze workspace.
+              You can now start collaborating in this workspace.
             </Text>
           </Box>
           <Flex gap="2" className="w-full">
             <Button asChild className="flex-1">
               <Link href={`/workspaces/${invite.workspaceId}`}>
-                Ga naar Workspace
+                Go to Workspace
               </Link>
             </Button>
             <Button variant="soft" asChild className="flex-1">

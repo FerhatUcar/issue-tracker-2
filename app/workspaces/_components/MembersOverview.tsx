@@ -1,4 +1,4 @@
-import { Avatar, Badge, Button, Card, Flex, Text } from "@radix-ui/themes";
+import { Avatar, Badge, Box, Button, Card, Flex, Text } from "@radix-ui/themes";
 import prisma from "@/prisma/client";
 import { getServerSession } from "next-auth";
 import authOptions from "@/app/auth/authOptions";
@@ -84,11 +84,13 @@ export const MembersOverview = async ({ workspaceId }: Props) => {
                 )}
 
                 {user.id !== currentUser?.id && (
-                  <DeleteMember
-                    userId={user.id}
-                    userName={user.name ?? "Member"}
-                    workspaceId={workspaceId}
-                  />
+                  <Box className="mr-4">
+                    <DeleteMember
+                      userId={user.id}
+                      userName={user.name ?? "Member"}
+                      workspaceId={workspaceId}
+                    />
+                  </Box>
                 )}
               </Flex>
             </Flex>

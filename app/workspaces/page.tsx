@@ -3,7 +3,7 @@ import authOptions from "@/app/auth/authOptions";
 import prisma from "@/prisma/client";
 import { redirect } from "next/navigation";
 import { Box, Card, Flex, Grid, Heading } from "@radix-ui/themes";
-import { PlusIcon } from "@radix-ui/react-icons";
+import { HiOutlinePlus } from "react-icons/hi2";
 import { CreateWorkspace } from "@/app/workspaces/_components/CreateWorkspace";
 import { WorkspaceCard } from "@/app/workspaces/_components";
 import { MdOutlineWorkspaces } from "react-icons/md";
@@ -73,7 +73,7 @@ const WorkspacesPage = async () => {
         <CreateWorkspace>
           <Card className="cursor-pointer">
             <Box className="flex justify-center items-center h-full">
-              <PlusIcon className="w-14 h-14" />
+              <HiOutlinePlus className="w-10 h-10" />
             </Box>
           </Card>
         </CreateWorkspace>

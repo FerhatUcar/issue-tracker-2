@@ -1,6 +1,6 @@
 "use client";
 
-import { PropsWithChildren, useState } from "react";
+import { Dispatch, PropsWithChildren, SetStateAction, useState } from "react";
 import { Button, Dialog, Flex, Text, TextField } from "@radix-ui/themes";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -26,15 +26,21 @@ type ApiErrorResponse = {
 
 type Props = PropsWithChildren<{
   workspaceId: string;
+  open: boolean;
+  onOpenChange: Dispatch<SetStateAction<boolean>>;
 }>;
 
-export const InviteMember = ({ workspaceId, children }: Props) => {
+export const InviteMember = ({
+  workspaceId,
+  open,
+  onOpenChange,
+  children,
+}: Props) => {
   const { mutateAsync, isLoading, isError } = useInviteMember();
   const { data: members = [] } = useDataQuery<Member>(
     "workspace-members",
     workspaceId,
   );
-  const [open, setOpen] = useState(false);
   const [apiError, setApiError] = useState("");
 
   const {
@@ -69,7 +75,7 @@ export const InviteMember = ({ workspaceId, children }: Props) => {
         {
           onSuccess: () => {
             toast.success("Invitation sent!");
-            setOpen(false);
+            onOpenChange(false);
             reset();
           },
         },
@@ -91,13 +97,13 @@ export const InviteMember = ({ workspaceId, children }: Props) => {
   });
 
   const handleCancel = () => {
-    setOpen(false);
+    onOpenChange(false);
     reset();
     setApiError("");
   };
 
   return (
-    <Dialog.Root open={open} onOpenChange={setOpen}>
+    <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Trigger>{children}</Dialog.Trigger>
 
       <Dialog.Content style={{ maxWidth: 400 }}>
