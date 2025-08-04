@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth";
 import authOptions from "@/app/auth/authOptions";
 import { notFound } from "next/navigation";
 import { PiCrownDuotone } from "react-icons/pi";
+import { DeleteMember } from "@/app/workspaces/_components/DeleteMember";
 import Link from "next/link";
 import { IoMdArrowRoundBack } from "react-icons/io";
 
@@ -32,6 +33,11 @@ export const MembersOverview = async ({ workspaceId }: Props) => {
   if (!workspace) {
     notFound();
   }
+
+  const currentUser = await prisma.user.findUnique({
+    where: { email: session.user.email },
+    select: { id: true },
+  });
 
   return (
     <>
@@ -68,13 +74,23 @@ export const MembersOverview = async ({ workspaceId }: Props) => {
                 </Flex>
               </Flex>
 
-              {role === "ADMIN" && (
-                <Badge color="orange" size="2" variant="solid">
-                  <Flex align="center" gap="1">
-                    <PiCrownDuotone size="20" /> Admin
-                  </Flex>
-                </Badge>
-              )}
+              <Flex align="center" gap="2">
+                {role === "ADMIN" && (
+                  <Badge color="orange" size="2" variant="solid">
+                    <Flex align="center" gap="1">
+                      <PiCrownDuotone size="20" /> Admin
+                    </Flex>
+                  </Badge>
+                )}
+
+                {user.id !== currentUser?.id && (
+                  <DeleteMember
+                    userId={user.id}
+                    userName={user.name ?? "Member"}
+                    workspaceId={workspaceId}
+                  />
+                )}
+              </Flex>
             </Flex>
           </Card>
         ))}

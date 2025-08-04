@@ -1,6 +1,6 @@
 "use client";
 
-import React, { MouseEventHandler } from "react";
+import React, { MouseEventHandler, ReactNode } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import {
   Box,
@@ -35,11 +35,17 @@ type Props = {
    * Type: MouseEventHandler<HTMLButtonElement> | undefined
    */
   onConfirm: MouseEventHandler<HTMLButtonElement> | undefined;
+
+  /**
+   * Represents an icon or symbol used to represent a visual object.
+   */
+  icon?: ReactNode;
 };
 
 export const ConfirmationDialog = ({
   title = "Are you sure?",
   description = "You can't revert this action.",
+  icon = <FaTrash />,
   onConfirm,
 }: Props) => {
   return (
@@ -52,7 +58,7 @@ export const ConfirmationDialog = ({
           className="text-gray-800 dark:text-white hover:bg-transparent"
           title="Delete"
         >
-          <FaTrash />
+          {icon}
         </IconButton>
       </Dialog.Trigger>
 

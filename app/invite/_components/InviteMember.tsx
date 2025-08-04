@@ -29,7 +29,7 @@ type Props = PropsWithChildren<{
 }>;
 
 export const InviteMember = ({ workspaceId, children }: Props) => {
-  const { mutateAsync } = useInviteMember();
+  const { mutateAsync, isLoading, isError } = useInviteMember();
   const { data: members = [] } = useDataQuery<Member>(
     "workspace-members",
     workspaceId,
@@ -40,7 +40,7 @@ export const InviteMember = ({ workspaceId, children }: Props) => {
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
     reset,
   } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -108,7 +108,7 @@ export const InviteMember = ({ workspaceId, children }: Props) => {
           <Flex direction="column" gap="3">
             <TextField.Root>
               <TextField.Input
-                placeholder="E-mailadres van gebruiker"
+                placeholder="User's email address"
                 {...register("email")}
               />
             </TextField.Root>
@@ -125,14 +125,21 @@ export const InviteMember = ({ workspaceId, children }: Props) => {
               </Text>
             )}
 
+            {isError && !apiError && (
+              <Text color="red" size="1">
+                Something went wrong while sending the invitation.
+              </Text>
+            )}
+
             <Flex gap="4" mt="4" justify="end" align="center">
               <Dialog.Close onClick={handleCancel}>
                 <Button type="button" variant="ghost">
                   Cancel
                 </Button>
               </Dialog.Close>
-              <Button type="submit" disabled={isSubmitting}>
-                Invite
+
+              <Button type="submit" disabled={isLoading}>
+                {isLoading ? "Sending..." : "Invite"}
               </Button>
             </Flex>
           </Flex>
