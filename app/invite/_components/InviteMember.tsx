@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, PropsWithChildren } from "react";
-import { Dialog, Button, Flex, TextField, Text } from "@radix-ui/themes";
+import { PropsWithChildren, useState } from "react";
+import { Button, Dialog, Flex, Text, TextField } from "@radix-ui/themes";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import axios from "axios";
+import { AxiosError } from "axios";
 import { toast } from "react-hot-toast";
 import { useDataQuery, useInviteMember } from "@/app/hooks";
 
@@ -15,16 +15,25 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>;
 
+type Member = {
+  email: string;
+  accepted: boolean;
+};
+
+type ApiErrorResponse = {
+  error: string;
+};
+
 type Props = PropsWithChildren<{
   workspaceId: string;
 }>;
 
 export const InviteMember = ({ workspaceId, children }: Props) => {
   const { mutateAsync } = useInviteMember();
-  const { data: members = [] } = useDataQuery<{
-    email: string;
-    accepted: boolean;
-  }>("workspace-members", workspaceId);
+  const { data: members = [] } = useDataQuery<Member>(
+    "workspace-members",
+    workspaceId,
+  );
   const [open, setOpen] = useState(false);
   const [apiError, setApiError] = useState("");
 
@@ -43,13 +52,13 @@ export const InviteMember = ({ workspaceId, children }: Props) => {
     const existing = members.find(({ email }) => email === data.email);
 
     if (existing?.accepted) {
-      setApiError("Deze gebruiker is al lid van deze workspace.");
+      setApiError("This user is already a member of this workspace.");
       return;
     }
 
     if (existing && !existing.accepted) {
       setApiError(
-        "Deze gebruiker is al uitgenodigd maar heeft de uitnodiging nog niet geaccepteerd.",
+        "This user has already been invited but has not yet accepted the invitation.",
       );
       return;
     }
@@ -59,21 +68,33 @@ export const InviteMember = ({ workspaceId, children }: Props) => {
         { workspaceId, email: data.email },
         {
           onSuccess: () => {
-            toast.success("Uitnodiging verstuurd!");
+            toast.success("Invitation sent!");
             setOpen(false);
             reset();
           },
         },
       );
-    } catch (err) {
+    } catch (err: unknown) {
       // backup check when backend wants also to verify a user is added
-      if (axios.isAxiosError(err) && err.response?.data?.error) {
-        setApiError(err.response.data.error);
+      if (err instanceof AxiosError && err.response?.data) {
+        const errorData = err.response.data as ApiErrorResponse;
+
+        if (errorData.error) {
+          setApiError(errorData.error);
+        } else {
+          toast.error("Error sending invitation");
+        }
       } else {
-        toast.error("Fout bij versturen van uitnodiging");
+        toast.error("Error sending invitation");
       }
     }
   });
+
+  const handleCancel = () => {
+    setOpen(false);
+    reset();
+    setApiError("");
+  };
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
@@ -82,6 +103,7 @@ export const InviteMember = ({ workspaceId, children }: Props) => {
       <Dialog.Content style={{ maxWidth: 400 }}>
         <Dialog.Title>Lid uitnodigen</Dialog.Title>
 
+        {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
         <form onSubmit={onSubmit}>
           <Flex direction="column" gap="3">
             <TextField.Root>
@@ -104,7 +126,7 @@ export const InviteMember = ({ workspaceId, children }: Props) => {
             )}
 
             <Flex gap="4" mt="4" justify="end" align="center">
-              <Dialog.Close>
+              <Dialog.Close onClick={handleCancel}>
                 <Button type="button" variant="ghost">
                   Annuleer
                 </Button>

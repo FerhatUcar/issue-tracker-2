@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
+import { Comment } from "@prisma/client";
 
 type Payload = {
   content: string;
@@ -9,12 +10,12 @@ type Payload = {
 export const useCommentMutation = () => {
   const queryClient = useQueryClient();
 
-  const createComment = useMutation({
+  const createComment = useMutation<Comment, Error, Payload>({
     mutationFn: async (data: Payload) =>
-      axios.post("/api/comments", data).then((res) => res.data),
+      axios.post<Comment>("/api/comments", data).then((res) => res.data),
 
     onSuccess: (_data, { issueId }) => {
-      queryClient.invalidateQueries({ queryKey: ["comments", issueId] });
+      void queryClient.invalidateQueries({ queryKey: ["comments", issueId] });
     },
   });
 
@@ -24,23 +25,25 @@ export const useCommentMutation = () => {
     { commentId: number; issueId: number }
   >({
     mutationFn: async ({ commentId }) =>
-      axios.delete(`/api/comments/${commentId}`).then((res) => res.data),
+      axios.delete<void>(`/api/comments/${commentId}`).then((res) => res.data),
 
     onSuccess: (_data, { issueId }) => {
-      queryClient.invalidateQueries({ queryKey: ["comments", issueId] });
+      void queryClient.invalidateQueries({ queryKey: ["comments", issueId] });
     },
   });
 
   const updateComment = useMutation<
-    string,
+    Comment,
     Error,
     { id: number; content: string; issueId: number }
   >({
     mutationFn: async ({ id, content }) =>
-      axios.patch(`/api/comments/${id}`, { content }).then((res) => res.data),
+      axios
+        .patch<Comment>(`/api/comments/${id}`, { content })
+        .then((res) => res.data),
 
     onSuccess: (_data, { issueId }) => {
-      queryClient.invalidateQueries({ queryKey: ["comments", issueId] });
+      void queryClient.invalidateQueries({ queryKey: ["comments", issueId] });
     },
   });
 

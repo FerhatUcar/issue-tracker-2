@@ -7,12 +7,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
 import { Issue } from "@prisma/client";
 import {
-  Card,
   Button,
   Callout,
+  Card,
   Flex,
-  TextField,
   Select,
+  TextField,
 } from "@radix-ui/themes";
 import "easymde/dist/easymde.min.css";
 import { useParams, useRouter } from "next/navigation";
@@ -22,8 +22,8 @@ import SimpleMDE from "react-simplemde-editor";
 import type { Options } from "easymde";
 import { AiOutlineSend } from "react-icons/ai";
 import {
-  useIssueMutation,
   useDataQuery,
+  useIssueMutation,
   usePushNotificationMutation,
 } from "@/app/hooks";
 import { User } from "next-auth";
@@ -51,7 +51,7 @@ const IssueForm = ({ issue }: Props) => {
 
   const { data: users, isLoading: isLoadingUsers } = useDataQuery<User>(
     "users",
-    workspaceId
+    workspaceId,
   );
 
   const {
@@ -84,16 +84,16 @@ const IssueForm = ({ issue }: Props) => {
       await mutateAsync(payload, {
         onSuccess: () => {
           if (assignedToUserId) {
-            mutatePush({
+            void mutatePush({
               token: pushToken,
-              title: "🎯 Je bent toegewezen",
-              body: `Je bent toegewezen aan issue #${data.title ?? "nieuw"}`,
+              title: "🎯 You've been assigned",
+              body: `You've been assigned to issue #${data.title ?? "new"}`,
             });
           } else {
-            mutatePush({
+            void mutatePush({
               token: pushToken,
-              title: "🎫 Nieuw ticket aangemaakt",
-              body: `Een nieuw issue is aangemaakt: "${data.title}"`,
+              title: "🎫 New ticket created",
+              body: `A new issue has been created: "${data.title}"`,
             });
           }
 
@@ -103,8 +103,10 @@ const IssueForm = ({ issue }: Props) => {
           router.refresh();
         },
       });
-    } catch (error) {
-      toast.error(`An unexpected error occurred: ${error}`);
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : "An unexpected error occurred";
+      toast.error(`An unexpected error occurred: ${errorMessage}`);
     }
   });
 
@@ -118,6 +120,7 @@ const IssueForm = ({ issue }: Props) => {
         </Callout.Root>
       )}
 
+      {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
       <form className="space-y-4" onSubmit={onSubmit}>
         <TextField.Root>
           <Flex align="center">

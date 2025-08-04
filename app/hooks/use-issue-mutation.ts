@@ -7,33 +7,33 @@ type Payload = Partial<Issue> & { id?: number };
 export const useIssueMutation = () => {
   const queryClient = useQueryClient();
 
-  const upsertMutation = useMutation({
+  const upsertMutation = useMutation<Issue, Error, Payload>({
     mutationFn: async (data: Payload) => {
       const { id, ...rest } = data;
 
       if (id) {
         // Update issue
         return axios
-          .patch(`/api/issues/${id}`, { ...rest })
+          .patch<Issue>(`/api/issues/${id}`, { ...rest })
           .then((res) => res.data);
       } else {
         // Create issue
         return axios
-          .post(`/api/issues`, { ...rest })
+          .post<Issue>(`/api/issues`, { ...rest })
           .then((res) => res.data);
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["issues"] });
+      void queryClient.invalidateQueries({ queryKey: ["issues"] });
     },
   });
 
-  const deleteMutation = useMutation({
+  const deleteMutation = useMutation<void, Error, number>({
     mutationFn: async (id: number) => {
-      return axios.delete(`/api/issues/${id}`).then((res) => res.data);
+      return axios.delete<void>(`/api/issues/${id}`).then((res) => res.data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["issues"] });
+      void queryClient.invalidateQueries({ queryKey: ["issues"] });
     },
   });
 

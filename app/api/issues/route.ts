@@ -3,8 +3,9 @@ import prisma from "@/prisma/client";
 import { issueSchema } from "@/app/validationSchema";
 import { getServerSession } from "next-auth";
 import authOptions from "@/app/auth/authOptions";
+import { Issue } from "@prisma/client";
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   const uniqueUserIssues = await prisma.issue.findMany({
     select: { assignedToUserId: true },
   });
@@ -19,7 +20,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({}, { status: 401 });
   }
 
-  const body = await request.json();
+  const body = (await request.json()) as Issue;
   const validation = issueSchema.safeParse(body);
 
   if (!validation.success) {
@@ -36,7 +37,7 @@ export async function POST(request: NextRequest) {
         ? { connect: { id: assignedToUserId } }
         : undefined,
       Workspace: {
-        connect: { id: workspaceId },
+        connect: { id: workspaceId ?? "" },
       },
     },
   });

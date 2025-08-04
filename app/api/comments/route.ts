@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/prisma/client";
 import { getServerSession } from "next-auth";
 import authOptions from "@/app/auth/authOptions";
+import { Comment } from "@prisma/client";
 
 export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -10,13 +11,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
 
-  const { content, issueId } = await request.json();
+  const { content, issueId } = (await request.json()) as Comment;
 
   const comment = await prisma.comment.create({
     data: {
       content,
       issueId,
-      authorId: session.user?.name
+      authorId: session.user?.name,
     },
   });
 
@@ -39,4 +40,3 @@ export async function GET(req: NextRequest) {
 
   return NextResponse.json(comments);
 }
-

@@ -16,26 +16,25 @@ export const DeleteIssueButton = ({ issueId }: Props) => {
   const router = useRouter();
   const [isPending, setIsPending] = useState(false);
   const {
-    deleteIssue: {
-      mutateAsync,
-      isError,
-      reset,
-    },
+    deleteIssue: { mutate, isError, reset },
   } = useIssueMutation();
 
-  const handleDeleteIssue = async () => {
+  const handleDeleteIssue = () => {
     try {
       setIsPending(true);
 
-      await mutateAsync(issueId, {
+      mutate(issueId, {
         onSuccess: () => {
           setIsPending(false);
           router.push("/issues/list");
           router.refresh();
         },
       });
-    } catch (error) {
-      toast.error(`An unexpected error occurred: ${error}`);
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : "An unexpected error occurred";
+
+      toast.error(`An unexpected error occurred: ${errorMessage}`);
     }
   };
 
@@ -75,12 +74,7 @@ export const DeleteIssueButton = ({ issueId }: Props) => {
           <AlertDialog.Description>
             This issue could not be deleted.
           </AlertDialog.Description>
-          <Button
-            color="gray"
-            variant="soft"
-            mt="2"
-            onClick={() => reset()}
-          >
+          <Button color="gray" variant="soft" mt="2" onClick={() => reset()}>
             OK
           </Button>
         </AlertDialog.Content>

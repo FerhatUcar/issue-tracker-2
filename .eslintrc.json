@@ -18,5 +18,13 @@
     "@typescript-eslint/no-unsafe-call": "error",
     "@typescript-eslint/no-unsafe-return": "error",
     "@typescript-eslint/no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }]
-  }
+  },
+  "overrides": [
+    {
+      "files": ["*.d.ts"],
+      "rules": {
+        "@typescript-eslint/no-unused-vars": "off"
+      }
+    }
+  ]
 }

@@ -4,7 +4,7 @@ import React, { FC, useEffect, useState } from "react";
 import { Avatar, Flex, Table } from "@radix-ui/themes";
 import NextLink from "next/link";
 import { ArrowDownIcon, ArrowUpIcon } from "@radix-ui/react-icons";
-import { StatusBadge, Link } from "@/app/components";
+import { Link, StatusBadge } from "@/app/components";
 import { Issue, Status } from "@prisma/client";
 import { columns } from "@/app/workspaces/[workspaceId]/issues/list/IssueColumns";
 import { useSession } from "next-auth/react";
@@ -65,9 +65,10 @@ const IssueTable: FC<IssueTableProps> = ({
   const { status } = useSession();
   const [sort, setSort] = useState("asc");
   const searchValue = useRecoilValue(searchValueState);
-  const [filteredList, setFilteredList] = useState<IssuesWithAssigning>(issuesWithAssigning);
+  const [filteredList, setFilteredList] =
+    useState<IssuesWithAssigning>(issuesWithAssigning);
 
-  let updatedList: IssuesWithAssigning = [...issuesWithAssigning];
+  const updatedList: IssuesWithAssigning = [...issuesWithAssigning];
 
   useEffect(
     () =>
@@ -154,7 +155,7 @@ const IssueTable: FC<IssueTableProps> = ({
               <Table.Cell>
                 {issue.assignedToUserId ? (
                   <Avatar
-                    src={issue.assignedToUser?.image!}
+                    src={issue.assignedToUser?.image ?? ""}
                     fallback="?"
                     size="2"
                     radius="full"

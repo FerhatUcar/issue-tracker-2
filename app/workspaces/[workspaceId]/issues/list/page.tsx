@@ -6,7 +6,7 @@ import { Pagination } from "@/app/components";
 import IssueTable, {
   IssueQuery,
 } from "@/app/workspaces/[workspaceId]/issues/list/IssueTable";
-import { Card, Flex, Heading, Text, Box, Badge } from "@radix-ui/themes";
+import { Badge, Box, Card, Flex, Heading, Text } from "@radix-ui/themes";
 import { columns } from "@/app/workspaces/[workspaceId]/issues/list/IssueColumns";
 import { getPaginatedIssuesWithAssignedUser } from "@/app/helpers";
 import { IssuesWithAssigning } from "@/app/types/types";
@@ -30,7 +30,7 @@ const IssuesPage = async ({ searchParams, params }: Props) => {
   const validOrderFields = columns.map((column) => column.value);
   const sortBy = searchParams.sortBy === "asc" ? "asc" : "desc";
 
-  let orderBy: {} = { createdAt: "desc" };
+  let orderBy: NonNullable<unknown> = { createdAt: "desc" };
 
   if (validOrderFields.includes(searchParams.orderBy)) {
     if (searchParams.orderBy === "workspaceName") {
@@ -78,8 +78,10 @@ const IssuesPage = async ({ searchParams, params }: Props) => {
               Issues
             </Heading>
             <Text size="3" className="text-gray-500">
-              Beheer en volg alle issues in
-              <Badge className="mx-2">{workspace?.name || "this workspace"}</Badge>
+              Manage and track all issues in
+              <Badge className="mx-2">
+                {workspace?.name || "this workspace"}
+              </Badge>
             </Text>
           </Box>
         </Box>
@@ -102,7 +104,9 @@ const IssuesPage = async ({ searchParams, params }: Props) => {
           </Heading>
           <Text size="3" className="text-gray-500">
             {issueCount} {issueCount === 1 ? "issue" : "issues"} in
-            <Badge className="mx-2">{workspace?.name || "this workspace"}</Badge>
+            <Badge className="mx-2">
+              {workspace?.name || "this workspace"}
+            </Badge>
           </Text>
         </Box>
       </Box>

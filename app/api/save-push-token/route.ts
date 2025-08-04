@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
-import { writeFile, readFile } from "fs/promises";
+import { readFile, writeFile } from "fs/promises";
 import path from "path";
 
 const FILE = path.resolve("./tokens.json");
 
 export async function POST(request: Request) {
   try {
-    const { token } = await request.json();
+    const { token } = (await request.json()) as { token: string };
 
     if (!token) {
       return NextResponse.json(
@@ -20,7 +20,7 @@ export async function POST(request: Request) {
     try {
       const content = await readFile(FILE, "utf-8");
 
-      tokens = JSON.parse(content);
+      tokens = JSON.parse(content) as string[];
     } catch (e) {}
     if (!tokens.includes(token)) {
       tokens.push(token);

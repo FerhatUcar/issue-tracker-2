@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/prisma/client";
+import { Comment } from "@prisma/client";
 
 export async function DELETE(
   _req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   const id = parseInt(params.id);
 
@@ -14,9 +15,9 @@ export async function DELETE(
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
-  const { content } = await req.json();
+  const { content } = (await req.json()) as Comment;
 
   const updated = await prisma.comment.update({
     where: { id: parseInt(params.id) },
@@ -26,5 +27,3 @@ export async function PATCH(
 
   return NextResponse.json(updated);
 }
-
-

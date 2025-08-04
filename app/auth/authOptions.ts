@@ -12,7 +12,7 @@ const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async session({ session, user }) {
+    session({ session, user }) {
       return {
         ...session,
         user: {
@@ -22,7 +22,7 @@ const authOptions: NextAuthOptions = {
       };
     },
 
-    async redirect({ baseUrl }) {
+    redirect({ baseUrl }) {
       return `${baseUrl}/workspaces`;
     },
   },

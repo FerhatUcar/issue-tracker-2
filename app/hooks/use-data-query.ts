@@ -10,7 +10,7 @@ export const useDataQuery = <T>(path: string, params?: string | number) =>
   useQuery<T[]>({
     queryKey: [path, params],
     queryFn: () =>
-      axios.get(`/api/${path}?id=${params}`).then((res) => res.data),
+      axios.get<T[]>(`/api/${path}?id=${params}`).then((res) => res.data),
     staleTime: 60 * 1000,
     retry: 3,
   });

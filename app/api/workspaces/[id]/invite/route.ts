@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth";
 import authOptions from "@/app/auth/authOptions";
 import { Resend } from "resend";
 import { nanoid } from "nanoid";
+import { Invite } from "@prisma/client";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -12,7 +13,7 @@ export async function POST(
   { params }: { params: { id: string } },
 ) {
   const session = await getServerSession(authOptions);
-  const body = await request.json();
+  const body = (await request.json()) as Invite;
   const workspaceId = params.id;
 
   if (!session?.user?.email) {
@@ -20,7 +21,7 @@ export async function POST(
   }
 
   if (!body.email) {
-    return NextResponse.json({ error: "Email is verplicht" }, { status: 400 });
+    return NextResponse.json({ error: "Email is mandatory" }, { status: 400 });
   }
 
   const existingInvite = await prisma.invite.findFirst({
@@ -32,15 +33,18 @@ export async function POST(
 
   if (existingInvite?.accepted) {
     return NextResponse.json(
-      { error: "Deze gebruiker is al lid van deze workspace." },
-      { status: 400 }
+      { error: "This user is already a member of this workspace." },
+      { status: 400 },
     );
   }
 
   if (existingInvite && !existingInvite.accepted) {
     return NextResponse.json(
-      { error: "Deze gebruiker is al uitgenodigd maar heeft de uitnodiging nog niet geaccepteerd." },
-      { status: 400 }
+      {
+        error:
+          "This user has already been invited but has not yet accepted the invitation.",
+      },
+      { status: 400 },
     );
   }
 
@@ -69,9 +73,9 @@ export async function POST(
     const { error } = await resend.emails.send({
       from: process.env.RESEND_FROM!,
       to: body.email,
-      subject: `${inviter.name || "Iemand"} heeft je uitgenodigd voor een Workspace in Rocket Issues!`,
+      subject: `${inviter.name || "Someone"} invited you to a Workspace in Rocket Issues`,
       react: `
-        Je bent uitgenodigd om deel te nemen aan een workspace in onze Rocket issues app.
+        You've been invited to join a workspace in our Rocket issues app.
         
         Link: ${inviteUrl}
       `,

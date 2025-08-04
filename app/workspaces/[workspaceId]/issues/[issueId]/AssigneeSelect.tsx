@@ -19,9 +19,13 @@ const AssigneeSelect = ({ issue }: Props) => {
   const workspaceId = Array.isArray(params?.workspaceId)
     ? params.workspaceId[0]
     : params.workspaceId;
-  const { data: users, error, isLoading } = useDataQuery<User>("users", workspaceId);
   const {
-    upsertIssue: { mutateAsync },
+    data: users,
+    error,
+    isLoading,
+  } = useDataQuery<User>("users", workspaceId);
+  const {
+    upsertIssue: { mutate },
   } = useIssueMutation();
 
   if (isLoading) {
@@ -32,7 +36,7 @@ const AssigneeSelect = ({ issue }: Props) => {
     return null;
   }
 
-  const handleOnValueChange = async (userId: string) => {
+  const handleOnValueChange = (userId: string) => {
     const assignedToUserId = userId === "unassigned" ? null : userId;
 
     if (issue.assignedToUserId === assignedToUserId) {
@@ -40,7 +44,7 @@ const AssigneeSelect = ({ issue }: Props) => {
     }
 
     try {
-      await mutateAsync(
+      mutate(
         {
           id: issue.id,
           assignedToUserId,
@@ -63,10 +67,7 @@ const AssigneeSelect = ({ issue }: Props) => {
         defaultValue={issue.assignedToUserId || "unassigned"}
         onValueChange={handleOnValueChange}
       >
-        <Select.Trigger
-          className="w-full"
-          placeholder="Assign..."
-        />
+        <Select.Trigger className="w-full" placeholder="Assign..." />
         <Select.Content>
           <Select.Group>
             <Select.Label>Suggestions</Select.Label>

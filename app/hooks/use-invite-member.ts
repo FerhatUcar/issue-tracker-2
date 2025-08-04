@@ -18,9 +18,11 @@ type InviteMemberData = {
 };
 
 export const useInviteMember = () => {
-  return useMutation({
+  return useMutation<void, Error, InviteMemberData>({
     mutationFn: async ({ workspaceId, email }: InviteMemberData) => {
-      await axios.post(`/api/workspaces/${workspaceId}/invite`, { email });
+      await axios.post<void>(`/api/workspaces/${workspaceId}/invite`, {
+        email,
+      });
     },
   });
 };

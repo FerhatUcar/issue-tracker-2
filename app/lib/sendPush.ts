@@ -5,13 +5,46 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_JSON!);
+type ServiceAccount = {
+  client_email: string;
+  private_key: string;
+  project_id: string;
+};
+
+type FCMMessage = {
+  message: {
+    token: string;
+    notification: {
+      title: string;
+      body: string;
+    };
+    webpush?: {
+      fcmOptions: {
+        link: string;
+      };
+    };
+  };
+};
+
+type FCMResponse = {
+  name?: string;
+  error?: {
+    code: number;
+    message: string;
+    status: string;
+  };
+};
+
+const serviceAccount = JSON.parse(
+  process.env.FIREBASE_SERVICE_ACCOUNT_JSON!,
+) as ServiceAccount;
+
 serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, "\n");
 
 const SCOPES = ["https://www.googleapis.com/auth/firebase.messaging"];
 const projectId = serviceAccount.project_id;
 
-async function getAccessToken() {
+async function getAccessToken(): Promise<string | null | undefined> {
   const jwtClient = new JWT({
     email: serviceAccount.client_email,
     key: serviceAccount.private_key,
@@ -27,10 +60,10 @@ export async function sendPush(
   title: string,
   body: string,
   url?: string,
-) {
+): Promise<FCMResponse | null> {
   const accessToken = await getAccessToken();
 
-  const message = {
+  const message: FCMMessage = {
     message: {
       token,
       notification: {
@@ -62,19 +95,16 @@ export async function sendPush(
   const text = await res.text();
 
   try {
-    const json = JSON.parse(text);
+    const json = JSON.parse(text) as FCMResponse;
 
-    console.log("✅ Verzonden:", json);
+    console.log("✅ Send:", json);
 
     return json;
-  } catch (err) {
-    console.error("❌ Geen JSON:", text);
+  } catch (err: unknown) {
+    console.error("❌ No JSON:", text);
+
     return null;
   }
 }
 
-sendPush(
-  pushToken,
-  "title",
-  "body",
-);
+void sendPush(pushToken, "title", "body");

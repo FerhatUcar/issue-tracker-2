@@ -3,6 +3,7 @@ import prisma from "@/prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import authOptions from "@/app/auth/authOptions";
+import { Issue } from "@prisma/client";
 
 export async function PATCH(
   request: NextRequest,
@@ -15,7 +16,8 @@ export async function PATCH(
   }
 
   const { assignedToUserId, status, title, description, ...body } =
-    await request.json();
+    (await request.json()) as Issue;
+
   const validation = patchIssueSchema.safeParse(body);
 
   if (!validation.success) {

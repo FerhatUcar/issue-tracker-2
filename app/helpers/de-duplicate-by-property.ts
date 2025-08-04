@@ -11,7 +11,7 @@ export const deduplicateByProperty = <T>(
     return [];
   }
 
-  const uniqueValues: Set<any> = new Set();
+  const uniqueValues: Set<T[keyof T]> = new Set();
 
   return arr.filter((item) => {
     if (item[property] === null) {

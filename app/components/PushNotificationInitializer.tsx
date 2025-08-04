@@ -5,14 +5,16 @@ import { getToken, messaging } from "@/app/lib/firebase";
 
 const PushNotificationInitializer = () => {
   useEffect(() => {
-    if (typeof window === "undefined" || !("Notification" in window)) return;
+    if (typeof window === "undefined" || !("Notification" in window)) {
+      return;
+    }
 
     const setupPush = async () => {
       try {
         const permission = await Notification.requestPermission();
 
         if (permission !== "granted") {
-          console.log("Notificaties geweigerd");
+          console.log("Notifications denied");
           return;
         }
 
@@ -21,7 +23,7 @@ const PushNotificationInitializer = () => {
         });
 
         if (!token) {
-          console.warn("Geen push-token beschikbaar");
+          console.warn("No push token available");
           return;
         }
 
@@ -33,11 +35,11 @@ const PushNotificationInitializer = () => {
           body: JSON.stringify({ token }),
         });
       } catch (err) {
-        console.error("Push setup faalde:", err);
+        console.error("Push setup failed:", err);
       }
     };
 
-    setupPush();
+    void setupPush();
   }, []);
 
   return null;

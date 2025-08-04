@@ -12,11 +12,11 @@ import {
   Text,
 } from "@radix-ui/themes";
 import {
+  AvatarIcon,
+  ExitIcon,
   MoonIcon,
   PersonIcon,
   SunIcon,
-  ExitIcon,
-  AvatarIcon,
 } from "@radix-ui/react-icons";
 import Skeleton from "react-loading-skeleton";
 import { useThemeToggle } from "@/app/providers";
@@ -30,8 +30,12 @@ type Props = {
 
 export const AuthStatus = ({ userId, count }: Props) => {
   const { status, data: session } = useSession();
-  const params = useParams();
+  const { workspaceId } = useParams();
   const { appearance, toggleAppearance } = useThemeToggle();
+
+  const workspaceIdString = Array.isArray(workspaceId)
+    ? workspaceId[0]
+    : workspaceId;
 
   if (status === "loading") {
     return <Skeleton width="3rem" />;
@@ -52,7 +56,7 @@ export const AuthStatus = ({ userId, count }: Props) => {
       <DropdownMenu.Trigger>
         <Box className="relative inline-block">
           <Avatar
-            src={session!.user!.image!}
+            src={session!.user.image!}
             fallback="?"
             size="2"
             radius="full"
@@ -68,7 +72,7 @@ export const AuthStatus = ({ userId, count }: Props) => {
         <DropdownMenu.Label>
           <Flex direction="row" align="center" gap="2">
             <AvatarIcon />
-            <Text size="2">{session!.user!.name}</Text>
+            <Text size="2">{session!.user.name}</Text>
           </Flex>
         </DropdownMenu.Label>
 
@@ -79,7 +83,6 @@ export const AuthStatus = ({ userId, count }: Props) => {
           </Flex>
         </DropdownMenu.Item>
 
-        {/* Nieuwe link naar alle issues */}
         <Link href={`/issues/list?assignedToUserId=${userId}`}>
           <DropdownMenu.Item>
             <Flex justify="between" width="100%">
@@ -101,8 +104,10 @@ export const AuthStatus = ({ userId, count }: Props) => {
           </DropdownMenu.Item>
         </Link>
 
-        {params.workspaceId && (
-          <Link href={`/workspaces/${params.workspaceId}/issues/list?assignedToUserId=${userId}`}>
+        {workspaceIdString && (
+          <Link
+            href={`/workspaces/${workspaceIdString}/issues/list?assignedToUserId=${userId}`}
+          >
             <DropdownMenu.Item>
               <Flex justify="between" width="100%">
                 <Flex direction="row" align="center" gap="2">

@@ -7,12 +7,16 @@ import { IssueChart, LatestIssues, Summary } from "@/app/components";
 import { getIssueStatusCounts } from "@/app/helpers";
 import { InviteMember } from "@/app/invite/_components";
 import { PlusIcon } from "@radix-ui/react-icons";
+import { IoTicketOutline } from "react-icons/io5";
+import Link from "next/link";
 
 type Props = {
   params: { workspaceId: string };
 };
 
-export default async function WorkspacePage({ params: {workspaceId} }: Props) {
+export default async function WorkspacePage({
+  params: { workspaceId },
+}: Props) {
   const session = await getServerSession(authOptions);
 
   const workspace = await prisma.workspace.findUnique({
@@ -39,11 +43,18 @@ export default async function WorkspacePage({ params: {workspaceId} }: Props) {
         <Heading size="4">
           {workspace.name?.charAt(0).toUpperCase() + workspace.name?.slice(1)}
         </Heading>
-        <InviteMember workspaceId={workspaceId}>
-          <Button variant="soft" size="3">
-            <PlusIcon /> Invite Member
-          </Button>
-        </InviteMember>
+        <Flex direction="row" gap="2" align="center">
+          <Link href={`/workspaces/${workspaceId}/issues/list`}>
+            <Button variant="soft" size="3">
+              <IoTicketOutline /> Issues
+            </Button>
+          </Link>
+          <InviteMember workspaceId={workspaceId}>
+            <Button variant="soft" size="3">
+              <PlusIcon /> Invite member
+            </Button>
+          </InviteMember>
+        </Flex>
       </Flex>
 
       <Grid columns={{ initial: "1", md: "2" }} gap="5">
