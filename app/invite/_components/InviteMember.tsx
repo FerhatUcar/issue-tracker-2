@@ -10,7 +10,7 @@ import { toast } from "react-hot-toast";
 import { useDataQuery, useInviteMember } from "@/app/hooks";
 
 const schema = z.object({
-  email: z.string().email("Voer een geldig e-mailadres in"),
+  email: z.string().email("Enter valid email address"),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -101,7 +101,7 @@ export const InviteMember = ({ workspaceId, children }: Props) => {
       <Dialog.Trigger>{children}</Dialog.Trigger>
 
       <Dialog.Content style={{ maxWidth: 400 }}>
-        <Dialog.Title>Lid uitnodigen</Dialog.Title>
+        <Dialog.Title>Invite member</Dialog.Title>
 
         {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
         <form onSubmit={onSubmit}>
@@ -128,11 +128,11 @@ export const InviteMember = ({ workspaceId, children }: Props) => {
             <Flex gap="4" mt="4" justify="end" align="center">
               <Dialog.Close onClick={handleCancel}>
                 <Button type="button" variant="ghost">
-                  Annuleer
+                  Cancel
                 </Button>
               </Dialog.Close>
               <Button type="submit" disabled={isSubmitting}>
-                Uitnodigen
+                Invite
               </Button>
             </Flex>
           </Flex>

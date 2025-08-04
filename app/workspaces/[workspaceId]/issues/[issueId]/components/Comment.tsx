@@ -45,7 +45,12 @@ export const Comment = ({ comment, issueId }: Props) => {
       );
     } catch (error) {
       console.error(error);
-      toast.error("Failed to update comment");
+
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("Something went wrong while updating the comment");
+      }
     }
   };
 
@@ -78,10 +83,15 @@ export const Comment = ({ comment, issueId }: Props) => {
                 <Button
                   variant="soft"
                   onClick={handleUpdate}
-                  disabled={!editedContent.trim()}
+                  disabled={!editedContent.trim() || updateComment.isLoading}
                 >
-                  <FaCheck />
-                  Save
+                  {updateComment.isLoading ? (
+                    "Saving..."
+                  ) : (
+                    <>
+                      <FaCheck /> Save
+                    </>
+                  )}
                 </Button>
               </Flex>
             </>
@@ -115,8 +125,8 @@ export const Comment = ({ comment, issueId }: Props) => {
             </IconButton>
           )}
           <ConfirmationDialog
-            title="Comment verwijderen?"
-            description="Weet je zeker dat je deze comment wilt verwijderen? Deze actie is permanent."
+            title="Delete comment?"
+            description="Are you sure you want to delete this comment? This action cannot be undone."
             onConfirm={handleDelete}
           />
         </Box>

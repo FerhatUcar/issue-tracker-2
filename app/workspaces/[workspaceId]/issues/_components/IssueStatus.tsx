@@ -21,21 +21,21 @@ type Props = {
 const IssueStatus = ({ issue }: Props) => {
   const router = useRouter();
   const {
-    upsertIssue: { mutateAsync },
+    upsertIssue: { mutate },
   } = useIssueMutation();
 
   if (!issue) {
     notFound();
   }
 
-  const handleOnChange = async (status: string) => {
+  const handleOnChange = (status: string) => {
     if (!issue.id) {
       toast.error("Issue ID is missing");
       return;
     }
 
     try {
-      await mutateAsync(
+      mutate(
         {
           id: issue.id,
           status: status as Status,
@@ -56,10 +56,7 @@ const IssueStatus = ({ issue }: Props) => {
   return (
     <>
       <Select.Root defaultValue={issue?.status} onValueChange={handleOnChange}>
-        <Select.Trigger
-          className="w-full"
-          placeholder="Status..."
-        />
+        <Select.Trigger className="w-full" placeholder="Status..." />
         <Select.Content>
           <Select.Group>
             <Select.Label>Choose status</Select.Label>

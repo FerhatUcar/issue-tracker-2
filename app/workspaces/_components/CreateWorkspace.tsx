@@ -1,17 +1,17 @@
 "use client";
 
-import { useState, PropsWithChildren } from "react";
-import { Button, Dialog, Flex, TextField, Text } from "@radix-ui/themes";
+import { PropsWithChildren, useState } from "react";
+import { Button, Dialog, Flex, Text, TextField } from "@radix-ui/themes";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCreateWorkspace } from "@/app/hooks/use-create-workspace";
 import { useRouter } from "next/navigation";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { toast } from "react-hot-toast";
 
 const schema = z.object({
-  name: z.string().min(3, "Naam moet minstens 3 tekens bevatten"),
+  name: z.string().min(3, "Name must be at least 3 characters long"),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -38,14 +38,20 @@ export const CreateWorkspace = ({ children }: PropsWithChildren) => {
           router.push(`/workspaces/${res.id}`);
         },
       });
-    } catch (err) {
-      if (axios.isAxiosError(err) && err.response?.data?.error) {
-        setError("name", {
-          type: "manual",
-          message: "Er bestaat al een workspace met deze naam.",
-        });
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const axiosError = error as AxiosError<{ error: string }>;
+
+        if (axiosError.response?.data?.error) {
+          setError("name", {
+            type: "manual",
+            message: "A workspace with this name already exists.",
+          });
+        } else {
+          toast.error("Unexpected error while creating workspace.");
+        }
       } else {
-        toast.error("Onverwachte fout bij aanmaken");
+        toast.error("Unexpected error while creating workspace.");
       }
     }
   });
@@ -57,11 +63,12 @@ export const CreateWorkspace = ({ children }: PropsWithChildren) => {
       <Dialog.Content style={{ maxWidth: 400 }}>
         <Dialog.Title>Create new workspace</Dialog.Title>
 
+        {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
         <form onSubmit={onSubmit}>
           <Flex direction="column" gap="3">
             <TextField.Root>
               <TextField.Input
-                placeholder="Name of the workspace"
+                placeholder="Workspace name"
                 {...register("name")}
               />
             </TextField.Root>
