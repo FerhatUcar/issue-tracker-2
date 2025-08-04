@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { Card, Heading, Text, Avatar, Flex, Box } from "@radix-ui/themes";
+import { Avatar, Box, Card, Flex, Heading, Text } from "@radix-ui/themes";
 import { Workspace } from "@prisma/client";
 
 type Props = {
@@ -16,7 +16,7 @@ type Props = {
 };
 
 export const WorkspaceCard = ({ workspace }: Props) => (
-  <Link href={`/workspaces/${workspace.id}`}>
+  <Link href={`/workspaces/${workspace.id}`} prefetch={false}>
     <Card className="w-full">
       <Flex direction="column" justify="between" className="h-full">
         <Box>

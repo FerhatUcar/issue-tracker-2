@@ -8,6 +8,7 @@ import { getIssueStatusCounts } from "@/app/helpers";
 import { InviteMember } from "@/app/invite/_components";
 import { PlusIcon } from "@radix-ui/react-icons";
 import { IoTicketOutline } from "react-icons/io5";
+import { RiGroup2Fill } from "react-icons/ri";
 import Link from "next/link";
 
 type Props = {
@@ -44,7 +45,15 @@ export default async function WorkspacePage({
           {workspace.name?.charAt(0).toUpperCase() + workspace.name?.slice(1)}
         </Heading>
         <Flex direction="row" gap="2" align="center">
-          <Link href={`/workspaces/${workspaceId}/issues/list`}>
+          <Link href={`/workspaces/${workspaceId}/members`}>
+            <Button variant="soft" size="3">
+              <RiGroup2Fill /> View Members
+            </Button>
+          </Link>
+          <Link
+            href={`/workspaces/${workspaceId}/issues/list`}
+            prefetch={false}
+          >
             <Button variant="soft" size="3">
               <IoTicketOutline /> Issues
             </Button>

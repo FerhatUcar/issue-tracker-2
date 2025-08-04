@@ -13,7 +13,9 @@ const LoadingIssuesPage = async () => {
           <Table.Row>
             <Table.ColumnHeaderCell>Issue</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell>Status</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell>Workspace</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell>Created</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell>User</Table.ColumnHeaderCell>
           </Table.Row>
         </Table.Header>
         <Table.Body>

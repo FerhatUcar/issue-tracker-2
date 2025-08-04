@@ -2,7 +2,7 @@ import { getServerSession } from "next-auth";
 import authOptions from "@/app/auth/authOptions";
 import prisma from "@/prisma/client";
 import { redirect } from "next/navigation";
-import { Card, Heading, Grid, Box, Flex } from "@radix-ui/themes";
+import { Box, Card, Flex, Grid, Heading } from "@radix-ui/themes";
 import { PlusIcon } from "@radix-ui/react-icons";
 import { CreateWorkspace } from "@/app/workspaces/_components/CreateWorkspace";
 import { WorkspaceCard } from "@/app/workspaces/_components";
