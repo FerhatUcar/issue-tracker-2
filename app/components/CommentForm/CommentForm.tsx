@@ -11,27 +11,30 @@ type Props = {
 
 export const CommentForm = ({ issueId }: Props) => {
   const {
-    createComment: { mutateAsync, isLoading },
+    createComment: { mutate, isLoading },
   } = useCommentMutation();
   const [content, setContent] = useState("");
   const router = useRouter();
 
-  const handleSubmit = async (e: FormEvent) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
 
     if (!content.trim()) {
       return;
     }
 
-    await mutateAsync({
-      content,
-      issueId,
-    }, {
-      onSuccess: () => {
-        setContent("");
-        router.refresh();
+    mutate(
+      {
+        content,
+        issueId,
       },
-    })
+      {
+        onSuccess: () => {
+          setContent("");
+          router.refresh();
+        },
+      },
+    );
   };
 
   return (

@@ -1,19 +1,20 @@
 import {
   Avatar,
+  Badge,
+  Box,
+  Button,
   Card,
   Flex,
   Heading,
-  Button,
-  Box,
   Text,
-  Badge,
 } from "@radix-ui/themes";
 import React from "react";
-import { StatusBadge, NoIssuesPlaceholder } from "@/app/components";
+import { NoIssuesPlaceholder, StatusBadge } from "@/app/components";
 import Link from "next/link";
 import { AiFillPlusCircle } from "react-icons/ai";
 import { IoTicketOutline } from "react-icons/io5";
 import { getLatestIssues } from "@/app/helpers";
+import { BsChatDots } from "react-icons/bs";
 
 type Props = {
   workspaceId: string;
@@ -57,7 +58,7 @@ export const LatestIssues = async ({ workspaceId }: Props) => {
                   <Flex gap="2">
                     {issue.Comment.length > 0 && (
                       <Badge variant="soft" color="gray">
-                        💬 {issue.Comment.length}
+                        <BsChatDots /> {issue.Comment.length}
                       </Badge>
                     )}
                     {issue.assignedToUser && (

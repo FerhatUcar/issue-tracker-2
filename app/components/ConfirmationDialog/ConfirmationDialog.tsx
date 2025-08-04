@@ -1,32 +1,46 @@
 "use client";
 
-import React from "react";
+import React, { MouseEventHandler } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import {
-  DialogContent,
-  DialogTitle,
-  DialogDescription,
+  Box,
   Button,
-  IconButton, Box
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+  IconButton,
 } from "@radix-ui/themes";
 import { FaTrash } from "react-icons/fa";
 
 type Props = {
-  onConfirm: () => void;
-  triggerLabel?: React.ReactNode;
-  confirmText?: string;
-  cancelText?: string;
-  title?: string;
-  description?: string;
+  /**
+   * Represents the title or heading of a content or resource.
+   * Typically used to provide a descriptive label or summary.
+   */
+  title: string;
+
+  /**
+   * A string variable that provides a textual description.
+   */
+  description: string;
+
+  /**
+   * Event handler triggered when a confirmation action occurs, typically
+   * associated with a button click event.
+   *
+   * This property represents a function that handles mouse events on a button
+   * element. It is invoked when the user confirms their intent through a user
+   * interface element, such as a button.
+   *
+   * Type: MouseEventHandler<HTMLButtonElement> | undefined
+   */
+  onConfirm: MouseEventHandler<HTMLButtonElement> | undefined;
 };
 
-export const DeleteConfirmationDialog = ({
+export const ConfirmationDialog = ({
+  title = "Are you sure?",
+  description = "You can't revert this action.",
   onConfirm,
-  triggerLabel = <FaTrash />,
-  confirmText = "Verwijderen",
-  cancelText = "Annuleren",
-  title = "Weet je het zeker?",
-  description = "Deze actie kan niet ongedaan worden gemaakt.",
 }: Props) => {
   return (
     <Dialog.Root>
@@ -38,7 +52,7 @@ export const DeleteConfirmationDialog = ({
           className="text-gray-800 dark:text-white hover:bg-transparent"
           title="Delete"
         >
-          {triggerLabel}
+          <FaTrash />
         </IconButton>
       </Dialog.Trigger>
 
@@ -55,11 +69,11 @@ export const DeleteConfirmationDialog = ({
 
         <Box className="flex justify-end gap-3 mt-4">
           <Dialog.Close asChild>
-            <Button variant="soft">{cancelText}</Button>
+            <Button variant="soft">Cancel</Button>
           </Dialog.Close>
           <Dialog.Close asChild>
             <Button color="red" onClick={onConfirm}>
-              {confirmText}
+              Delete
             </Button>
           </Dialog.Close>
         </Box>

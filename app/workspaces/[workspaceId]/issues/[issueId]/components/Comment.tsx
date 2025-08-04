@@ -3,17 +3,17 @@
 import React, { ChangeEvent, useState } from "react";
 import {
   Box,
-  Text,
-  TextArea,
   Button,
   Flex,
   IconButton,
+  Text,
+  TextArea,
 } from "@radix-ui/themes";
 import { type Comment as CommentType } from "@prisma/client";
-import { FaEdit, FaCheck, FaTimes } from "react-icons/fa";
+import { FaCheck, FaEdit, FaTimes } from "react-icons/fa";
 import { useCommentMutation } from "@/app/hooks/use-comment-mutation";
+import { ConfirmationDialog } from "@/app/components";
 import toast from "react-hot-toast";
-import { DeleteConfirmationDialog } from "./DeleteConfirmationDialog";
 
 type Props = {
   /**
@@ -32,13 +32,12 @@ export const Comment = ({ comment, issueId }: Props) => {
   const [editedContent, setEditedContent] = useState(comment.content);
   const { deleteComment, updateComment } = useCommentMutation();
 
-  const handleDelete = () => {
+  const handleDelete = () =>
     deleteComment.mutate({ commentId: comment.id, issueId });
-  };
 
-  const handleUpdate = async () => {
+  const handleUpdate = () => {
     try {
-      await updateComment.mutateAsync(
+      updateComment.mutate(
         { id: comment.id, content: editedContent, issueId },
         {
           onSuccess: () => setIsEditing(false),
@@ -50,9 +49,8 @@ export const Comment = ({ comment, issueId }: Props) => {
     }
   };
 
-  const handleEditedContentChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+  const handleEdit = (e: ChangeEvent<HTMLTextAreaElement>) =>
     setEditedContent(e.target.value);
-  }
 
   return (
     <Box className="bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg p-4 shadow-sm w-full">
@@ -74,11 +72,8 @@ export const Comment = ({ comment, issueId }: Props) => {
           </Flex>
 
           {isEditing ? (
-            <Box>
-              <TextArea
-                value={editedContent}
-                onChange={handleEditedContentChange}
-              />
+            <>
+              <TextArea value={editedContent} onChange={handleEdit} />
               <Flex justify="end" mt="2">
                 <Button
                   variant="soft"
@@ -89,11 +84,11 @@ export const Comment = ({ comment, issueId }: Props) => {
                   Save
                 </Button>
               </Flex>
-            </Box>
+            </>
           ) : (
-            <p className="text-sm text-gray-700 dark:text-gray-300">
+            <Text className="text-sm text-gray-700 dark:text-gray-300">
               {comment.content}
-            </p>
+            </Text>
           )}
         </Box>
 
@@ -119,10 +114,10 @@ export const Comment = ({ comment, issueId }: Props) => {
               <FaEdit />
             </IconButton>
           )}
-          <DeleteConfirmationDialog
-            onConfirm={handleDelete}
+          <ConfirmationDialog
             title="Comment verwijderen?"
             description="Weet je zeker dat je deze comment wilt verwijderen? Deze actie is permanent."
+            onConfirm={handleDelete}
           />
         </Box>
       </Flex>

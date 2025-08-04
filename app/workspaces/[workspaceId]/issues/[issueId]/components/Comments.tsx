@@ -1,11 +1,11 @@
 "use client";
 
-import { CommentForm } from "@/app/components";
+import { CommentForm, Spinner } from "@/app/components";
 import { Avatar, Box, Card, Flex } from "@radix-ui/themes";
 import { Comment } from "./Comment";
 import { useComments } from "@/app/hooks";
-import { Spinner } from "@/app/components";
 import { useSession } from "next-auth/react";
+import { BsWechat } from "react-icons/bs";
 
 type Props = {
   issueId: number;
@@ -27,7 +27,7 @@ export const Comments = ({ issueId }: Props) => {
     <Card mt="5">
       <h4 className="mb-4">
         <Flex direction="row" gap="2" align="center" content="center">
-          <span>💬</span> <span>Comments</span>
+          <BsWechat /> Comments
         </Flex>
       </h4>
 
@@ -40,7 +40,7 @@ export const Comments = ({ issueId }: Props) => {
               <Flex direction="row" gap="2" key={comment.id}>
                 {session ? (
                   <Avatar
-                    src={session.user?.image ?? ''}
+                    src={session.user?.image ?? ""}
                     fallback="?"
                     size="2"
                     radius="full"
