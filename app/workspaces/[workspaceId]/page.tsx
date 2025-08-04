@@ -10,6 +10,7 @@ import { PlusIcon } from "@radix-ui/react-icons";
 import { IoTicketOutline } from "react-icons/io5";
 import { RiGroup2Fill } from "react-icons/ri";
 import Link from "next/link";
+import { DeleteWorkspaceButton } from "@/app/workspaces/_components";
 
 type Props = {
   params: { workspaceId: string };
@@ -25,14 +26,23 @@ export default async function WorkspacePage({
       where: { id: workspaceId },
       include: {
         issues: true,
-        memberships: true,
+        memberships: {
+          include: {
+            user: true,
+          },
+        },
       },
     }),
     getIssueStatusCounts(workspaceId),
   ]);
 
+  const currentUserId = session?.user?.id;
   const isMember = workspace?.memberships.some(
-    (member) => member.userId === session?.user?.id,
+    (member) => member.userId === currentUserId,
+  );
+
+  const isAdmin = workspace?.memberships.some(
+    (member) => member.userId === currentUserId && member.role === "ADMIN",
   );
 
   if (!workspace || !isMember) {
@@ -45,6 +55,7 @@ export default async function WorkspacePage({
         <Heading size="4">
           {workspace.name?.charAt(0).toUpperCase() + workspace.name?.slice(1)}
         </Heading>
+
         <Flex direction="row" gap="2" align="center">
           <Link href={`/workspaces/${workspaceId}/members`}>
             <Button variant="soft" size="3">
@@ -64,6 +75,14 @@ export default async function WorkspacePage({
               <PlusIcon /> Invite member
             </Button>
           </InviteMember>
+
+          {isAdmin && (
+            <DeleteWorkspaceButton
+              workspaceId={workspace.id}
+              workspaceName={workspace.name}
+              isAdmin={true}
+            />
+          )}
         </Flex>
       </Flex>
 

@@ -4,5 +4,6 @@ export { useCommentMutation } from "./use-comment-mutation";
 export { useComments } from "./use-comment";
 export { usePushNotificationMutation } from "./use-push-notification-mutation";
 export { useCreateWorkspace } from "./use-create-workspace";
+export { useDeleteWorkspace } from "./use-delete-workspace";
 export { useInviteMember } from "./use-invite-member";
 export { useDeleteMember } from "./use-delete-member";
