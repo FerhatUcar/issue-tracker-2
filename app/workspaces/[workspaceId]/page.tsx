@@ -20,13 +20,16 @@ export default async function WorkspacePage({
 }: Props) {
   const session = await getServerSession(authOptions);
 
-  const workspace = await prisma.workspace.findUnique({
-    where: { id: workspaceId },
-    include: {
-      issues: true,
-      memberships: true,
-    },
-  });
+  const [workspace, issueCounts] = await Promise.all([
+    prisma.workspace.findUnique({
+      where: { id: workspaceId },
+      include: {
+        issues: true,
+        memberships: true,
+      },
+    }),
+    getIssueStatusCounts(workspaceId),
+  ]);
 
   const isMember = workspace?.memberships.some(
     (member) => member.userId === session?.user?.id,
@@ -35,8 +38,6 @@ export default async function WorkspacePage({
   if (!workspace || !isMember) {
     notFound();
   }
-
-  const issueCounts = await getIssueStatusCounts(workspaceId);
 
   return (
     <>

@@ -1,12 +1,13 @@
-import React, { Suspense } from "react";
+import React from "react";
 import prisma from "@/prisma/client";
 import { Status } from "@prisma/client";
 import { Pagination } from "@/app/components";
-import { Card, Flex, Heading, Text, Box } from "@radix-ui/themes";
-import { IssueQuery } from "@/app/workspaces/[workspaceId]/issues/list/IssueTable";
+import { Box, Card, Flex, Heading, Text } from "@radix-ui/themes";
+import IssueTable, {
+  IssueQuery,
+} from "@/app/workspaces/[workspaceId]/issues/list/IssueTable";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
-import IssueTable from "@/app/workspaces/[workspaceId]/issues/list/IssueTable";
 import authOptions from "@/app/auth/authOptions";
 
 type Props = {
@@ -28,27 +29,29 @@ const AllIssuesPage = async ({ searchParams }: Props) => {
   const page = parseInt(searchParams.page) || 1;
   const pageSize = 10;
 
-  const issues = await prisma.issue.findMany({
-    where: {
-      assignedToUserId: session.user.id,
-      status,
-    },
-    include: {
-      assignedToUser: true,
-      Workspace: true,
-      Comment: true
-    },
-    orderBy: { createdAt: "desc" },
-    skip: (page - 1) * pageSize,
-    take: pageSize,
-  });
+  const [issues, issueCount] = await Promise.all([
+    prisma.issue.findMany({
+      where: {
+        assignedToUserId: session.user.id,
+        status,
+      },
+      include: {
+        assignedToUser: true,
+        Workspace: true,
+        Comment: true,
+      },
+      orderBy: { createdAt: "desc" },
+      skip: (page - 1) * pageSize,
+      take: pageSize,
+    }),
 
-  const issueCount = await prisma.issue.count({
-    where: {
-      assignedToUserId: session.user.id,
-      status,
-    },
-  });
+    prisma.issue.count({
+      where: {
+        assignedToUserId: session.user.id,
+        status,
+      },
+    }),
+  ]);
 
   return (
     <Box className="space-y-6">
@@ -84,17 +87,11 @@ const AllIssuesPage = async ({ searchParams }: Props) => {
 
           {issueCount > pageSize && (
             <Flex justify="center" className="pt-4">
-              <Suspense
-                fallback={
-                  <div className="h-10 w-64 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
-                }
-              >
-                <Pagination
-                  itemCount={issueCount}
-                  pageSize={pageSize}
-                  currentPage={page}
-                />
-              </Suspense>
+              <Pagination
+                itemCount={issueCount}
+                pageSize={pageSize}
+                currentPage={page}
+              />
             </Flex>
           )}
         </>

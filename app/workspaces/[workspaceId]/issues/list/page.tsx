@@ -1,4 +1,4 @@
-import React, { Suspense } from "react";
+import React from "react";
 import prisma from "@/prisma/client";
 import IssueActions from "@/app/workspaces/[workspaceId]/issues/list/IssueActions";
 import { Status } from "@prisma/client";
@@ -22,6 +22,7 @@ const IssuesPage = async ({ searchParams, params }: Props) => {
   const status: Status | undefined = statuses.includes(searchParams.status)
     ? searchParams.status
     : undefined;
+
   const assignedToUserId =
     searchParams.assignedToUserId === "All"
       ? undefined
@@ -42,32 +43,31 @@ const IssuesPage = async ({ searchParams, params }: Props) => {
 
   const page = parseInt(searchParams.page) || 1;
 
-  const issues = (await getPaginatedIssuesWithAssignedUser({
-    where: {
-      status,
-      assignedToUserId,
-      workspaceId: params.workspaceId,
-    },
-    orderBy,
-    page: (page - 1) * 10,
-    pageSize: 10,
-  })) as IssuesWithAssigning;
+  const [issues, issueCount, workspace] = await Promise.all([
+    getPaginatedIssuesWithAssignedUser({
+      where: {
+        status,
+        assignedToUserId,
+        workspaceId: params.workspaceId,
+      },
+      orderBy,
+      page: (page - 1) * 10,
+      pageSize: 10,
+    }) as Promise<IssuesWithAssigning>,
 
-  const issueCount = await prisma.issue.count({
-    where: {
-      status,
-      assignedToUserId,
-      workspaceId: params.workspaceId,
-    },
-  });
+    prisma.issue.count({
+      where: {
+        status,
+        assignedToUserId,
+        workspaceId: params.workspaceId,
+      },
+    }),
 
-  const workspace = await prisma.workspace.findUnique({
-    where: { id: params.workspaceId },
-    include: {
-      issues: true,
-      memberships: true,
-    },
-  });
+    prisma.workspace.findUnique({
+      where: { id: params.workspaceId },
+      select: { name: true },
+    }),
+  ]);
 
   if (issues.length === 0 && page === 1) {
     return (
@@ -126,17 +126,7 @@ const IssuesPage = async ({ searchParams, params }: Props) => {
 
       {issueCount > 10 && (
         <Flex justify="center" className="pt-4">
-          <Suspense
-            fallback={
-              <div className="h-10 w-64 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
-            }
-          >
-            <Pagination
-              itemCount={issueCount}
-              pageSize={10}
-              currentPage={page}
-            />
-          </Suspense>
+          <Pagination itemCount={issueCount} pageSize={10} currentPage={page} />
         </Flex>
       )}
     </Box>

@@ -15,9 +15,12 @@ const WorkspacesPage = async () => {
     redirect("/");
   }
 
-  const user = await prisma.user.findUnique({
-    where: { email: session.user.email },
-  });
+  const [user] = await Promise.all([
+    prisma.user.findUnique({
+      where: { email: session.user.email },
+      select: { id: true },
+    }),
+  ]);
 
   if (!user) {
     redirect("/");
@@ -40,7 +43,11 @@ const WorkspacesPage = async () => {
               },
             },
           },
-          _count: { select: { issues: true } },
+          _count: {
+            select: {
+              issues: true,
+            },
+          },
         },
       },
     },
