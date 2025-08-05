@@ -14,8 +14,8 @@ export const useCommentMutation = () => {
     mutationFn: async (data: Payload) =>
       axios.post<Comment>("/api/comments", data).then((res) => res.data),
 
-    onSuccess: (_data, { issueId }) => {
-      void queryClient.invalidateQueries({ queryKey: ["comments", issueId] });
+    onSuccess: async (_data, { issueId }) => {
+      await queryClient.invalidateQueries({ queryKey: ["comments", issueId] });
     },
   });
 
@@ -27,8 +27,8 @@ export const useCommentMutation = () => {
     mutationFn: async ({ commentId }) =>
       axios.delete<void>(`/api/comments/${commentId}`).then((res) => res.data),
 
-    onSuccess: (_data, { issueId }) => {
-      void queryClient.invalidateQueries({ queryKey: ["comments", issueId] });
+    onSuccess: async (_data, { issueId }) => {
+      await queryClient.invalidateQueries({ queryKey: ["comments", issueId] });
     },
   });
 
@@ -42,8 +42,8 @@ export const useCommentMutation = () => {
         .patch<Comment>(`/api/comments/${id}`, { content })
         .then((res) => res.data),
 
-    onSuccess: (_data, { issueId }) => {
-      void queryClient.invalidateQueries({ queryKey: ["comments", issueId] });
+    onSuccess: async (_data, { issueId }) => {
+      await queryClient.invalidateQueries({ queryKey: ["comments", issueId] });
     },
   });
 

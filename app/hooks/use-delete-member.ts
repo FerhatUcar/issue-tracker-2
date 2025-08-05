@@ -41,8 +41,8 @@ export const useDeleteMember = () => {
         throw new Error("Unknown error during deletion");
       }
     },
-    onSuccess: (_, { workspaceId }) => {
-      void queryClient.invalidateQueries({
+    onSuccess: async (_, { workspaceId }) => {
+      await queryClient.invalidateQueries({
         queryKey: ["workspace", workspaceId, "members"],
       });
     },

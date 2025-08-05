@@ -1,6 +1,6 @@
 import fetch from "node-fetch";
 import { JWT } from "google-auth-library";
-import { pushToken } from "../token";
+// import { pushToken } from "../token";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -107,4 +107,4 @@ export async function sendPush(
   }
 }
 
-void sendPush(pushToken, "title", "body");
+// sendPush(pushToken, "title", "body");

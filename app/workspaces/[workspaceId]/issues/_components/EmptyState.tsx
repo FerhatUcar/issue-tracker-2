@@ -24,7 +24,7 @@ type Props = {
 export const EmptyState = ({ workspaceId, status }: Props) => (
   <Card>
     <Flex direction="column" align="center" justify="center" p="4">
-      <GiBoxTrap className="w-16 h-16 text-gray-400 mb-4" />
+      <GiBoxTrap className="w-20 h-20 mb-4" />
       <Heading size="5" className="mb-2 text-center">
         {status ? `No ${getStatusLabel(status)} issues` : "No issues found"}
       </Heading>

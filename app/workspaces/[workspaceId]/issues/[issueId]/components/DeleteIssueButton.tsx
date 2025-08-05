@@ -10,9 +10,10 @@ import { useState } from "react";
 
 type Props = {
   issueId: number;
+  workspaceId: string;
 };
 
-export const DeleteIssueButton = ({ issueId }: Props) => {
+export const DeleteIssueButton = ({ issueId, workspaceId }: Props) => {
   const router = useRouter();
   const [isPending, setIsPending] = useState(false);
   const {
@@ -26,7 +27,7 @@ export const DeleteIssueButton = ({ issueId }: Props) => {
       mutate(issueId, {
         onSuccess: () => {
           setIsPending(false);
-          router.push("/issues/list");
+          router.push(`/workspace/${workspaceId}`);
           router.refresh();
         },
       });

@@ -87,14 +87,17 @@ export const AuthStatus = ({ userId, count }: Props) => {
         <Link href={`/issues/list?assignedToUserId=${userId}`}>
           <DropdownMenu.Item>
             <Flex
-              justify="between"
+              justify={count >= 1 ? "between" : "start"}
               width="100%"
               direction="row"
               align="center"
               gap="2"
             >
-              <IoTicketOutline />
-              <Text>All my issues</Text>
+              <Flex align="center" gap="2">
+                <IoTicketOutline />
+                <Text>My list</Text>
+              </Flex>
+
               {count >= 1 && (
                 <Badge
                   variant="solid"

@@ -43,6 +43,8 @@ export const CreateWorkspace = ({ children }: PropsWithChildren) => {
         const axiosError = error as AxiosError<{ error: string }>;
 
         if (axiosError.response?.data?.error) {
+          console.log(axiosError.response?.data?.error);
+
           setError("name", {
             type: "manual",
             message: "A workspace with this name already exists.",

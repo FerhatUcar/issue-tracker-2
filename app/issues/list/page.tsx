@@ -2,13 +2,16 @@ import React from "react";
 import prisma from "@/prisma/client";
 import { Status } from "@prisma/client";
 import { Pagination } from "@/app/components";
-import { Box, Card, Flex, Heading, Text } from "@radix-ui/themes";
+import { Box, Button, Card, Flex, Heading, Text } from "@radix-ui/themes";
 import IssueTable, {
   IssueQuery,
 } from "@/app/workspaces/[workspaceId]/issues/list/IssueTable";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import authOptions from "@/app/auth/authOptions";
+import { GiBoxTrap } from "react-icons/gi";
+import Link from "next/link";
+import { MdOutlineWorkspaces } from "react-icons/md";
 
 type Props = {
   searchParams: IssueQuery;
@@ -29,7 +32,7 @@ const AllIssuesPage = async ({ searchParams }: Props) => {
   const page = parseInt(searchParams.page) || 1;
   const pageSize = 10;
 
-  const [issues, issueCount] = await Promise.all([
+  const [issues, issueCount, memberships] = await Promise.all([
     prisma.issue.findMany({
       where: {
         assignedToUserId: session.user.id,
@@ -51,16 +54,25 @@ const AllIssuesPage = async ({ searchParams }: Props) => {
         status,
       },
     }),
+
+    prisma.membership.findMany({
+      where: { userId: session.user.id },
+      include: { workspace: true },
+    }),
   ]);
+
+  const workspaces = memberships
+    .map((m) => m.workspace)
+    .filter((w) => w !== null);
 
   return (
     <Box className="space-y-6">
       <Box className="flex items-center justify-between">
         <Box>
-          <Heading size="6" className="mb-1">
-            My Issues
+          <Heading size="4" className="mb-1">
+            My Issues List
           </Heading>
-          <Text size="3" className="text-gray-500">
+          <Text size="2" className="text-gray-500">
             {issueCount} {issueCount === 1 ? "issue" : "issues"} assigned to you
             across all workspaces
           </Text>
@@ -68,10 +80,25 @@ const AllIssuesPage = async ({ searchParams }: Props) => {
       </Box>
 
       {issues.length === 0 ? (
-        <Card className="p-8 text-center">
-          <Text size="3" className="text-gray-500">
-            No issues assigned to you
-          </Text>
+        <Card>
+          <Flex direction="column" align="center" gap="2" my="4">
+            <GiBoxTrap className="w-20 h-20 mb-4" />
+            <Text size="3" className="text-gray-500">
+              No issues assigned to you
+            </Text>
+          </Flex>
+
+          {workspaces.length > 0 && (
+            <Flex direction="column" gap="2" align="center" my="4">
+              {workspaces.map((ws) => (
+                <Link key={ws.id} href={`/workspaces/${ws.id}`}>
+                  <Button variant="soft">
+                    <MdOutlineWorkspaces /> Back to {ws.name}
+                  </Button>
+                </Link>
+              ))}
+            </Flex>
+          )}
         </Card>
       ) : (
         <>

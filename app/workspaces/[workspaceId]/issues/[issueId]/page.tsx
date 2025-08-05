@@ -80,7 +80,10 @@ const IssueDetailPage = async ({ params }: Props) => {
               issueId={issue.id}
               workspaceId={params.workspaceId}
             />
-            <DeleteIssueButton issueId={issue.id} />
+            <DeleteIssueButton
+              issueId={issue.id}
+              workspaceId={params.workspaceId}
+            />
           </Flex>
         </Card>
       )}

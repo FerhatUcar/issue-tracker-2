@@ -9,9 +9,7 @@ export default async function HomePage() {
   const session = await getServerSession(authOptions);
 
   if (!session) {
-    return (
-      <PublicHome />
-    );
+    return <PublicHome />;
   }
 
   const workspaces = await prisma.workspace.findMany({
@@ -21,6 +19,10 @@ export default async function HomePage() {
           userId: session.user.id,
         },
       },
+    },
+    // TODO: check this
+    include: {
+      memberships: true,
     },
   });
 

@@ -21,13 +21,8 @@ import { patchIssueSchema } from "@/app/validationSchema";
 import SimpleMDE from "react-simplemde-editor";
 import type { Options } from "easymde";
 import { AiOutlineSend } from "react-icons/ai";
-import {
-  useDataQuery,
-  useIssueMutation,
-  usePushNotificationMutation,
-} from "@/app/hooks";
+import { useDataQuery, useIssueMutation } from "@/app/hooks";
 import { User } from "next-auth";
-import { pushToken } from "@/app/token";
 
 const simpleMdeOptions: Options = {
   hideIcons: ["fullscreen", "side-by-side", "preview", "guide"] as const,
@@ -40,7 +35,6 @@ type Props = {
 const IssueForm = ({ issue }: Props) => {
   const router = useRouter();
   const params = useParams();
-  const { mutateAsync: mutatePush } = usePushNotificationMutation();
   const {
     upsertIssue: { mutateAsync },
   } = useIssueMutation();
@@ -83,20 +77,6 @@ const IssueForm = ({ issue }: Props) => {
     try {
       await mutateAsync(payload, {
         onSuccess: () => {
-          if (assignedToUserId) {
-            void mutatePush({
-              token: pushToken,
-              title: "🎯 You've been assigned",
-              body: `You've been assigned to issue #${data.title ?? "new"}`,
-            });
-          } else {
-            void mutatePush({
-              token: pushToken,
-              title: "🎫 New ticket created",
-              body: `A new issue has been created: "${data.title}"`,
-            });
-          }
-
           toast.success("Issue submitted successfully!");
 
           router.push(`/workspaces/${workspaceId}`);

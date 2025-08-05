@@ -23,8 +23,8 @@ export const useIssueMutation = () => {
           .then((res) => res.data);
       }
     },
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["issues"] });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["issues"] });
     },
   });
 
@@ -32,8 +32,8 @@ export const useIssueMutation = () => {
     mutationFn: async (id: number) => {
       return axios.delete<void>(`/api/issues/${id}`).then((res) => res.data);
     },
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["issues"] });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["issues"] });
     },
   });
 
