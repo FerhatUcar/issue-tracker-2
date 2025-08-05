@@ -39,7 +39,7 @@ const PushNotificationInitializer = () => {
       }
     };
 
-    setupPush();
+    // setupPush();
   }, []);
 
   return null;
