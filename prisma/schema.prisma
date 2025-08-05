@@ -61,6 +61,7 @@ model User {
   Comment        Comment[]
   Membership     Membership[]
   Invite         Invite[]
+  Workspace      Workspace[]
 }
 
 model VerificationToken {
@@ -91,12 +92,15 @@ enum Role {
 model Workspace {
   id          String       @id @default(cuid())
   name        String
-  slug        String       @unique
+  ownerId     String
+  owner       User         @relation(fields: [ownerId], references: [id])
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
   memberships Membership[]
   issues      Issue[]
   Invite      Invite[]
+
+  @@unique([name, ownerId])
 }
 
 model Membership {

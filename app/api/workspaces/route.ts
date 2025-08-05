@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import authOptions from "@/app/auth/authOptions";
 import { getServerSession } from "next-auth";
 import prisma from "@/prisma/client";
-import slugify from "slugify";
 import { Workspace } from "@prisma/client";
 
 export async function GET(req: Request) {
@@ -45,39 +44,44 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions);
 
-  if (!session || !session.user || !session.user.email) {
+  if (!session?.user?.email) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { name } = (await req.json()) as Workspace;
+  const body = (await req.json()) as Workspace;
+  const name = body.name?.trim();
 
   if (!name) {
     return NextResponse.json({ error: "Name is mandatory" }, { status: 400 });
   }
 
-  const existingWorkspace = await prisma.workspace.findFirst({
-    where: { name },
+  const user = await prisma.user.findUnique({
+    where: { email: session.user.email },
   });
 
-  if (existingWorkspace) {
+  if (!user) {
+    return NextResponse.json({ error: "User not found" }, { status: 404 });
+  }
+
+  const existing = await prisma.workspace.findFirst({
+    where: { name, ownerId: user.id },
+  });
+
+  if (existing) {
     return NextResponse.json(
       { error: "Workspace already exists" },
       { status: 400 },
     );
   }
 
-  const slug = slugify(name, { lower: true, strict: true });
-
   try {
     const workspace = await prisma.workspace.create({
       data: {
         name,
-        slug,
+        ownerId: user.id,
         memberships: {
           create: {
-            user: {
-              connect: { email: session.user.email },
-            },
+            userId: user.id,
             role: "ADMIN",
           },
         },
@@ -86,7 +90,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json(workspace);
   } catch (err) {
-    console.error(err);
+    console.error("Workspace creation failed:", err);
 
     return NextResponse.json(
       { error: "Something went wrong" },
