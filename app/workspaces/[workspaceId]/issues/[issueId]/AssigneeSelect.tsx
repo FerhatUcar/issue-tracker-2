@@ -51,7 +51,7 @@ const AssigneeSelect = ({ issue }: Props) => {
         },
         {
           onSuccess: () => {
-            router.push("/issues/list");
+            toast.success("Changes saved successfully.");
             router.refresh();
           },
         },

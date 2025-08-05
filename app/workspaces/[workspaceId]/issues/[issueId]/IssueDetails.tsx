@@ -1,19 +1,16 @@
 import { StatusBadge } from "@/app/components";
-import { Issue } from "@prisma/client";
 import { Avatar, Box, Card, Flex, Heading, Text } from "@radix-ui/themes";
 import ReactMarkdown from "react-markdown";
 import React from "react";
-import { getServerSession } from "next-auth";
-import prisma from "@/prisma/client";
 import Link from "next/link";
 import { IoMdArrowRoundBack } from "react-icons/io";
-import authOptions from "@/app/auth/authOptions";
+import { IssuesWithAssigning } from "@/app/types/types";
 
-type IssueDetailsProps = {
+type Props = {
   /**
    * The issue object containing details about the issue.
    */
-  issue: Issue;
+  issue: IssuesWithAssigning;
 
   /**
    * A unique identifier for a workspace.
@@ -21,18 +18,7 @@ type IssueDetailsProps = {
   workspaceId: string;
 };
 
-const IssueDetails = async ({ issue, workspaceId }: IssueDetailsProps) => {
-  const session = await getServerSession(authOptions);
-
-  const currentUser = session?.user?.email
-    ? await prisma.user.findUnique({
-        where: { email: session.user.email },
-        select: { id: true },
-      })
-    : null;
-
-  const isAssignedToCurrentUser = issue.assignedToUserId === currentUser?.id;
-
+const IssueDetails = ({ issue, workspaceId }: Props) => {
   return (
     <Card>
       <Flex direction="row" gap="2" align="center">
@@ -50,12 +36,13 @@ const IssueDetails = async ({ issue, workspaceId }: IssueDetailsProps) => {
               </Text>
             </Flex>
 
-            {isAssignedToCurrentUser && session?.user?.image && (
+            {issue.assignedToUser && (
               <Avatar
-                src={session.user.image}
-                fallback="?"
+                src={issue.assignedToUser.image ?? ""}
+                fallback={issue.assignedToUser.name?.[0] ?? "?"}
                 size="2"
                 radius="full"
+                title={issue.assignedToUser.name ?? "Assigned user"}
                 referrerPolicy="no-referrer"
               />
             )}

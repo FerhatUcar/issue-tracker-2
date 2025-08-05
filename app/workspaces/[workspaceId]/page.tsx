@@ -56,37 +56,6 @@ export default async function WorkspacePage({
           workspaceName={workspace.name}
           isAdmin={isAdmin ?? false}
         />
-
-        {/*<Flex direction="row" gap="2" align="center">*/}
-        {/*  <Link href={`/workspaces/${workspaceId}/members`}>*/}
-        {/*    <Button variant="soft" size="3">*/}
-        {/*      <RiGroup2Fill /> View Members*/}
-        {/*    </Button>*/}
-        {/*  </Link>*/}
-
-        {/*  <Link*/}
-        {/*    href={`/workspaces/${workspaceId}/issues/list`}*/}
-        {/*    prefetch={false}*/}
-        {/*  >*/}
-        {/*    <Button variant="soft" size="3">*/}
-        {/*      <IoTicketOutline /> Issues*/}
-        {/*    </Button>*/}
-        {/*  </Link>*/}
-
-        {/*  <InviteMember workspaceId={workspaceId}>*/}
-        {/*    <Button variant="soft" size="3">*/}
-        {/*      <PlusIcon /> Invite member*/}
-        {/*    </Button>*/}
-        {/*  </InviteMember>*/}
-
-        {/*  {isAdmin && (*/}
-        {/*    <DeleteWorkspaceButton*/}
-        {/*      workspaceId={workspace.id}*/}
-        {/*      workspaceName={workspace.name}*/}
-        {/*      isAdmin={true}*/}
-        {/*    />*/}
-        {/*  )}*/}
-        {/*</Flex>*/}
       </Flex>
 
       <Grid columns={{ initial: "1", md: "2" }} gap="5">

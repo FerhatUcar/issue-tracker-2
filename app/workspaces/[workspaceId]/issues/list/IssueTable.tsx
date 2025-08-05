@@ -31,7 +31,7 @@ type IssueTableProps = {
   /**
    * The list of issues with their assigned user information.
    */
-  issuesWithAssigning: IssuesWithAssigning;
+  issuesWithAssigning: IssuesWithAssigning[];
 
   /**
    * A unique identifier representing a specific workspace.
@@ -66,9 +66,9 @@ const IssueTable: FC<IssueTableProps> = ({
   const [sort, setSort] = useState("asc");
   const searchValue = useRecoilValue(searchValueState);
   const [filteredList, setFilteredList] =
-    useState<IssuesWithAssigning>(issuesWithAssigning);
+    useState<IssuesWithAssigning[]>(issuesWithAssigning);
 
-  const updatedList: IssuesWithAssigning = [...issuesWithAssigning];
+  const updatedList = [...issuesWithAssigning];
 
   useEffect(
     () =>

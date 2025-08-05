@@ -34,10 +34,13 @@ export const MembersOverview = async ({ workspaceId }: Props) => {
     notFound();
   }
 
-  const currentUser = await prisma.user.findUnique({
-    where: { email: session.user.email },
-    select: { id: true },
-  });
+  const currentMembership = workspace.memberships.find(
+    (m) => m.user.email === session.user.email,
+  );
+
+  if (!currentMembership) {
+    notFound();
+  }
 
   return (
     <>
@@ -56,46 +59,51 @@ export const MembersOverview = async ({ workspaceId }: Props) => {
       </Flex>
 
       <Flex direction="column" gap="3">
-        {workspace.memberships.map(({ user, role }, i) => (
-          <Card key={i} variant="surface">
-            <Flex align="center" gap="3" justify="between">
-              <Flex align="center" gap="3">
-                <Avatar
-                  fallback={user.name?.[0] ?? "?"}
-                  radius="full"
-                  src={user.image ?? ""}
-                  size="3"
-                />
-                <Flex direction="column">
-                  <Text weight="bold">{user.name}</Text>
-                  <Text size="1" color="gray">
-                    {user.email}
-                  </Text>
+        {workspace.memberships.map(({ user, role }) => {
+          const isCurrentUser = user.email === session.user.email;
+          const isAdmin = role === "ADMIN";
+          const canDelete =
+            currentMembership.role === "ADMIN" && !isAdmin && !isCurrentUser;
+
+          return (
+            <Card key={user.id} variant="surface">
+              <Flex align="center" gap="3" justify="between">
+                <Flex align="center" gap="3">
+                  <Avatar
+                    fallback={user.name?.[0] ?? "?"}
+                    radius="full"
+                    src={user.image ?? ""}
+                    size="3"
+                  />
+                  <Flex direction="column">
+                    <Text weight="bold">{user.name}</Text>
+                    <Text size="1" color="gray">
+                      {user.email}
+                    </Text>
+                  </Flex>
+                </Flex>
+
+                <Flex align="center" gap="2">
+                  {isAdmin && (
+                    <Badge color="orange" size="2" variant="solid">
+                      <PiCrownDuotone size="18" />
+                    </Badge>
+                  )}
+
+                  {canDelete && (
+                    <Box className="mr-4">
+                      <DeleteMember
+                        userId={user.id}
+                        userName={user.name ?? "Member"}
+                        workspaceId={workspaceId}
+                      />
+                    </Box>
+                  )}
                 </Flex>
               </Flex>
-
-              <Flex align="center" gap="2">
-                {role === "ADMIN" && (
-                  <Badge color="orange" size="2" variant="solid">
-                    <Flex align="center" gap="1">
-                      <PiCrownDuotone size="20" /> Admin
-                    </Flex>
-                  </Badge>
-                )}
-
-                {user.id !== currentUser?.id && (
-                  <Box className="mr-4">
-                    <DeleteMember
-                      userId={user.id}
-                      userName={user.name ?? "Member"}
-                      workspaceId={workspaceId}
-                    />
-                  </Box>
-                )}
-              </Flex>
-            </Flex>
-          </Card>
-        ))}
+            </Card>
+          );
+        })}
       </Flex>
     </>
   );

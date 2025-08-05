@@ -76,9 +76,7 @@ export const LatestIssues = async ({ workspaceId }: Props) => {
           ))}
         </Box>
       ) : (
-        <Box className="h-[calc(100%-95px)]">
-          <NoIssuesPlaceholder />
-        </Box>
+        <NoIssuesPlaceholder />
       )}
 
       <Link href={`/workspaces/${workspaceId}/issues/new`}>

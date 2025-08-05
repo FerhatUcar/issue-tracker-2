@@ -53,7 +53,7 @@ const IssuesPage = async ({ searchParams, params }: Props) => {
       orderBy,
       page: (page - 1) * 10,
       pageSize: 10,
-    }) as Promise<IssuesWithAssigning>,
+    }) as Promise<IssuesWithAssigning[]>,
 
     prisma.issue.count({
       where: {

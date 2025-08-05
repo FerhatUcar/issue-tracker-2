@@ -1,11 +1,11 @@
 import prisma from "@/prisma/client";
 import { notFound } from "next/navigation";
-import { Box, Card, Grid, Flex } from "@radix-ui/themes";
+import { Box, Card, Flex, Grid } from "@radix-ui/themes";
 import IssueDetails from "@/app/workspaces/[workspaceId]/issues/[issueId]/IssueDetails";
 import {
+  Comments,
   DeleteIssueButton,
   EditIssueButton,
-  Comments,
 } from "@/app/workspaces/[workspaceId]/issues/[issueId]/components";
 import React, { cache } from "react";
 import { getServerSession } from "next-auth";
@@ -22,6 +22,7 @@ const fetchIssue = cache((issueId: number) =>
   prisma.issue.findUnique({
     where: { id: issueId },
     include: {
+      assignedToUser: true,
       Workspace: {
         include: {
           memberships: {

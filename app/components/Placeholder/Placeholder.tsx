@@ -5,11 +5,11 @@ export const NoIssuesPlaceholder = () => (
   <Box className="flex flex-col items-center justify-center mb-2">
     <Image
       src="/placeholder.png"
-      alt="Geen issues gevonden"
-      width={300}
-      height={300}
+      alt="No issues placeholder"
+      width={315}
+      height={315}
       priority
     />
-    <Text size="2">Er zijn momenteel geen issues 🎉</Text>
+    <Text size="2">There are currently no issues!</Text>
   </Box>
 );
