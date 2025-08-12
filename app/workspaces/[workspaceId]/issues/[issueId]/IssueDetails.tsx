@@ -18,44 +18,41 @@ type Props = {
   workspaceId: string;
 };
 
-const IssueDetails = ({ issue, workspaceId }: Props) => {
-  return (
-    <Card>
-      <Flex direction="row" gap="2" align="center">
-        <Box className="w-12 h-12 bg-gray-100 dark:bg-black/20 px-4 rounded-lg flex items-center justify-center">
-          <Link href={`/workspaces/${workspaceId}`}>
-            <IoMdArrowRoundBack />
-          </Link>
-        </Box>
-        <Box className="w-full bg-gray-100 dark:bg-black/20 px-4 rounded-lg">
-          <Flex justify="between" align="center" py="2">
-            <Flex align="center" gap="3">
-              <StatusBadge status={issue.status} />
-              <Text size="2" color="gray">
-                {issue.createdAt.toDateString()}
-              </Text>
-            </Flex>
-
-            {issue.assignedToUser && (
-              <Avatar
-                src={issue.assignedToUser.image ?? ""}
-                fallback={issue.assignedToUser.name?.[0] ?? "?"}
-                size="2"
-                radius="full"
-                title={issue.assignedToUser.name ?? "Assigned user"}
-                referrerPolicy="no-referrer"
-              />
-            )}
-          </Flex>
-        </Box>
-      </Flex>
-
-      <Box className="p-2 py-4">
-        <Heading mb="2">{issue.title}</Heading>
-        <ReactMarkdown>{issue.description}</ReactMarkdown>
+const IssueDetails = ({ issue, workspaceId }: Props) => (
+  <Card>
+    <Flex direction="row" gap="2" align="center">
+      <Box className="w-12 h-12 bg-gray-100 dark:bg-black/20 px-4 rounded-lg flex items-center justify-center">
+        <Link href={`/workspaces/${workspaceId}`}>
+          <IoMdArrowRoundBack />
+        </Link>
       </Box>
-    </Card>
-  );
-};
+      <Box className="w-full bg-gray-100 dark:bg-black/20 px-4 rounded-lg">
+        <Flex justify="between" align="center" py="2">
+          <Flex align="center" gap="3">
+            <StatusBadge status={issue.status} />
+            <Text size="2" color="gray">
+              {issue.createdAt.toDateString()}
+            </Text>
+          </Flex>
+          {issue.assignedToUser && (
+            <Avatar
+              src={issue.assignedToUser.image ?? ""}
+              fallback={issue.assignedToUser.name?.[0] ?? "?"}
+              size="2"
+              radius="full"
+              title={issue.assignedToUser.name ?? "Assigned user"}
+              referrerPolicy="no-referrer"
+            />
+          )}
+        </Flex>
+      </Box>
+    </Flex>
+
+    <Box className="p-2 py-4">
+      <Heading mb="2">{issue.title}</Heading>
+      <ReactMarkdown>{issue.description}</ReactMarkdown>
+    </Box>
+  </Card>
+);
 
 export default IssueDetails;

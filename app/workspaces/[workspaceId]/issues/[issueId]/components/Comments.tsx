@@ -4,7 +4,6 @@ import { CommentForm } from "@/app/components";
 import { Avatar, Box, Card, Flex, Text } from "@radix-ui/themes";
 import { Comment } from "./Comment";
 import { useComments } from "@/app/hooks";
-import { useSession } from "next-auth/react";
 import { BsWechat } from "react-icons/bs";
 import Skeleton from "react-loading-skeleton";
 
@@ -14,7 +13,6 @@ type Props = {
 
 export const Comments = ({ issueId }: Props) => {
   const { data: comments = [], isLoading } = useComments(issueId);
-  const { data: session } = useSession();
 
   return (
     <Card mt="4">
@@ -34,20 +32,27 @@ export const Comments = ({ issueId }: Props) => {
             <Skeleton />
           ) : (
             <Box className="space-y-4 w-full">
-              {comments.map((comment) => (
-                <Flex direction="row" gap="2" key={comment.id}>
-                  {session ? (
+              {comments.map((comment) => {
+                const { author } = comment;
+                const fallback = (
+                  author?.name?.[0] ??
+                  author?.email?.[0] ??
+                  "?"
+                ).toUpperCase();
+
+                return (
+                  <Flex direction="row" gap="2" key={comment.id}>
                     <Avatar
-                      src={session.user?.image ?? ""}
-                      fallback="?"
+                      src={author?.image ?? ""}
+                      fallback={fallback}
                       size="2"
                       radius="full"
                       referrerPolicy="no-referrer"
                     />
-                  ) : null}
-                  <Comment comment={comment} issueId={issueId} />
-                </Flex>
-              ))}
+                    <Comment comment={comment} issueId={issueId} />
+                  </Flex>
+                );
+              })}
             </Box>
           )}
         </Flex>

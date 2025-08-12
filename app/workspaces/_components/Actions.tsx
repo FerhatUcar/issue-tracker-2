@@ -24,6 +24,16 @@ export const Actions = ({ workspaceId, workspaceName, isAdmin }: Props) => {
   const { mutate, isLoading } = useDeleteWorkspace();
   const router = useRouter();
 
+  const handleOnDeleteWorkspace = (e: Event) => {
+    e.preventDefault();
+    setShowDialog(true);
+  };
+
+  const handleOnInviteMember = (e: Event) => {
+    e.preventDefault();
+    setInviteOpen(true);
+  };
+
   const handleDeleteConfirm = () => {
     mutate(workspaceId, {
       onSuccess: () => {
@@ -51,12 +61,7 @@ export const Actions = ({ workspaceId, workspaceName, isAdmin }: Props) => {
             </DropdownMenu.Item>
           </Link>
 
-          <DropdownMenu.Item
-            onSelect={(e) => {
-              e.preventDefault();
-              setInviteOpen(true);
-            }}
-          >
+          <DropdownMenu.Item onSelect={handleOnInviteMember}>
             <Flex align="center" gap="2">
               <MdPersonAddAlt1 />
               <Text>Invite member</Text>
@@ -75,12 +80,7 @@ export const Actions = ({ workspaceId, workspaceName, isAdmin }: Props) => {
           {isAdmin && (
             <>
               <DropdownMenu.Separator />
-              <DropdownMenu.Item
-                onSelect={(e) => {
-                  e.preventDefault();
-                  setShowDialog(true);
-                }}
-              >
+              <DropdownMenu.Item onSelect={handleOnDeleteWorkspace}>
                 <Flex direction="row" align="center" gap="2">
                   <FaTrash />
                   <Text>Delete workspace</Text>

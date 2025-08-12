@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
     data: {
       content,
       issueId,
-      authorId: session.user?.name,
+      authorId: session.user?.id,
     },
   });
 
