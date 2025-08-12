@@ -12,7 +12,7 @@ export const WorkspaceSelect = ({ workspaces }: Props) => {
   const router = useRouter();
 
   return (
-    <Box className="w-full max-w-sm">
+    <>
       <Box mb="2">
         <Text size="2" weight="bold" className="flex items-center gap-2">
           <MdOutlineWorkspaces /> Go back to a workspace:
@@ -22,7 +22,7 @@ export const WorkspaceSelect = ({ workspaces }: Props) => {
       <Select.Root
         onValueChange={(value) => router.push(`/workspaces/${value}`)}
       >
-        <Select.Trigger placeholder="Selecteer een workspace" />
+        <Select.Trigger placeholder="Select workspace" />
         <Select.Content>
           <Select.Group>
             <Select.Label>Workspaces</Select.Label>
@@ -34,6 +34,6 @@ export const WorkspaceSelect = ({ workspaces }: Props) => {
           </Select.Group>
         </Select.Content>
       </Select.Root>
-    </Box>
+    </>
   );
 };

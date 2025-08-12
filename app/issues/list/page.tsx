@@ -92,12 +92,8 @@ const AllIssuesPage = async ({ searchParams }: Props) => {
           </Flex>
 
           {workspaces.length > 0 && (
-            <Flex direction="column" gap="2" align="center" my="4">
-              {workspaces.length > 0 && (
-                <Flex direction="column" align="center">
-                  <WorkspaceSelect workspaces={workspaceOptions} />
-                </Flex>
-              )}
+            <Flex direction="column" align="center" my="2">
+              <WorkspaceSelect workspaces={workspaceOptions} />
             </Flex>
           )}
         </Card>
