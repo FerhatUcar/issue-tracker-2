@@ -1,8 +1,7 @@
-import React from "react";
 import prisma from "@/prisma/client";
 import { Status } from "@prisma/client";
 import { Pagination } from "@/app/components";
-import { Box, Button, Card, Flex, Heading, Text } from "@radix-ui/themes";
+import { Box, Card, Flex, Heading, Text } from "@radix-ui/themes";
 import IssueTable, {
   IssueQuery,
 } from "@/app/workspaces/[workspaceId]/issues/list/IssueTable";
@@ -10,8 +9,7 @@ import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import authOptions from "@/app/auth/authOptions";
 import { GiBoxTrap } from "react-icons/gi";
-import Link from "next/link";
-import { MdOutlineWorkspaces } from "react-icons/md";
+import { WorkspaceSelect } from "@/app/issues/_components";
 
 type Props = {
   searchParams: IssueQuery;
@@ -65,6 +63,11 @@ const AllIssuesPage = async ({ searchParams }: Props) => {
     .map((m) => m.workspace)
     .filter((w) => w !== null);
 
+  const workspaceOptions = workspaces.map(({ id, name }) => ({
+    id,
+    name,
+  }));
+
   return (
     <Box className="space-y-6">
       <Box className="flex items-center justify-between">
@@ -90,13 +93,11 @@ const AllIssuesPage = async ({ searchParams }: Props) => {
 
           {workspaces.length > 0 && (
             <Flex direction="column" gap="2" align="center" my="4">
-              {workspaces.map((ws) => (
-                <Link key={ws.id} href={`/workspaces/${ws.id}`}>
-                  <Button variant="soft">
-                    <MdOutlineWorkspaces /> Back to {ws.name}
-                  </Button>
-                </Link>
-              ))}
+              {workspaces.length > 0 && (
+                <Flex direction="column" align="center">
+                  <WorkspaceSelect workspaces={workspaceOptions} />
+                </Flex>
+              )}
             </Flex>
           )}
         </Card>
