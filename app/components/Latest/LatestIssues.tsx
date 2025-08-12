@@ -1,15 +1,5 @@
-import {
-  Avatar,
-  Badge,
-  Box,
-  Button,
-  Card,
-  Flex,
-  Heading,
-  Text,
-} from "@radix-ui/themes";
-import React from "react";
-import { NoIssuesPlaceholder, StatusBadge } from "@/app/components";
+import { Avatar, Badge, Box, Button, Card, Flex, Heading, Text } from "@radix-ui/themes";
+import { NoIssuesPlaceholder, StatusDot } from "@/app/components";
 import Link from "next/link";
 import { AiFillPlusCircle } from "react-icons/ai";
 import { IoTicketOutline } from "react-icons/io5";
@@ -46,13 +36,11 @@ export const LatestIssues = async ({ workspaceId }: Props) => {
               >
                 <Flex justify="between" align="center">
                   <Flex direction="row" align="center" height="5" gap="2">
-                    <Box className="w-16">
-                      <StatusBadge status={issue.status} />
-                    </Box>
+                    <StatusDot status={issue.status} />
 
-                    <Box className="truncate max-w-[180px]">
-                      <Text className="truncate">{issue.title}</Text>
-                    </Box>
+                    <Text className="overflow-hidden truncate max-[430px]:w-36">
+                      {issue.title}
+                    </Text>
                   </Flex>
 
                   <Flex gap="2">
@@ -61,6 +49,7 @@ export const LatestIssues = async ({ workspaceId }: Props) => {
                         <BsChatDots /> {issue.Comment.length}
                       </Badge>
                     )}
+
                     {issue.assignedToUser && (
                       <Avatar
                         src={issue.assignedToUser.image!}

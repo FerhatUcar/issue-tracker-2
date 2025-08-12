@@ -1,5 +1,6 @@
 export { default as Skeleton } from "./Skeleton/Skeleton";
 export { StatusBadge } from "./StatusBadge";
+export { StatusDot } from "./StatusDot";
 export { ErrorMessage } from "./ErrorMessage";
 export { Link } from "./Link";
 export { Spinner } from "./Spinner";

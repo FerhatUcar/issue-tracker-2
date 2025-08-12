@@ -19,10 +19,10 @@ type Props = {
 };
 
 export const Actions = ({ workspaceId, workspaceName, isAdmin }: Props) => {
+  const router = useRouter();
+  const { mutate, isLoading } = useDeleteWorkspace();
   const [showDialog, setShowDialog] = useState(false);
   const [inviteOpen, setInviteOpen] = useState(false);
-  const { mutate, isLoading } = useDeleteWorkspace();
-  const router = useRouter();
 
   const handleOnDeleteWorkspace = (e: Event) => {
     e.preventDefault();
