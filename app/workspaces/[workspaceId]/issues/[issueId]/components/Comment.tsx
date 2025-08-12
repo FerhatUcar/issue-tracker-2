@@ -9,17 +9,17 @@ import {
   Text,
   TextArea,
 } from "@radix-ui/themes";
-import { type Comment as CommentType } from "@prisma/client";
 import { FaCheck, FaEdit, FaTimes } from "react-icons/fa";
 import { useCommentMutation } from "@/app/hooks/use-comment-mutation";
 import { ConfirmationDialog } from "@/app/components";
 import toast from "react-hot-toast";
+import { CommentWithAuthor } from "@/app/types/types";
 
 type Props = {
   /**
    * The comment object containing details like id, content, authorId, and timestamps.
    */
-  comment: CommentType;
+  comment: CommentWithAuthor;
 
   /**
    * The ID of the issue to which this comment belongs.
@@ -63,7 +63,7 @@ export const Comment = ({ comment, issueId }: Props) => {
         <Box className="flex-1 space-y-1">
           <Flex direction="column" mb="4">
             <Text className="text-sm font-medium text-gray-800 dark:text-gray-100">
-              {comment.authorId ?? "Anonymous"}
+              {comment.author?.name ?? "Anonymous"}
             </Text>
             <Text className="text-xs text-gray-500">
               {new Date(comment.createdAt).toLocaleString("nl-NL", {
