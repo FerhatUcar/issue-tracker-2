@@ -6,9 +6,12 @@ import { Flex, Separator } from "@radix-ui/themes";
 import Link from "next/link";
 import classnames from "classnames";
 import { MdOutlineWorkspaces } from "react-icons/md";
+import { useSession } from "next-auth/react";
 
 export const NavLinks = () => {
   const currentPath = usePathname();
+  const { status } = useSession();
+  const isAuthenticated = status === "authenticated";
 
   const links = [
     {
@@ -21,7 +24,7 @@ export const NavLinks = () => {
     },
   ];
 
-  return (
+  return isAuthenticated ? (
     <ul className="flex space-x-3">
       {links.map((link, i) => (
         <Flex align="center" gap="3" key={i}>
@@ -40,5 +43,5 @@ export const NavLinks = () => {
         </Flex>
       ))}
     </ul>
-  );
+  ) : null;
 };

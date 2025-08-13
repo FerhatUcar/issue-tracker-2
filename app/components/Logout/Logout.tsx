@@ -1,10 +1,9 @@
 "use client";
 
-import Image from "next/image";
 import { useState } from "react";
-import { signIn } from "next-auth/react";
+import { signOut } from "next-auth/react";
 import { Box, Button, Dialog, Flex, IconButton, Text } from "@radix-ui/themes";
-import { Cross2Icon } from "@radix-ui/react-icons";
+import { Cross2Icon, ExitIcon } from "@radix-ui/react-icons";
 
 type Props = {
   callbackUrl?: string;
@@ -12,13 +11,13 @@ type Props = {
   setOpen: (open: boolean) => void;
 };
 
-export const Login = ({ callbackUrl = "/", open, setOpen }: Props) => {
+export const Logout = ({ callbackUrl = "/", open, setOpen }: Props) => {
   const [loading, setLoading] = useState(false);
 
-  const handleOnClick = () => {
+  const handleLogout = () => {
     setLoading(true);
 
-    void signIn("google", { callbackUrl });
+    void signOut({ callbackUrl });
   };
 
   return (
@@ -36,26 +35,23 @@ export const Login = ({ callbackUrl = "/", open, setOpen }: Props) => {
           </IconButton>
         </Dialog.Close>
 
-        <Dialog.Title>Log in</Dialog.Title>
-        <Text className="text-gray-600">With your Google account</Text>
+        <Dialog.Title>Logout</Dialog.Title>
+        <Text className="text-gray-600">Are you sure you want to log out?</Text>
 
         <Box className="mt-6">
           <Button
             type="button"
-            variant="soft"
+            variant="solid"
+            color="red"
             size="3"
             disabled={loading}
-            onClick={handleOnClick}
-            className="w-full rounded bg-blue-600 text-white py-2 disabled:opacity-60"
+            onClick={handleLogout}
+            className="w-full py-2 disabled:opacity-60"
           >
-            {loading ? (
-              "Loading..."
-            ) : (
-              <Flex direction="row" align="center" justify="center" gap="2">
-                <Image src="/google.png" alt="google" width={25} height={25} />
-                Login with Google
-              </Flex>
-            )}
+            <Flex align="center" justify="center" gap="2">
+              <ExitIcon />
+              {loading ? "Logging out..." : "Logout"}
+            </Flex>
           </Button>
         </Box>
       </Dialog.Content>

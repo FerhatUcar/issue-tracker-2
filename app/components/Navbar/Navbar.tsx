@@ -2,8 +2,8 @@
 
 import React from "react";
 import Link from "next/link";
-import { Container, Flex } from "@radix-ui/themes";
 import Image from "next/image";
+import { Container, Flex } from "@radix-ui/themes";
 import { AuthStatus } from "@/app/components";
 import { NavLinks } from "./Navlinks";
 
