@@ -1,4 +1,13 @@
-import { Avatar, Badge, Box, Button, Card, Flex, Heading, Text } from "@radix-ui/themes";
+import {
+  Avatar,
+  Badge,
+  Box,
+  Button,
+  Card,
+  Flex,
+  Heading,
+  Text,
+} from "@radix-ui/themes";
 import { NoIssuesPlaceholder, StatusDot } from "@/app/components";
 import Link from "next/link";
 import { AiFillPlusCircle } from "react-icons/ai";

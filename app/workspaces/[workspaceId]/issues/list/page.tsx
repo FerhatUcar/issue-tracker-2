@@ -72,19 +72,17 @@ const IssuesPage = async ({ searchParams, params }: Props) => {
   if (issues.length === 0 && page === 1) {
     return (
       <Box className="space-y-6">
-        <Box className="flex items-center justify-between">
-          <Box>
-            <Heading size="6" className="mb-1">
-              Issues
-            </Heading>
-            <Text size="3" className="text-gray-500">
-              Manage and track all issues in
-              <Badge className="mx-2">
-                {workspace?.name || "this workspace"}
-              </Badge>
-            </Text>
-          </Box>
-        </Box>
+        <Flex direction="column" align="start">
+          <Heading size="6" className="mb-1">
+            Issues
+          </Heading>
+          <Text size="3" className="text-gray-500">
+            Manage and track all issues in
+            <Badge className="mx-2">
+              {workspace?.name || "this workspace"}
+            </Badge>
+          </Text>
+        </Flex>
 
         <Card className="p-4">
           <IssueActions workspaceId={params.workspaceId} />
@@ -97,19 +95,15 @@ const IssuesPage = async ({ searchParams, params }: Props) => {
 
   return (
     <Box className="space-y-6">
-      <Box className="flex items-center justify-between">
-        <Box>
-          <Heading size="6" className="mb-1">
-            Issues
-          </Heading>
-          <Text size="3" className="text-gray-500">
-            {issueCount} {issueCount === 1 ? "issue" : "issues"} in
-            <Badge className="mx-2">
-              {workspace?.name || "this workspace"}
-            </Badge>
-          </Text>
-        </Box>
-      </Box>
+      <Flex direction="column" align="start">
+        <Heading size="6" className="mb-1">
+          Issues
+        </Heading>
+        <Text size="3" className="text-gray-500">
+          {issueCount} {issueCount === 1 ? "issue" : "issues"} in
+          <Badge className="mx-2">{workspace?.name || "this workspace"}</Badge>
+        </Text>
+      </Flex>
 
       <Card className="p-4">
         <IssueActions workspaceId={params.workspaceId} />

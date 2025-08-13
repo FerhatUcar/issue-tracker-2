@@ -1,83 +1,101 @@
 "use client";
 
-import React from "react";
 import { Flex, Select } from "@radix-ui/themes";
 import { Skeleton } from "@/app/components";
-import { deduplicateByProperty } from "@/app/helpers";
 import { useDataQuery } from "@/app/hooks";
-import { User } from "next-auth";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-type UniqueUserIssues = {
-  assignedToUserId: string | null;
-};
-type UserName = string | null | undefined;
-type AssignedUser = {
-  name: UserName;
-  assignedToUserId: UniqueUserIssues["assignedToUserId"];
-};
+type IssueLite = { assignedToUserId: string | null };
+type AppUser = { id: string; name: string | null };
 
-type Props = {
-  workspaceId: string;
-};
+type Props = { workspaceId: string };
 
-const IssueUserFilter = ({ workspaceId }: Props) => {
+const UNASSIGNED = "__unassigned__";
+
+export default function IssueUserFilter({ workspaceId }: Props) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+
   const {
     data: issues,
     isError: isIssuesError,
-    isLoading,
-  } = useDataQuery<UniqueUserIssues>("issues");
-  const { data: users, error: isUsersError } = useDataQuery<User>(
-    "users",
-    workspaceId,
-  );
-  const nameMapping: Record<string, UserName> = {};
-  const assignedUser: AssignedUser[] = [];
+    isLoading: isIssuesLoading,
+  } = useDataQuery<IssueLite>("issues");
 
-  if (isUsersError) {
+  const {
+    data: users,
+    isError: isUsersError,
+    isLoading: isUsersLoading,
+  } = useDataQuery<AppUser>("users", workspaceId);
+
+  if (isUsersError || isIssuesError) {
     return null;
   }
 
-  if (users) {
-    users.forEach((user) => {
-      nameMapping[user.id] = user.name;
-    });
-  }
-
-  if (issues) {
-    issues.forEach((issue) =>
-      assignedUser.push({
-        ...issue,
-        name: nameMapping[issue.assignedToUserId ?? ""],
-      }),
-    );
-  }
-
-  if (isLoading) {
+  if (isUsersLoading || isIssuesLoading) {
     return <Skeleton />;
   }
 
-  if (isIssuesError) {
-    return null;
+  // get the user id from the URL
+  const urlValue = searchParams.get("assignedToUserId") ?? "";
+
+  // Only show "assigned-only" when actually filtering on a specific user.
+  // So NOT at All ("") and NOT at Unassigned.
+  const showingAssignedOnly = urlValue !== "" && urlValue !== "null";
+
+  // Set of userIds that appear in issues
+  const assignedIds = new Set(
+    (issues ?? [])
+      .map((i) => i.assignedToUserId)
+      .filter((id): id is string => !!id),
+  );
+
+  // Options: default ALL users
+  let options = (users ?? []).map((u) => ({
+    value: u.id,
+    label: u.name ?? "(No name)",
+  }));
+
+  // If you filter specifically on user, you can limit it to users with issues
+  if (showingAssignedOnly) {
+    options = options.filter((o) => assignedIds.has(o.value));
+
+    // Make sure the selected user remains visible, even without issues
+    if (urlValue && !options.some((o) => o.value === urlValue)) {
+      const user = users?.find((x) => x.id === urlValue);
+
+      if (user)
+        options = [
+          { value: user.id, label: user.name ?? "(No name)" },
+          ...options,
+        ];
+    }
   }
 
-  const filteredIssuesArray = deduplicateByProperty(
-    assignedUser,
-    "assignedToUserId",
-  );
+  // Include "Unassigned" if there are unassigned issues.
+  const hasUnassigned = (issues ?? []).some((i) => i.assignedToUserId === null);
+
+  if (hasUnassigned) {
+    options = [{ value: UNASSIGNED, label: "Unassigned" }, ...options];
+  }
+
+  const value =
+    urlValue === "" ? "" : urlValue === "null" ? UNASSIGNED : urlValue;
 
   const handleOnValueChange = (assignedToUserId: string) => {
     const params = new URLSearchParams();
 
-    if (assignedToUserId) {
-      params.append("assignedToUserId", assignedToUserId);
+    if (assignedToUserId && assignedToUserId !== UNASSIGNED) {
+      params.set("assignedToUserId", assignedToUserId);
+    } else if (assignedToUserId === UNASSIGNED) {
+      params.set("assignedToUserId", "null");
     }
 
-    if (searchParams.get("status")) {
-      params.append("status", searchParams.get("status")!);
+    const status = searchParams.get("status");
+
+    if (status) {
+      params.set("status", status);
     }
 
     router.push(`${pathname}?${params.toString()}`);
@@ -85,25 +103,20 @@ const IssueUserFilter = ({ workspaceId }: Props) => {
 
   return (
     <Flex align="center" gap="3">
-      <Select.Root
-        defaultValue={searchParams.get("assignedToUserId") ?? undefined}
-        onValueChange={handleOnValueChange}
-      >
+      <Select.Root value={value} onValueChange={handleOnValueChange}>
         <Select.Trigger
           placeholder="Filter by user"
           className="truncate max-w-[85px] sm:max-w-none"
         />
         <Select.Content>
           <Select.Item value="">All</Select.Item>
-          {filteredIssuesArray.map(({ name, assignedToUserId }, i) => (
-            <Select.Item key={i} value={assignedToUserId || ""}>
-              {name}
+          {options.map((opt) => (
+            <Select.Item key={opt.value} value={opt.value}>
+              {opt.label}
             </Select.Item>
           ))}
         </Select.Content>
       </Select.Root>
     </Flex>
   );
-};
-
-export default IssueUserFilter;
+}

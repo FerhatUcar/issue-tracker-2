@@ -2,7 +2,7 @@
 
 import React, { useMemo } from "react";
 import { Flex, Select } from "@radix-ui/themes";
-import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { statuses } from "@/app/workspaces/[workspaceId]/issues/_components/IssueStatus";
 
 const IssueStatusFilter = () => {
@@ -45,7 +45,10 @@ const IssueStatusFilter = () => {
         value={currentStatus}
         onValueChange={handleOnValueChange}
       >
-        <Select.Trigger placeholder="Filter by status" className="truncate max-w-[85px] sm:max-w-none" />
+        <Select.Trigger
+          placeholder="Filter by status"
+          className="truncate max-w-[85px] sm:max-w-none"
+        />
         <Select.Content>
           {statuses.map((status, i) => (
             <Select.Item key={i} value={status.value || "ALL"}>
