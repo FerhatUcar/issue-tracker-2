@@ -10,6 +10,7 @@ export { NoIssuesPlaceholder } from "./Placeholder";
 export { PublicHome } from "./PublicHome";
 export { Summary } from "./Summary";
 export { LatestIssues } from "./Latest";
+export { Login } from "./Login";
 export { IssueChart } from "./Chart";
 export { Pagination } from "./Pagination";
 export { CommentForm } from "./CommentForm";

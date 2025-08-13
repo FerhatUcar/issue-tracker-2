@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useSession } from "next-auth/react";
 import {
   Avatar,
@@ -22,16 +21,17 @@ import Skeleton from "react-loading-skeleton";
 import { useThemeToggle } from "@/app/providers";
 import { IoTicketOutline } from "react-icons/io5";
 import { useParams } from "next/navigation";
+import { Login } from "@/app/components";
+import { useState } from "react";
+import Link from "next/link";
 
-type Props = {
-  userId: string;
-  count: number;
-};
+type Props = { userId: string; count: number };
 
 export const AuthStatus = ({ userId, count }: Props) => {
   const { status, data: session } = useSession();
   const { workspaceId } = useParams();
   const { appearance, toggleAppearance } = useThemeToggle();
+  const [open, setOpen] = useState(false);
 
   const workspaceIdString = Array.isArray(workspaceId)
     ? workspaceId[0]
@@ -41,15 +41,18 @@ export const AuthStatus = ({ userId, count }: Props) => {
     return <Skeleton width="3rem" />;
   }
 
-  if (status === "unauthenticated")
+  if (status === "unauthenticated") {
     return (
-      <Link className="hover:cursor-pointer nav-link" href="/api/auth/signin">
-        <Button className="hover:cursor-pointer" variant="soft">
+      <>
+        <Button variant="soft" onClick={() => setOpen(true)}>
           <PersonIcon />
           Log in
         </Button>
-      </Link>
+
+        <Login open={open} setOpen={setOpen} />
+      </>
     );
+  }
 
   return (
     <DropdownMenu.Root>
@@ -89,7 +92,6 @@ export const AuthStatus = ({ userId, count }: Props) => {
             <Flex
               justify={count >= 1 ? "between" : "start"}
               width="100%"
-              direction="row"
               align="center"
               gap="2"
             >
@@ -97,7 +99,6 @@ export const AuthStatus = ({ userId, count }: Props) => {
                 <IoTicketOutline />
                 <Text>My list</Text>
               </Flex>
-
               {count >= 1 && (
                 <Badge
                   variant="solid"
@@ -117,13 +118,7 @@ export const AuthStatus = ({ userId, count }: Props) => {
             href={`/workspaces/${workspaceIdString}/issues/list?assignedToUserId=${userId}`}
           >
             <DropdownMenu.Item>
-              <Flex
-                justify="between"
-                width="100%"
-                direction="row"
-                align="center"
-                gap="2"
-              >
+              <Flex justify="between" width="100%" align="center" gap="2">
                 <IoTicketOutline />
                 <Text>Workspace issues</Text>
               </Flex>
@@ -133,7 +128,7 @@ export const AuthStatus = ({ userId, count }: Props) => {
 
         <DropdownMenu.Separator />
         <DropdownMenu.Item>
-          <Flex direction="row" align="center" gap="2">
+          <Flex align="center" gap="2">
             <ExitIcon />
             <Link href="/api/auth/signout">Log out</Link>
           </Flex>

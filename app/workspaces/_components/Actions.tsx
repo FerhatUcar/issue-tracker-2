@@ -51,7 +51,11 @@ export const Actions = ({ workspaceId, workspaceName, isAdmin }: Props) => {
           </Button>
         </DropdownMenu.Trigger>
 
-        <DropdownMenu.Content side="left" align="start">
+        <DropdownMenu.Content
+          side="left"
+          align="start"
+          className="min-w-[200px]"
+        >
           <Link href={`/workspaces/${workspaceId}/members`}>
             <DropdownMenu.Item>
               <Flex direction="row" align="center" gap="2">
@@ -61,12 +65,14 @@ export const Actions = ({ workspaceId, workspaceName, isAdmin }: Props) => {
             </DropdownMenu.Item>
           </Link>
 
-          <DropdownMenu.Item onSelect={handleOnInviteMember}>
-            <Flex align="center" gap="2">
-              <MdPersonAddAlt1 />
-              <Text>Invite member</Text>
-            </Flex>
-          </DropdownMenu.Item>
+          {isAdmin && (
+            <DropdownMenu.Item onSelect={handleOnInviteMember}>
+              <Flex align="center" gap="2">
+                <MdPersonAddAlt1 />
+                <Text>Invite member</Text>
+              </Flex>
+            </DropdownMenu.Item>
+          )}
 
           <Link href={`/workspaces/${workspaceId}/issues/list`}>
             <DropdownMenu.Item>
