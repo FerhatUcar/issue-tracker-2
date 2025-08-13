@@ -1,19 +1,12 @@
 "use client";
 
-import { useMemo } from "react";
+import { FormEventHandler, useMemo } from "react";
 import { z } from "zod";
 import { Spinner } from "@/app/components";
 import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
 import { Issue } from "@prisma/client";
-import {
-  Button,
-  Callout,
-  Card,
-  Flex,
-  Select,
-  TextField,
-} from "@radix-ui/themes";
+import { Box, Button, Callout, Card, Flex, Select, TextField } from "@radix-ui/themes";
 import "easymde/dist/easymde.min.css";
 import { useParams, useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
@@ -28,9 +21,7 @@ const simpleMdeOptions: Options = {
   hideIcons: ["fullscreen", "side-by-side", "preview", "guide"] as const,
 };
 
-type Props = {
-  issue?: Issue;
-};
+type Props = { issue?: Issue };
 
 const IssueForm = ({ issue }: Props) => {
   const router = useRouter();
@@ -78,7 +69,6 @@ const IssueForm = ({ issue }: Props) => {
       await mutateAsync(payload, {
         onSuccess: () => {
           toast.success("Issue submitted successfully!");
-
           router.push(`/workspaces/${workspaceId}`);
           router.refresh();
         },
@@ -90,6 +80,12 @@ const IssueForm = ({ issue }: Props) => {
     }
   });
 
+  const handleFormSubmit: FormEventHandler<HTMLFormElement> = (e) => {
+    e.preventDefault();
+
+    void onSubmit(e);
+  };
+
   return (
     <Card className="md:max-w-xl">
       {(errors.title?.message || errors.description?.message) && (
@@ -100,13 +96,14 @@ const IssueForm = ({ issue }: Props) => {
         </Callout.Root>
       )}
 
-      {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
-      <form className="space-y-4" onSubmit={onSubmit}>
-        <TextField.Root>
+      <form className="space-y-4" onSubmit={handleFormSubmit}>
+        <TextField.Root className="relative z-10 pointer-events-auto">
           <Flex align="center">
             <TextField.Input
               size="3"
               placeholder="Issue title..."
+              inputMode="text"
+              autoComplete="off"
               {...register("title")}
             />
           </Flex>
@@ -142,23 +139,25 @@ const IssueForm = ({ issue }: Props) => {
           />
         )}
 
-        <Controller
-          name="description"
-          control={control}
-          defaultValue={defaultDescription}
-          render={({ field: { onChange, value } }) => (
-            <SimpleMDE
-              value={value}
-              onChange={onChange}
-              options={simpleMdeOptions}
-              placeholder="Description"
-            />
-          )}
-        />
+        <Box className="relative z-0">
+          <Controller
+            name="description"
+            control={control}
+            defaultValue={defaultDescription}
+            render={({ field: { onChange, value } }) => (
+              <SimpleMDE
+                value={value}
+                onChange={onChange}
+                options={simpleMdeOptions}
+                placeholder="Description"
+              />
+            )}
+          />
+        </Box>
 
         <Flex justify="end">
           <Button
-            disabled={isSubmitting || (!!errors.title && !!errors.description)}
+            disabled={isSubmitting || !!errors.title || !!errors.description}
             type="submit"
             variant="soft"
           >
