@@ -23,7 +23,7 @@ export const Login = ({ callbackUrl = "/", open, setOpen }: Props) => {
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
-      <Dialog.Content className="relative">
+      <Dialog.Content className="relative mx-4">
         <Dialog.Close>
           <IconButton
             variant="ghost"
