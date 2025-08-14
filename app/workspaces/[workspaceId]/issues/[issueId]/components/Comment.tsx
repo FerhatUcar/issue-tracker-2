@@ -31,6 +31,7 @@ export const Comment = ({ comment, issueId }: Props) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedContent, setEditedContent] = useState(comment.content);
   const { deleteComment, updateComment } = useCommentMutation();
+  const [open, setOpen] = useState(false);
 
   const handleDelete = () =>
     deleteComment.mutate({ commentId: comment.id, issueId });
@@ -124,15 +125,21 @@ export const Comment = ({ comment, issueId }: Props) => {
               <FaEdit />
             </IconButton>
           )}
+
+          <IconButton
+            variant="ghost"
+            color="gray"
+            size="1"
+            onClick={() => setOpen(true)}
+          >
+            <FaTrash aria-hidden />
+          </IconButton>
           <ConfirmationDialog
             title="Delete comment?"
             description="Are you sure you want to delete this comment? This action cannot be undone."
             onConfirm={handleDelete}
-            trigger={
-              <IconButton variant="ghost" color="red" size="1">
-                <FaTrash aria-hidden />
-              </IconButton>
-            }
+            open={open}
+            onOpenChange={setOpen}
           />
         </Box>
       </Flex>

@@ -55,7 +55,6 @@ export const MembersOverview = async ({ workspaceId }: Props) => {
           const isCurrentUser = user.email === session.user.email!;
           const isAdmin = role === "ADMIN";
           const iAmAdmin = currentMembership.role === "ADMIN";
-
           const showMenu = iAmAdmin && !isAdmin && !isCurrentUser;
 
           return (
