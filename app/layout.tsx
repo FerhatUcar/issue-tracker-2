@@ -22,8 +22,8 @@ const PushNotifications = dynamic(
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export const metadata: Metadata = {
-  title: "Issue Tracker App",
-  description: "Offline-ready PWA voor je issues",
+  title: "Rocket issues",
+  description: "Offline-ready PWA for your issues",
   manifest: "/manifest.json",
 };
 
@@ -35,7 +35,7 @@ const RootLayout = async ({ children }: { children: ReactNode }) => (
       <link rel="manifest" href="/manifest.json" />
       <link rel="apple-touch-icon" href="/192x192.png" />
       <link rel="icon" href="/192x192.png" />
-      <title>Issue tracker</title>
+      <title>Rocket issues</title>
     </head>
     <body className={inter.variable}>
       <QueryClientProvider>

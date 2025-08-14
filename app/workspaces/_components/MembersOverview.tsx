@@ -4,13 +4,11 @@ import { getServerSession } from "next-auth";
 import authOptions from "@/app/auth/authOptions";
 import { notFound } from "next/navigation";
 import { PiCrownDuotone } from "react-icons/pi";
-import { DeleteMember } from "@/app/workspaces/_components/DeleteMember";
 import Link from "next/link";
 import { IoMdArrowRoundBack } from "react-icons/io";
+import { MemberActionsMenu } from "@/app/workspaces/_components";
 
-type Props = {
-  workspaceId: string;
-};
+type Props = { workspaceId: string };
 
 export const MembersOverview = async ({ workspaceId }: Props) => {
   const session = await getServerSession(authOptions);
@@ -21,13 +19,7 @@ export const MembersOverview = async ({ workspaceId }: Props) => {
 
   const workspace = await prisma.workspace.findUnique({
     where: { id: workspaceId },
-    include: {
-      memberships: {
-        include: {
-          user: true,
-        },
-      },
-    },
+    include: { memberships: { include: { user: true } } },
   });
 
   if (!workspace) {
@@ -35,7 +27,7 @@ export const MembersOverview = async ({ workspaceId }: Props) => {
   }
 
   const currentMembership = workspace.memberships.find(
-    (m) => m.user.email === session.user.email,
+    ({ user }) => user.email === session.user.email!,
   );
 
   if (!currentMembership) {
@@ -60,10 +52,11 @@ export const MembersOverview = async ({ workspaceId }: Props) => {
 
       <Flex direction="column" gap="3">
         {workspace.memberships.map(({ user, role }) => {
-          const isCurrentUser = user.email === session.user.email;
+          const isCurrentUser = user.email === session.user.email!;
           const isAdmin = role === "ADMIN";
-          const canDelete =
-            currentMembership.role === "ADMIN" && !isAdmin && !isCurrentUser;
+          const iAmAdmin = currentMembership.role === "ADMIN";
+
+          const showMenu = iAmAdmin && !isAdmin && !isCurrentUser;
 
           return (
             <Card key={user.id} variant="surface">
@@ -85,17 +78,15 @@ export const MembersOverview = async ({ workspaceId }: Props) => {
 
                 <Flex align="center" gap="2">
                   {isAdmin && (
-                    <Badge color="orange" size="2" variant="solid">
-                      <PiCrownDuotone size="18" />
-                    </Badge>
+                    <PiCrownDuotone className="mr-2" size={18} color="gold" />
                   )}
 
-                  {canDelete && (
-                    <Box className="mr-4">
-                      <DeleteMember
+                  {showMenu && (
+                    <Box className="mr-2 flex items-center">
+                      <MemberActionsMenu
+                        workspaceId={workspaceId}
                         userId={user.id}
                         userName={user.name ?? "Member"}
-                        workspaceId={workspaceId}
                       />
                     </Box>
                   )}

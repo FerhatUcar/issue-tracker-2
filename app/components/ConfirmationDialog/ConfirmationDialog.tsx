@@ -8,9 +8,7 @@ import {
   DialogContent,
   DialogDescription,
   DialogTitle,
-  IconButton,
 } from "@radix-ui/themes";
-import { FaTrash } from "react-icons/fa";
 
 type Props = {
   /**
@@ -37,31 +35,31 @@ type Props = {
   onConfirm: MouseEventHandler<HTMLButtonElement> | undefined;
 
   /**
-   * Represents an icon or symbol used to represent a visual object.
+   * Controls the dialog's open state.
    */
-  icon?: ReactNode;
+  open: boolean;
+
+  /**
+   * Notified when the dialog requests to change open state.
+   */
+  onOpenChange: (open: boolean) => void;
+
+  /**
+   * Optional: custom footer content override.
+   */
+  footer?: ReactNode;
 };
 
 export const ConfirmationDialog = ({
   title = "Are you sure?",
   description = "You can't revert this action.",
-  icon = <FaTrash />,
   onConfirm,
+  open,
+  onOpenChange,
+  footer,
 }: Props) => {
   return (
-    <Dialog.Root>
-      <Dialog.Trigger asChild>
-        <IconButton
-          size="1"
-          color="gray"
-          variant="ghost"
-          className="text-gray-800 dark:text-white hover:bg-transparent"
-          title="Delete"
-        >
-          {icon}
-        </IconButton>
-      </Dialog.Trigger>
-
+    <Dialog.Root modal open={open} onOpenChange={onOpenChange}>
       <DialogContent
         className="bg-white dark:bg-neutral-900 p-6 rounded-lg shadow-lg z-50"
         style={{ maxWidth: 400 }}
@@ -74,14 +72,18 @@ export const ConfirmationDialog = ({
         </DialogDescription>
 
         <Box className="flex justify-end gap-3 mt-4">
-          <Dialog.Close asChild>
-            <Button variant="soft">Cancel</Button>
-          </Dialog.Close>
-          <Dialog.Close asChild>
-            <Button color="red" onClick={onConfirm}>
-              Delete
-            </Button>
-          </Dialog.Close>
+          {footer ?? (
+            <>
+              <Dialog.Close asChild>
+                <Button variant="soft">Cancel</Button>
+              </Dialog.Close>
+              <Dialog.Close asChild>
+                <Button color="red" onClick={onConfirm}>
+                  Delete
+                </Button>
+              </Dialog.Close>
+            </>
+          )}
         </Box>
       </DialogContent>
     </Dialog.Root>

@@ -9,7 +9,7 @@ import {
   Text,
   TextArea,
 } from "@radix-ui/themes";
-import { FaCheck, FaEdit, FaTimes } from "react-icons/fa";
+import { FaCheck, FaEdit, FaTimes, FaTrash } from "react-icons/fa";
 import { useCommentMutation } from "@/app/hooks/use-comment-mutation";
 import { ConfirmationDialog } from "@/app/components";
 import toast from "react-hot-toast";
@@ -128,6 +128,11 @@ export const Comment = ({ comment, issueId }: Props) => {
             title="Delete comment?"
             description="Are you sure you want to delete this comment? This action cannot be undone."
             onConfirm={handleDelete}
+            trigger={
+              <IconButton variant="ghost" color="red" size="1">
+                <FaTrash aria-hidden />
+              </IconButton>
+            }
           />
         </Box>
       </Flex>
