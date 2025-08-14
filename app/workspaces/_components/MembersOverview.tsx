@@ -63,7 +63,7 @@ export const MembersOverview = async ({ workspaceId }: Props) => {
                 <Flex align="center" gap="3">
                   <Avatar
                     fallback={user.name?.[0] ?? "?"}
-                    radius="full"
+                    radius="large"
                     src={user.image ?? ""}
                     size="3"
                   />

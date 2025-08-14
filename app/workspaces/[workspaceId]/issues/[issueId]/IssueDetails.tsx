@@ -5,6 +5,7 @@ import React from "react";
 import Link from "next/link";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { IssuesWithAssigning } from "@/app/types/types";
+import { formatDate } from "@/app/helpers";
 
 type Props = {
   /**
@@ -30,8 +31,8 @@ const IssueDetails = ({ issue, workspaceId }: Props) => (
         <Flex justify="between" align="center" py="2">
           <Flex align="center" gap="3">
             <StatusBadge status={issue.status} />
-            <Text size="2" color="gray">
-              {issue.createdAt.toDateString()}
+            <Text className="text-xs text-gray-500">
+              {formatDate(issue.createdAt, false)}
             </Text>
           </Flex>
           {issue.assignedToUser && (
@@ -39,7 +40,7 @@ const IssueDetails = ({ issue, workspaceId }: Props) => (
               src={issue.assignedToUser.image ?? ""}
               fallback={issue.assignedToUser.name?.[0] ?? "?"}
               size="2"
-              radius="full"
+              radius="large"
               title={issue.assignedToUser.name ?? "Assigned user"}
               referrerPolicy="no-referrer"
             />

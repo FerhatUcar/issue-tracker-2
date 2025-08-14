@@ -46,7 +46,7 @@ export const Comments = ({ issueId }: Props) => {
                       src={author?.image ?? ""}
                       fallback={fallback}
                       size="2"
-                      radius="full"
+                      radius="large"
                       referrerPolicy="no-referrer"
                     />
                     <Comment comment={comment} issueId={issueId} />

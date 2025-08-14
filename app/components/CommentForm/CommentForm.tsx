@@ -40,7 +40,7 @@ export const CommentForm = ({ issueId }: Props) => {
   return (
     <form onSubmit={handleSubmit} className="mt-4 space-y-2">
       <textarea
-        className="w-full p-3 text-sm border border-neutral-300 dark:border-neutral-700 rounded-md resize-none bg-neutral-100 dark:bg-neutral-900 text-black dark:text-white"
+        className="w-full p-3 text-sm rounded-md resize-none bg-neutral-100 dark:bg-neutral-900 text-black dark:text-white"
         rows={4}
         value={content}
         onChange={(e) => setContent(e.target.value)}

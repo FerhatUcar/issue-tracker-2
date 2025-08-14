@@ -158,7 +158,7 @@ const IssueTable: FC<IssueTableProps> = ({
                     src={issue.assignedToUser?.image ?? ""}
                     fallback="?"
                     size="2"
-                    radius="full"
+                    radius="large"
                     referrerPolicy="no-referrer"
                   />
                 ) : (

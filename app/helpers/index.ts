@@ -3,3 +3,4 @@ export { getIssueStatusCounts } from "./get-issue-status-counts";
 export { getLatestIssues } from "./get-latest-issues";
 export { getPaginatedIssuesWithAssignedUser } from "./get-paginated-issues";
 export { getComments } from "./get-comments";
+export { formatDate } from "./format-date";

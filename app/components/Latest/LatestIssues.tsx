@@ -64,7 +64,7 @@ export const LatestIssues = async ({ workspaceId }: Props) => {
                         src={issue.assignedToUser.image!}
                         fallback="?"
                         size="2"
-                        radius="full"
+                        radius="large"
                       />
                     )}
                   </Flex>

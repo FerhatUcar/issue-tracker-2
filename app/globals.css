@@ -28,7 +28,7 @@
   --color-bg-card-hover: rgba(246, 246, 246, 0.5);
 
   --color-text-link: white;
-  --color-text-link-hover: #DEF5FF;
+  --color-text-link-hover: #def5ff;
 }
 
 .dark {
@@ -142,7 +142,7 @@ body {
 }
 
 .rt-BaseMenuViewport {
-    background-color: var(--color-bg-nav);
+  background-color: var(--color-bg-nav);
 }
 
 .rt-SelectTrigger {

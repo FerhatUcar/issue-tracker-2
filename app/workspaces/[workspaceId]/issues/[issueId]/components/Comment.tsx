@@ -1,14 +1,26 @@
 "use client";
 
 import React, { ChangeEvent, useState } from "react";
-import { Box, Button, Flex, IconButton, Text, TextArea } from "@radix-ui/themes";
+import {
+  Box,
+  Button,
+  Flex,
+  IconButton,
+  Text,
+  TextArea,
+} from "@radix-ui/themes";
 import { FaCheck, FaPencilAlt, FaTimes, FaTrash } from "react-icons/fa";
 import { useCommentMutation } from "@/app/hooks/use-comment-mutation";
-import { ConfirmationDialog, DislikeButton, LikeButton } from "@/app/components";
+import {
+  ConfirmationDialog,
+  DislikeButton,
+  LikeButton,
+} from "@/app/components";
 import toast from "react-hot-toast";
 import { CommentWithReactions, MyReaction } from "@/app/types/types";
 import { useSession } from "next-auth/react";
 import { useCommentReaction } from "@/app/hooks";
+import { formatDate } from "@/app/helpers";
 
 type Reaction = "NONE" | "LIKE" | "DISLIKE";
 type Action = "LIKE" | "DISLIKE";
@@ -121,20 +133,14 @@ export const Comment = ({ comment, issueId }: Props) => {
 
   return (
     <Flex direction="column" width="100%">
-      <Box className="bg-neutral-100 dark:bg-neutral-900 rounded-t-2xl p-4 shadow-sm">
+      <Box className="bg-neutral-100 dark:bg-neutral-900 rounded-t-md p-4 shadow-sm">
         <Box className="flex-1 space-y-1">
           <Flex direction="column" mb="4">
             <Text className="text-sm font-medium text-gray-800 dark:text-gray-100">
               {comment.author?.name ?? "Anonymous"}
             </Text>
             <Text className="text-xs text-gray-500">
-              {new Date(comment.createdAt).toLocaleString("nl-NL", {
-                hour: "2-digit",
-                minute: "2-digit",
-                day: "2-digit",
-                month: "2-digit",
-                year: "numeric",
-              })}
+              {formatDate(comment.createdAt)}
             </Text>
           </Flex>
 
@@ -166,7 +172,7 @@ export const Comment = ({ comment, issueId }: Props) => {
         </Box>
       </Box>
 
-      <Box className="bg-neutral-100 dark:bg-neutral-900 border-t border-neutral-200 dark:border-neutral-700 rounded-b-2xl p-4 shadow-sm">
+      <Box className="bg-neutral-100 dark:bg-neutral-900 border-t border-neutral-200 dark:border-neutral-700 rounded-b-md p-4 shadow-sm">
         <Flex justify="between" align="center">
           <Flex align="center" gap="4">
             <LikeButton

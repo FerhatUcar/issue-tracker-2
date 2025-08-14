@@ -64,7 +64,7 @@ export const AuthStatus = ({ userId, count }: Props) => {
               src={session!.user.image!}
               fallback="?"
               size="2"
-              radius="full"
+              radius="large"
               className="cursor-pointer hover:border-2 border-gray-300 transition-all"
               referrerPolicy="no-referrer"
             />
