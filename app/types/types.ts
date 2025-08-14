@@ -12,3 +12,12 @@ export type AssignedToUser = {
 export type CommentWithAuthor = Prisma.CommentGetPayload<{
   include: { author: true };
 }>;
+
+export type ReactionType = "LIKE" | "DISLIKE";
+export type MyReaction = ReactionType | "NONE";
+
+export type CommentWithReactions = CommentWithAuthor & {
+  likesCount: number;
+  dislikesCount: number;
+  myReaction?: ReactionType;
+};

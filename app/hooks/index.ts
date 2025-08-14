@@ -7,3 +7,4 @@ export { useCreateWorkspace } from "./use-create-workspace";
 export { useDeleteWorkspace } from "./use-delete-workspace";
 export { useInviteMember } from "./use-invite-member";
 export { useDeleteMember } from "./use-delete-member";
+export { useCommentReaction } from "./use-comment-reaction";

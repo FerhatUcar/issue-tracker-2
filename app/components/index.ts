@@ -17,3 +17,4 @@ export { Pagination } from "./Pagination";
 export { CommentForm } from "./CommentForm";
 export { ConfirmationDialog } from "./ConfirmationDialog";
 export { ConfirmationInputDialog } from "./ConfirmationDialog";
+export { LikeButton, DislikeButton } from "./Reactions";

@@ -1,26 +1,46 @@
 "use client";
 
 import React, { ChangeEvent, useState } from "react";
-import {
-  Box,
-  Button,
-  Flex,
-  IconButton,
-  Text,
-  TextArea,
-} from "@radix-ui/themes";
+import { Box, Button, Flex, IconButton, Text, TextArea } from "@radix-ui/themes";
 import { FaCheck, FaEdit, FaTimes, FaTrash } from "react-icons/fa";
 import { useCommentMutation } from "@/app/hooks/use-comment-mutation";
-import { ConfirmationDialog } from "@/app/components";
+import { ConfirmationDialog, DislikeButton, LikeButton } from "@/app/components";
 import toast from "react-hot-toast";
-import { CommentWithAuthor } from "@/app/types/types";
+import { CommentWithReactions, MyReaction } from "@/app/types/types";
 import { useSession } from "next-auth/react";
+import { useCommentReaction } from "@/app/hooks";
+
+type Reaction = "NONE" | "LIKE" | "DISLIKE";
+type Action = "LIKE" | "DISLIKE";
+
+type Delta = {
+  likes: -1 | 0 | 1;
+  dislikes: -1 | 0 | 1;
+  next: Reaction;
+};
+
+const TRANSITIONS: Record<Reaction, Record<Action, Delta>> = {
+  NONE: {
+    LIKE: { likes: +1, dislikes: 0, next: "LIKE" },
+    DISLIKE: { likes: 0, dislikes: +1, next: "DISLIKE" },
+  },
+  LIKE: {
+    LIKE: { likes: -1, dislikes: 0, next: "NONE" },
+    DISLIKE: { likes: -1, dislikes: +1, next: "DISLIKE" },
+  },
+  DISLIKE: {
+    LIKE: { likes: +1, dislikes: -1, next: "LIKE" },
+    DISLIKE: { likes: 0, dislikes: -1, next: "NONE" },
+  },
+} as const;
+
+const clampNonNegative = (n: number) => (n < 0 ? 0 : n);
 
 type Props = {
   /**
    * The comment object containing details like id, content, authorId, and timestamps.
    */
-  comment: CommentWithAuthor;
+  comment: CommentWithReactions;
 
   /**
    * The ID of the issue to which this comment belongs.
@@ -38,19 +58,19 @@ export const Comment = ({ comment, issueId }: Props) => {
   const { deleteComment, updateComment } = useCommentMutation();
   const [open, setOpen] = useState(false);
 
+  const { reactToComment } = useCommentReaction();
+
+  const [likes, setLikes] = useState(comment.likesCount ?? 0);
+  const [dislikes, setDislikes] = useState(comment.dislikesCount ?? 0);
+  const [myReaction, setMyReaction] = useState<MyReaction>(
+    comment.myReaction ?? "NONE",
+  );
+
   const handleDelete = () => {
-    if (!canModify) {
-      toast.error("Je kunt alleen je eigen comments verwijderen.");
-      return;
-    }
     deleteComment.mutate({ commentId: comment.id, issueId });
   };
 
   const handleUpdate = () => {
-    if (!canModify) {
-      toast.error("Je kunt alleen je eigen comments bewerken.");
-      return;
-    }
     try {
       updateComment.mutate(
         { id: comment.id, content: editedContent, issueId },
@@ -58,6 +78,7 @@ export const Comment = ({ comment, issueId }: Props) => {
       );
     } catch (error) {
       console.error(error);
+
       if (error instanceof Error) {
         toast.error(error.message);
       } else {
@@ -68,6 +89,35 @@ export const Comment = ({ comment, issueId }: Props) => {
 
   const handleEdit = (e: ChangeEvent<HTMLTextAreaElement>) =>
     setEditedContent(e.target.value);
+
+  const applyOptimistic = (action: Action) => {
+    const delta = TRANSITIONS[myReaction][action];
+
+    if (delta.likes !== 0) {
+      setLikes((v) => clampNonNegative(v + delta.likes));
+    }
+
+    if (delta.dislikes !== 0) {
+      setDislikes((v) => clampNonNegative(v + delta.dislikes));
+    }
+
+    setMyReaction(delta.next);
+  };
+
+  const onReact = (type: Action) => {
+    applyOptimistic(type);
+
+    reactToComment.mutate(
+      { commentId: comment.id, issueId, type },
+      {
+        onSuccess: (data) => {
+          setLikes(data.likesCount);
+          setDislikes(data.dislikesCount);
+          setMyReaction(data.myReaction);
+        },
+      },
+    );
+  };
 
   return (
     <Box className="bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg p-4 shadow-sm w-full">
@@ -157,6 +207,20 @@ export const Comment = ({ comment, issueId }: Props) => {
             />
           </Box>
         )}
+
+        <LikeButton
+          count={likes}
+          active={myReaction === "LIKE"}
+          disabled={reactToComment.isLoading}
+          onClick={() => onReact("LIKE")}
+        />
+
+        <DislikeButton
+          count={dislikes}
+          active={myReaction === "DISLIKE"}
+          disabled={reactToComment.isLoading}
+          onClick={() => onReact("DISLIKE")}
+        />
       </Flex>
     </Box>
   );
