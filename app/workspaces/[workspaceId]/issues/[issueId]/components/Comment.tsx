@@ -14,6 +14,7 @@ import { useCommentMutation } from "@/app/hooks/use-comment-mutation";
 import { ConfirmationDialog } from "@/app/components";
 import toast from "react-hot-toast";
 import { CommentWithAuthor } from "@/app/types/types";
+import { useSession } from "next-auth/react";
 
 type Props = {
   /**
@@ -28,25 +29,35 @@ type Props = {
 };
 
 export const Comment = ({ comment, issueId }: Props) => {
+  const { data: session } = useSession();
+  const currentUserId = session?.user?.id;
+  const canModify = currentUserId === comment.authorId;
+
   const [isEditing, setIsEditing] = useState(false);
   const [editedContent, setEditedContent] = useState(comment.content);
   const { deleteComment, updateComment } = useCommentMutation();
   const [open, setOpen] = useState(false);
 
-  const handleDelete = () =>
+  const handleDelete = () => {
+    if (!canModify) {
+      toast.error("Je kunt alleen je eigen comments verwijderen.");
+      return;
+    }
     deleteComment.mutate({ commentId: comment.id, issueId });
+  };
 
   const handleUpdate = () => {
+    if (!canModify) {
+      toast.error("Je kunt alleen je eigen comments bewerken.");
+      return;
+    }
     try {
       updateComment.mutate(
         { id: comment.id, content: editedContent, issueId },
-        {
-          onSuccess: () => setIsEditing(false),
-        },
+        { onSuccess: () => setIsEditing(false) },
       );
     } catch (error) {
       console.error(error);
-
       if (error instanceof Error) {
         toast.error(error.message);
       } else {
@@ -103,45 +114,49 @@ export const Comment = ({ comment, issueId }: Props) => {
           )}
         </Box>
 
-        <Box className="flex flex-col items-center shadow-sm space-y-2 ml-4">
-          {isEditing ? (
-            <IconButton
-              size="1"
-              onClick={() => setIsEditing(false)}
-              title="Cancel"
-              variant="ghost"
-              color="gray"
-            >
-              <FaTimes />
-            </IconButton>
-          ) : (
-            <IconButton
-              size="1"
-              onClick={() => setIsEditing(true)}
-              title="Edit"
-              variant="ghost"
-              color="gray"
-            >
-              <FaEdit />
-            </IconButton>
-          )}
+        {canModify && (
+          <Box className="flex flex-col items-center shadow-sm space-y-2 ml-4">
+            {isEditing ? (
+              <IconButton
+                size="1"
+                onClick={() => setIsEditing(false)}
+                title="Cancel"
+                variant="ghost"
+                color="gray"
+              >
+                <FaTimes />
+              </IconButton>
+            ) : (
+              <IconButton
+                size="1"
+                onClick={() => setIsEditing(true)}
+                title="Edit"
+                variant="ghost"
+                color="gray"
+              >
+                <FaEdit />
+              </IconButton>
+            )}
 
-          <IconButton
-            variant="ghost"
-            color="gray"
-            size="1"
-            onClick={() => setOpen(true)}
-          >
-            <FaTrash aria-hidden />
-          </IconButton>
-          <ConfirmationDialog
-            title="Delete comment?"
-            description="Are you sure you want to delete this comment? This action cannot be undone."
-            onConfirm={handleDelete}
-            open={open}
-            onOpenChange={setOpen}
-          />
-        </Box>
+            <IconButton
+              variant="ghost"
+              color="gray"
+              size="1"
+              onClick={() => setOpen(true)}
+              title="Delete"
+            >
+              <FaTrash aria-hidden />
+            </IconButton>
+
+            <ConfirmationDialog
+              title="Delete comment?"
+              description="Are you sure you want to delete this comment? This action cannot be undone."
+              onConfirm={handleDelete}
+              open={open}
+              onOpenChange={setOpen}
+            />
+          </Box>
+        )}
       </Flex>
     </Box>
   );
