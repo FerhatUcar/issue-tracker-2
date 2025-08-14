@@ -9,7 +9,7 @@ import { formatDate } from "@/app/helpers";
 
 type Props = {
   /**
-   * The issue object containing details about the issue.
+   * The issue object containing details about the
    */
   issue: IssuesWithAssigning;
 
@@ -19,7 +19,10 @@ type Props = {
   workspaceId: string;
 };
 
-const IssueDetails = ({ issue, workspaceId }: Props) => (
+const IssueDetails = ({
+  issue: { title, description, status, createdAt, assignedToUser },
+  workspaceId,
+}: Props) => (
   <Card>
     <Flex direction="row" gap="2" align="center">
       <Box className="w-12 h-12 bg-gray-100 dark:bg-black/20 px-4 rounded-lg flex items-center justify-center">
@@ -27,21 +30,21 @@ const IssueDetails = ({ issue, workspaceId }: Props) => (
           <IoMdArrowRoundBack />
         </Link>
       </Box>
-      <Box className="w-full bg-gray-100 dark:bg-black/20 px-4 rounded-lg">
+      <Box className="w-full bg-gray-100 dark:bg-black/20 px-2 rounded-lg">
         <Flex justify="between" align="center" py="2">
           <Flex align="center" gap="3">
-            <StatusBadge status={issue.status} />
+            <StatusBadge status={status} />
             <Text className="text-xs text-gray-500">
-              {formatDate(issue.createdAt, false)}
+              {formatDate(createdAt, false)}
             </Text>
           </Flex>
-          {issue.assignedToUser && (
+          {assignedToUser && (
             <Avatar
-              src={issue.assignedToUser.image ?? ""}
-              fallback={issue.assignedToUser.name?.[0] ?? "?"}
+              src={assignedToUser.image ?? ""}
+              fallback={assignedToUser.name?.[0] ?? "?"}
               size="2"
               radius="large"
-              title={issue.assignedToUser.name ?? "Assigned user"}
+              title={assignedToUser.name ?? "Assigned user"}
               referrerPolicy="no-referrer"
             />
           )}
@@ -50,8 +53,8 @@ const IssueDetails = ({ issue, workspaceId }: Props) => (
     </Flex>
 
     <Box className="p-2 py-4">
-      <Heading mb="2">{issue.title}</Heading>
-      <ReactMarkdown>{issue.description}</ReactMarkdown>
+      <Heading mb="2">{title}</Heading>
+      <ReactMarkdown>{description}</ReactMarkdown>
     </Box>
   </Card>
 );
