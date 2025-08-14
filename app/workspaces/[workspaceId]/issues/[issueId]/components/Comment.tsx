@@ -2,7 +2,7 @@
 
 import React, { ChangeEvent, useState } from "react";
 import { Box, Button, Flex, IconButton, Text, TextArea } from "@radix-ui/themes";
-import { FaCheck, FaEdit, FaTimes, FaTrash } from "react-icons/fa";
+import { FaCheck, FaPencilAlt, FaTimes, FaTrash } from "react-icons/fa";
 import { useCommentMutation } from "@/app/hooks/use-comment-mutation";
 import { ConfirmationDialog, DislikeButton, LikeButton } from "@/app/components";
 import toast from "react-hot-toast";
@@ -110,18 +110,18 @@ export const Comment = ({ comment, issueId }: Props) => {
     reactToComment.mutate(
       { commentId: comment.id, issueId, type },
       {
-        onSuccess: (data) => {
-          setLikes(data.likesCount);
-          setDislikes(data.dislikesCount);
-          setMyReaction(data.myReaction);
+        onSuccess: ({ likesCount, dislikesCount, myReaction }) => {
+          setLikes(likesCount);
+          setDislikes(dislikesCount);
+          setMyReaction(myReaction);
         },
       },
     );
   };
 
   return (
-    <Box className="bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg p-4 shadow-sm w-full">
-      <Flex justify="between" align="start">
+    <Flex direction="column" width="100%">
+      <Box className="bg-neutral-100 dark:bg-neutral-900 rounded-t-2xl p-4 shadow-sm">
         <Box className="flex-1 space-y-1">
           <Flex direction="column" mb="4">
             <Text className="text-sm font-medium text-gray-800 dark:text-gray-100">
@@ -141,18 +141,19 @@ export const Comment = ({ comment, issueId }: Props) => {
           {isEditing ? (
             <>
               <TextArea value={editedContent} onChange={handleEdit} />
-              <Flex justify="end" mt="2">
+              <Flex justify="end">
                 <Button
                   variant="soft"
+                  mt="2"
                   onClick={handleUpdate}
                   disabled={!editedContent.trim() || updateComment.isLoading}
                 >
                   {updateComment.isLoading ? (
                     "Saving..."
                   ) : (
-                    <>
-                      <FaCheck /> Save
-                    </>
+                    <Flex align="center" gap="2">
+                      <FaCheck /> <Text>Save</Text>
+                    </Flex>
                   )}
                 </Button>
               </Flex>
@@ -163,65 +164,69 @@ export const Comment = ({ comment, issueId }: Props) => {
             </Text>
           )}
         </Box>
+      </Box>
 
-        {canModify && (
-          <Box className="flex flex-col items-center shadow-sm space-y-2 ml-4">
-            {isEditing ? (
-              <IconButton
-                size="1"
-                onClick={() => setIsEditing(false)}
-                title="Cancel"
-                variant="ghost"
-                color="gray"
-              >
-                <FaTimes />
-              </IconButton>
-            ) : (
-              <IconButton
-                size="1"
-                onClick={() => setIsEditing(true)}
-                title="Edit"
-                variant="ghost"
-                color="gray"
-              >
-                <FaEdit />
-              </IconButton>
-            )}
-
-            <IconButton
-              variant="ghost"
-              color="gray"
-              size="1"
-              onClick={() => setOpen(true)}
-              title="Delete"
-            >
-              <FaTrash aria-hidden />
-            </IconButton>
-
-            <ConfirmationDialog
-              title="Delete comment?"
-              description="Are you sure you want to delete this comment? This action cannot be undone."
-              onConfirm={handleDelete}
-              open={open}
-              onOpenChange={setOpen}
+      <Box className="bg-neutral-100 dark:bg-neutral-900 border-t border-neutral-200 dark:border-neutral-700 rounded-b-2xl p-4 shadow-sm">
+        <Flex justify="between" align="center">
+          <Flex align="center" gap="4">
+            <LikeButton
+              count={likes}
+              active={myReaction === "LIKE"}
+              disabled={reactToComment.isLoading}
+              onClick={() => onReact("LIKE")}
             />
-          </Box>
-        )}
+            <DislikeButton
+              count={dislikes}
+              active={myReaction === "DISLIKE"}
+              disabled={reactToComment.isLoading}
+              onClick={() => onReact("DISLIKE")}
+            />
+          </Flex>
+          {canModify && (
+            <Flex align="center" gap="4">
+              {isEditing ? (
+                <IconButton
+                  size="1"
+                  onClick={() => setIsEditing(false)}
+                  title="Cancel"
+                  variant="ghost"
+                  color="gray"
+                >
+                  <FaTimes />
+                </IconButton>
+              ) : (
+                <IconButton
+                  size="1"
+                  onClick={() => setIsEditing(true)}
+                  title="Edit"
+                  variant="ghost"
+                  color="gray"
+                >
+                  <FaPencilAlt />
+                </IconButton>
+              )}
 
-        <LikeButton
-          count={likes}
-          active={myReaction === "LIKE"}
-          disabled={reactToComment.isLoading}
-          onClick={() => onReact("LIKE")}
-        />
+              <IconButton
+                variant="ghost"
+                color="gray"
+                size="1"
+                onClick={() => setOpen(true)}
+                title="Delete"
+              >
+                <FaTrash aria-hidden />
+              </IconButton>
 
-        <DislikeButton
-          count={dislikes}
-          active={myReaction === "DISLIKE"}
-          disabled={reactToComment.isLoading}
-          onClick={() => onReact("DISLIKE")}
-        />
-      </Flex>
-    </Box>
+              <ConfirmationDialog
+                title="Delete comment?"
+                description="Are you sure you want to delete this comment? This action cannot be undone."
+                onConfirm={handleDelete}
+                open={open}
+                onOpenChange={setOpen}
+              />
+            </Flex>
+          )}
+        </Flex>
+      </Box>
+    </Flex>
   );
 };

@@ -14,7 +14,7 @@ export const DislikeButton = ({ count, active, disabled, onClick }: Props) => (
   <Flex align="center" gap="2">
     <IconButton
       size="1"
-      variant={active ? "solid" : "ghost"}
+      variant={active ? "soft" : "ghost"}
       color={active ? "red" : "gray"}
       onClick={onClick}
       disabled={disabled}
