@@ -25,7 +25,6 @@
 
   --color-border-input: #cacaca;
   --color-bg-card: rgba(255, 255, 255, 0.8);
-  --color-bg-card-hover: rgba(246, 246, 246, 0.5);
 
   --color-text-link: white;
   --color-text-link-hover: #def5ff;
@@ -47,7 +46,6 @@
 
   --color-border-input: #3e3e3e;
   --color-bg-card: rgba(44, 44, 44, 0.8);
-  --color-bg-card-hover: rgba(51, 51, 51, 0.8);
 
   --color-text-link: white;
   --color-text-link-hover: #7dd3fc;
@@ -122,11 +120,6 @@
   box-shadow:
     0 1px 1px rgba(0, 0, 0, 0.05),
     0 1px 3px rgba(0, 0, 0, 0.05);
-}
-
-.rt-CardInner:hover {
-  background-color: var(--color-bg-card-hover);
-  transition: background-color 0.2s ease-in-out;
 }
 
 /* =====================

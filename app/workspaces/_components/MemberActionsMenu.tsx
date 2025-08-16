@@ -7,8 +7,19 @@ import { promoteToAdmin } from "@/app/workspaces/actions";
 import { PiCrownDuotone } from "react-icons/pi";
 
 type Props = {
+  /**
+   * A unique identifier for a workspace.
+   */
   workspaceId: string;
+
+  /**
+   * User ID
+   */
   userId: string;
+
+  /**
+   * Name of the user
+   */
   userName: string;
 };
 

@@ -20,7 +20,7 @@ import toast from "react-hot-toast";
 import { CommentWithReactions, MyReaction } from "@/app/types/types";
 import { useSession } from "next-auth/react";
 import { useCommentReaction } from "@/app/hooks";
-import { formatDate } from "@/app/helpers";
+import { clampNonNegative, formatDate } from "@/app/helpers";
 
 type Reaction = "NONE" | "LIKE" | "DISLIKE";
 type Action = "LIKE" | "DISLIKE";
@@ -46,8 +46,6 @@ const TRANSITIONS: Record<Reaction, Record<Action, Delta>> = {
   },
 } as const;
 
-const clampNonNegative = (n: number) => (n < 0 ? 0 : n);
-
 type Props = {
   /**
    * The comment object containing details like id, content, authorId, and timestamps.
@@ -62,6 +60,8 @@ type Props = {
 
 export const Comment = ({ comment, issueId }: Props) => {
   const { data: session } = useSession();
+  const { reactToComment } = useCommentReaction();
+
   const currentUserId = session?.user?.id;
   const canModify = currentUserId === comment.authorId;
 
@@ -69,9 +69,6 @@ export const Comment = ({ comment, issueId }: Props) => {
   const [editedContent, setEditedContent] = useState(comment.content);
   const { deleteComment, updateComment } = useCommentMutation();
   const [open, setOpen] = useState(false);
-
-  const { reactToComment } = useCommentReaction();
-
   const [likes, setLikes] = useState(comment.likesCount ?? 0);
   const [dislikes, setDislikes] = useState(comment.dislikesCount ?? 0);
   const [myReaction, setMyReaction] = useState<MyReaction>(
@@ -117,6 +114,10 @@ export const Comment = ({ comment, issueId }: Props) => {
   };
 
   const onReact = (type: Action) => {
+    if (reactToComment.isLoading) {
+      return;
+    }
+
     applyOptimistic(type);
 
     reactToComment.mutate(

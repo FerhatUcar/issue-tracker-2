@@ -38,7 +38,7 @@ export const WorkspaceCard = ({ workspace }: Props) => (
               key={i}
               size="1"
               fallback="?"
-              radius="large"
+              radius="full"
               src={user.image ?? ""}
               title={user.name ?? ""}
               style={{

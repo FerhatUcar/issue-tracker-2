@@ -12,7 +12,7 @@ type Props = {
 };
 
 export const Comments = ({ issueId }: Props) => {
-  const { data: comments = [], isLoading } = useComments(issueId);
+  const { data: comments = [], isLoading, isFetching } = useComments(issueId);
 
   return (
     <Card mt="4">
@@ -28,7 +28,7 @@ export const Comments = ({ issueId }: Props) => {
         <Box className="text-sm text-gray-500">No comments yet.</Box>
       ) : (
         <Flex direction="row" gap="2" content="center" align="start">
-          {isLoading ? (
+          {isLoading || isFetching ? (
             <Skeleton />
           ) : (
             <Box className="space-y-4 w-full">

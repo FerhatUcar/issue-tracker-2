@@ -1,6 +1,7 @@
 import axios, { AxiosError } from "axios";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
+import { useSession } from "next-auth/react";
 
 const ErrorResponse = z.object({ error: z.string() });
 const ReactionResponse = z.object({
@@ -43,6 +44,7 @@ const extractAxiosError = (err: unknown): string => {
 
 export const useCommentReaction = () => {
   const qc = useQueryClient();
+  const session = useSession();
 
   const mutate = useMutation({
     mutationFn: async ({
@@ -56,7 +58,7 @@ export const useCommentReaction = () => {
         const parsed = ReactionResponse.safeParse(res.data);
 
         if (!parsed.success) {
-          throw new Error("Invalid server response");
+          throw new Error("Invalid response format");
         }
 
         return parsed.data;
@@ -72,11 +74,12 @@ export const useCommentReaction = () => {
 
       if (typeof variables.issueId === "number") {
         await qc.invalidateQueries({
-          queryKey: ["comments", variables.issueId],
+          queryKey: [
+            "comments",
+            { issueId: variables.commentId, userId: session?.data?.user?.id },
+          ],
         });
       }
-
-      await qc.invalidateQueries({ queryKey: ["comments"] });
     },
   });
 
