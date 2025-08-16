@@ -13,10 +13,12 @@ type Props = {
   };
 };
 
-export default async function AcceptInvitePage({ searchParams }: Props) {
+export default async function AcceptInvitePage({
+  searchParams: { token },
+}: Props) {
   const session = await getServerSession(authOptions);
   const invite = await prisma.invite.findUnique({
-    where: { token: searchParams.token },
+    where: { token },
     include: {
       workspace: {
         select: {
@@ -34,9 +36,7 @@ export default async function AcceptInvitePage({ searchParams }: Props) {
   });
 
   if (!session?.user?.email) {
-    redirect(
-      "/api/auth/signin?callbackUrl=/invite/accept?token=" + searchParams.token,
-    );
+    redirect("/api/auth/signin?callbackUrl=/invite/accept?token=" + token);
   }
 
   if (!invite) {

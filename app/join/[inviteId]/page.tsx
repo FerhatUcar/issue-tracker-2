@@ -7,19 +7,19 @@ type Props = {
   params: {
     inviteId: string;
   };
-}
+};
 
-const AcceptInvitePage = async ({ params }: Props) => {
+const AcceptInvitePage = async ({ params: { inviteId } }: Props) => {
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.email) {
     // Force login if user not authenticated
-    redirect("/api/auth/signin?callbackUrl=/join/" + params.inviteId);
+    redirect("/api/auth/signin?callbackUrl=/join/" + inviteId);
   }
 
   const invite = await prisma.invite.findUnique({
     where: {
-      id: params.inviteId,
+      id: inviteId,
     },
     include: {
       workspace: true,

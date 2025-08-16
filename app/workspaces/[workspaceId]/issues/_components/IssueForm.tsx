@@ -6,7 +6,15 @@ import { Spinner } from "@/app/components";
 import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
 import { Issue } from "@prisma/client";
-import { Box, Button, Callout, Card, Flex, Select, TextField } from "@radix-ui/themes";
+import {
+  Box,
+  Button,
+  Callout,
+  Card,
+  Flex,
+  Select,
+  TextField,
+} from "@radix-ui/themes";
 import "easymde/dist/easymde.min.css";
 import { useParams, useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
