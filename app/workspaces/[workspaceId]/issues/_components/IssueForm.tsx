@@ -6,15 +6,7 @@ import { Spinner } from "@/app/components";
 import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
 import { Issue } from "@prisma/client";
-import {
-  Box,
-  Button,
-  Callout,
-  Card,
-  Flex,
-  Select,
-  TextField,
-} from "@radix-ui/themes";
+import { Box, Button, Callout, Card, Flex, Select, TextField } from "@radix-ui/themes";
 import "easymde/dist/easymde.min.css";
 import { useParams, useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
@@ -106,7 +98,7 @@ const IssueForm = ({ issue }: Props) => {
 
       <form className="space-y-4" onSubmit={handleFormSubmit}>
         <TextField.Root className="relative z-10 pointer-events-auto">
-          <Flex align="center">
+          <Flex align="center" width="100%">
             <TextField.Input
               size="3"
               placeholder="Issue title..."

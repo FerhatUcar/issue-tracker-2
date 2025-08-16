@@ -132,11 +132,7 @@ const IssueTable: FC<IssueTableProps> = ({
             <Table.Cell>
               <Flex align="center" justify="between">
                 <Link
-                  href={
-                    isCrossWorkspace
-                      ? `/workspaces/${issue.workspaceId}/issues/${issue.id}`
-                      : `/workspaces/${workspaceId}/issues/${issue.id}`
-                  }
+                  href={`/workspaces/${isCrossWorkspace ? issue.workspaceId : workspaceId}/issues/${issue.id}`}
                 >
                   {issue.title}
                 </Link>

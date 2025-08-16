@@ -21,14 +21,11 @@ const LoadingIssuesPage = async () => {
             <Table.Row key={issue.id}>
               <Table.Cell>
                 <Skeleton />
-                <Box className="block md:hidden">
-                  <Skeleton />
-                </Box>
               </Table.Cell>
-              <Table.Cell className="hidden md:table-cell">
+              <Table.Cell>
                 <Skeleton />
               </Table.Cell>
-              <Table.Cell className="hidden md:table-cell">
+              <Table.Cell>
                 <Skeleton />
               </Table.Cell>
             </Table.Row>
