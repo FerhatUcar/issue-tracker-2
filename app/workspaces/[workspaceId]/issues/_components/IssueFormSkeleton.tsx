@@ -5,7 +5,7 @@ import { Skeleton } from "@/app/components";
 const IssueFormSkeleton = () => (
   <Box className="max-w-xl">
     <Skeleton height="2rem" />
-    <Skeleton height="20rem" />
+    <Skeleton height="5rem" />
   </Box>
 );
 

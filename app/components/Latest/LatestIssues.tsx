@@ -1,8 +1,8 @@
+import dynamic from "next/dynamic";
 import {
   Avatar,
   Badge,
   Box,
-  Button,
   Card,
   Flex,
   Heading,
@@ -10,10 +10,17 @@ import {
 } from "@radix-ui/themes";
 import { NoIssuesPlaceholder, StatusDot } from "@/app/components";
 import Link from "next/link";
-import { AiFillPlusCircle } from "react-icons/ai";
 import { IoTicketOutline } from "react-icons/io5";
 import { getLatestIssues } from "@/app/helpers";
 import { BsChatDots } from "react-icons/bs";
+
+const CreateIssueDialog = dynamic(
+  () =>
+    import(
+      "@/app/workspaces/[workspaceId]/issues/_components/CreateIssueDialog"
+    ).then((m) => m.CreateIssueDialog),
+  { ssr: false },
+);
 
 type Props = {
   workspaceId: string;
@@ -77,17 +84,7 @@ export const LatestIssues = async ({ workspaceId }: Props) => {
         <NoIssuesPlaceholder />
       )}
 
-      <Link href={`/workspaces/${workspaceId}/issues/new`}>
-        <Button
-          className="w-full justify-start mt-3"
-          variant="soft"
-          size="3"
-          mt="3"
-        >
-          <AiFillPlusCircle />
-          Create new issue
-        </Button>
-      </Link>
+      <CreateIssueDialog />
     </Card>
   );
 };

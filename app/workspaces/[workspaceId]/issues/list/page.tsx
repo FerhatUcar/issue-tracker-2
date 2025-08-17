@@ -88,7 +88,7 @@ const IssuesPage = async ({ searchParams, params }: Props) => {
           <IssueActions workspaceId={params.workspaceId} />
         </Card>
 
-        <EmptyState workspaceId={params.workspaceId} status={status} />
+        <EmptyState status={status} />
       </Box>
     );
   }

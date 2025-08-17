@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { FormEventHandler, useMemo } from "react";
 import { z } from "zod";
 import { Spinner } from "@/app/components";
@@ -10,7 +11,6 @@ import {
   Box,
   Button,
   Callout,
-  Card,
   Flex,
   Select,
   TextField,
@@ -19,11 +19,15 @@ import "easymde/dist/easymde.min.css";
 import { useParams, useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { patchIssueSchema } from "@/app/validationSchema";
-import SimpleMDE from "react-simplemde-editor";
 import type { Options } from "easymde";
 import { AiOutlineSend } from "react-icons/ai";
 import { useDataQuery, useIssueMutation } from "@/app/hooks";
 import { User } from "next-auth";
+import IssueFormSkeleton from "@/app/workspaces/[workspaceId]/issues/_components/IssueFormSkeleton";
+
+const SimpleMDE = dynamic(() => import("react-simplemde-editor"), {
+  ssr: false,
+});
 
 const simpleMdeOptions: Options = {
   hideIcons: ["fullscreen", "side-by-side", "preview", "guide"] as const,
@@ -31,7 +35,7 @@ const simpleMdeOptions: Options = {
 
 type Props = { issue?: Issue };
 
-const IssueForm = ({ issue }: Props) => {
+export const IssueForm = ({ issue }: Props) => {
   const router = useRouter();
   const params = useParams();
   const {
@@ -51,7 +55,7 @@ const IssueForm = ({ issue }: Props) => {
     register,
     control,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, isLoading },
   } = useForm<z.infer<typeof patchIssueSchema>>({
     resolver: zodResolver(patchIssueSchema),
     defaultValues: {
@@ -95,7 +99,7 @@ const IssueForm = ({ issue }: Props) => {
   };
 
   return (
-    <Card className="md:max-w-xl">
+    <>
       {(errors.title?.message || errors.description?.message) && (
         <Callout.Root color="red" className="mb-5">
           <Callout.Text>
@@ -103,6 +107,8 @@ const IssueForm = ({ issue }: Props) => {
           </Callout.Text>
         </Callout.Root>
       )}
+
+      {isLoading && <IssueFormSkeleton />}
 
       <form className="space-y-4" onSubmit={handleFormSubmit}>
         <TextField.Root className="relative z-10 pointer-events-auto">
@@ -147,7 +153,7 @@ const IssueForm = ({ issue }: Props) => {
           />
         )}
 
-        <Box className="relative z-0">
+        <Box className="relative z-0 min-h-0">
           <Controller
             name="description"
             control={control}
@@ -175,8 +181,6 @@ const IssueForm = ({ issue }: Props) => {
           </Button>
         </Flex>
       </form>
-    </Card>
+    </>
   );
 };
-
-export default IssueForm;
