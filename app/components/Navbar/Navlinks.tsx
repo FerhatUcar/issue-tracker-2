@@ -26,14 +26,6 @@ export const NavLinks = () => {
       ),
       href: "/workspaces",
     },
-    {
-      label: (
-        <Flex direction="row" gap="2" align="center">
-          <MdOutlineWorkspaces /> test
-        </Flex>
-      ),
-      href: "/test",
-    },
   ];
 
   return (
