@@ -26,8 +26,7 @@
   --color-border-input: #cacaca;
   --color-bg-card: rgba(255, 255, 255, 0.8);
 
-  --color-text-link: white;
-  --color-text-link-hover: #def5ff;
+  --color-text-link-hover: #38bdf8;
 }
 
 .dark {
@@ -47,8 +46,7 @@
   --color-border-input: #3e3e3e;
   --color-bg-card: rgba(44, 44, 44, 0.8);
 
-  --color-text-link: white;
-  --color-text-link-hover: #7dd3fc;
+  --color-text-link-hover: #38bdf8;
 }
 
 /* =====================
@@ -57,7 +55,6 @@
 @layer utilities {
   .nav-link {
     @apply transition-colors;
-    color: var(--color-text-link);
   }
 
   .nav-link:hover {

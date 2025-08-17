@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Container, Flex } from "@radix-ui/themes";
+import { Container, Flex, Separator } from "@radix-ui/themes";
 import { AuthStatus } from "@/app/components";
 import { NavLinks } from "./Navlinks";
 import { useSession } from "next-auth/react";
@@ -17,8 +17,8 @@ type Props = {
 export const Navbar = ({ data: { userId, count } }: Props) => {
   const session = useSession();
   const isLoggedIn = session.status === "authenticated";
-  const width = isLoggedIn ? 35 : 40;
-  const height = isLoggedIn ? 35 : 40;
+  const width = isLoggedIn ? 30 : 35;
+  const height = isLoggedIn ? 30 : 35;
 
   return (
     <nav className="px-5 py-3">
@@ -39,6 +39,7 @@ export const Navbar = ({ data: { userId, count } }: Props) => {
                 }}
               />
             </Link>
+            {isLoggedIn && <Separator orientation="vertical" />}
             <NavLinks />
           </Flex>
           <AuthStatus userId={userId} count={count} />

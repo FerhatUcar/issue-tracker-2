@@ -13,6 +13,10 @@ export const NavLinks = () => {
   const { status } = useSession();
   const isAuthenticated = status === "authenticated";
 
+  if (!isAuthenticated) {
+    return null;
+  }
+
   const links = [
     {
       label: (
@@ -22,26 +26,34 @@ export const NavLinks = () => {
       ),
       href: "/workspaces",
     },
+    {
+      label: (
+        <Flex direction="row" gap="2" align="center">
+          <MdOutlineWorkspaces /> test
+        </Flex>
+      ),
+      href: "/test",
+    },
   ];
 
-  return isAuthenticated ? (
-    <ul className="flex space-x-3">
-      {links.map((link, i) => (
+  return (
+    <Flex gap="3">
+      {links.map(({ href, label }, i) => (
         <Flex align="center" gap="3" key={i}>
-          <li key={link.href}>
-            <Link
-              className={classnames({
-                "!text-sky-400": link.href === currentPath,
-                "font-bold": link.href === currentPath,
-              })}
-              href={link.href}
-            >
-              {link.label}
-            </Link>
-          </li>
+          <Link
+            href={href}
+            className={classnames({
+              "!text-sky-400": href === currentPath,
+              "font-bold": href === currentPath,
+              "nav-link": true,
+            })}
+          >
+            {label}
+          </Link>
+
           {i < links.length - 1 && <Separator orientation="vertical" />}
         </Flex>
       ))}
-    </ul>
-  ) : null;
+    </Flex>
+  );
 };
