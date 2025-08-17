@@ -8,7 +8,14 @@ export async function DELETE(
 ) {
   const id = parseInt(params.id);
 
-  const deleted = await prisma.comment.delete({ where: { id } });
+  // Delete all reactions associated with the comment
+  await prisma.commentReaction.deleteMany({
+    where: { commentId: id },
+  });
+
+  const deleted = await prisma.comment.delete({
+    where: { id },
+  });
 
   return NextResponse.json(deleted);
 }
