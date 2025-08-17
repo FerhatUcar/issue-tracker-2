@@ -47,14 +47,14 @@ export default function IssueUserFilter({ workspaceId }: Props) {
   // Set of userIds that appear in issues
   const assignedIds = new Set(
     (issues ?? [])
-      .map((i) => i.assignedToUserId)
+      .map(({ assignedToUserId }) => assignedToUserId)
       .filter((id): id is string => !!id),
   );
 
   // Options: default ALL users
-  let options = (users ?? []).map((u) => ({
-    value: u.id,
-    label: u.name ?? "(No name)",
+  let options = (users ?? []).map(({ id, name }) => ({
+    value: id,
+    label: name ?? "(No name)",
   }));
 
   // If you filter specifically on user, you can limit it to users with issues
@@ -62,8 +62,8 @@ export default function IssueUserFilter({ workspaceId }: Props) {
     options = options.filter((o) => assignedIds.has(o.value));
 
     // Make sure the selected user remains visible, even without issues
-    if (urlValue && !options.some((o) => o.value === urlValue)) {
-      const user = users?.find((x) => x.id === urlValue);
+    if (urlValue && !options.some(({ value }) => value === urlValue)) {
+      const user = users?.find(({ id }) => id === urlValue);
 
       if (user)
         options = [

@@ -1,11 +1,11 @@
 "use client";
 
-import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Container, Flex } from "@radix-ui/themes";
 import { AuthStatus } from "@/app/components";
 import { NavLinks } from "./Navlinks";
+import { useSession } from "next-auth/react";
 
 type Props = {
   data: {
@@ -14,29 +14,36 @@ type Props = {
   };
 };
 
-export const Navbar = ({ data: { userId, count } }: Props) => (
-  <nav className="px-5 py-3">
-    <Container>
-      <Flex justify="between" align="center">
-        <Flex align="center" gap="3">
-          <Link href="/" className="relative inline-block">
-            <Image
-              src="/logo.png"
-              alt="Logo"
-              width={50}
-              height={50}
-              priority
-              style={{
-                objectFit: "contain",
-                width: "auto",
-                height: "auto",
-              }}
-            />
-          </Link>
-          <NavLinks />
+export const Navbar = ({ data: { userId, count } }: Props) => {
+  const session = useSession();
+  const isLoggedIn = session.status === "authenticated";
+  const width = isLoggedIn ? 35 : 40;
+  const height = isLoggedIn ? 35 : 40;
+
+  return (
+    <nav className="px-5 py-3">
+      <Container>
+        <Flex justify="between" align="center">
+          <Flex align="center" gap="3">
+            <Link href="/" className="relative inline-block">
+              <Image
+                src="/logo.png"
+                alt="Logo"
+                width={width}
+                height={height}
+                priority
+                style={{
+                  objectFit: "contain",
+                  width: "auto",
+                  height: "auto",
+                }}
+              />
+            </Link>
+            <NavLinks />
+          </Flex>
+          <AuthStatus userId={userId} count={count} />
         </Flex>
-        <AuthStatus userId={userId} count={count} />
-      </Flex>
-    </Container>
-  </nav>
-);
+      </Container>
+    </nav>
+  );
+};
