@@ -1,6 +1,6 @@
 import prisma from "@/prisma/client";
 import { notFound } from "next/navigation";
-import { Box, Card, Flex, Grid } from "@radix-ui/themes";
+import { Box, Card, Flex, Grid, Separator } from "@radix-ui/themes";
 import IssueDetails from "@/app/workspaces/[workspaceId]/issues/[issueId]/IssueDetails";
 import {
   Comments,
@@ -12,7 +12,6 @@ import { getServerSession } from "next-auth";
 import authOptions from "@/app/auth/authOptions";
 import AssigneeSelect from "@/app/workspaces/[workspaceId]/issues/[issueId]/AssigneeSelect";
 import IssueStatus from "@/app/workspaces/[workspaceId]/issues/_components/IssueStatus";
-import { LuFlipVertical } from "react-icons/lu";
 
 type Props = {
   params: { issueId: string; workspaceId: string };
@@ -71,11 +70,11 @@ const IssueDetailPage = async ({ params }: Props) => {
       {session && (
         <Card>
           <Flex direction="column" gap="3">
-            <Flex direction="row" gap="1" align="center">
-              <LuFlipVertical /> Actions
-            </Flex>
+            Update Assignee
             <AssigneeSelect issue={issue} />
+            Update status
             <IssueStatus issue={issue} />
+            <Separator className="w-full my-2" />
             <EditIssueButton
               issueId={issue.id}
               workspaceId={params.workspaceId}

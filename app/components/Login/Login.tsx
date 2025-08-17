@@ -36,7 +36,7 @@ export const Login = ({ callbackUrl = "/", open, setOpen }: Props) => {
           </IconButton>
         </Dialog.Close>
 
-        <Dialog.Title>Log in</Dialog.Title>
+        <Dialog.Title mb="0">Log in</Dialog.Title>
         <Text className="text-gray-600">With your Google account</Text>
 
         <Box className="mt-6">

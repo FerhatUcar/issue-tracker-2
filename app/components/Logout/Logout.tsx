@@ -35,7 +35,7 @@ export const Logout = ({ callbackUrl = "/", open, setOpen }: Props) => {
           </IconButton>
         </Dialog.Close>
 
-        <Dialog.Title>Logout</Dialog.Title>
+        <Dialog.Title mb="0">Logout</Dialog.Title>
         <Text className="text-gray-600">Are you sure you want to log out?</Text>
 
         <Box className="mt-6">

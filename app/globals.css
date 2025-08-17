@@ -141,3 +141,7 @@ body {
 .rt-SelectTrigger {
   height: 2.5rem !important;
 }
+
+.rt-Separator[data-orientation="horizontal"] {
+  width: 100% !important;
+}
