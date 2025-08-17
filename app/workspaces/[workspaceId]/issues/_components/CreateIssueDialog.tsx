@@ -2,15 +2,20 @@
 
 import { useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
-import { Box, Button, DialogContent, DialogTitle } from "@radix-ui/themes";
+import { Box, Button, DialogContent, Flex, IconButton, Text } from "@radix-ui/themes";
+import { Cross2Icon } from "@radix-ui/react-icons";
 import { AiFillPlusCircle } from "react-icons/ai";
 import { IssueForm } from "./IssueForm";
 
-export const CreateIssueDialog = () => {
+type Props = {
+  hasSpace?: boolean;
+};
+
+export const CreateIssueDialog = ({ hasSpace = false }: Props) => {
   const [open, setOpen] = useState(false);
 
   return (
-    <Box className="m-4">
+    <Box className={hasSpace ? "my-4" : "mt-4"}>
       <Button
         onClick={() => setOpen(true)}
         className="w-full justify-start mt-3"
@@ -22,8 +27,21 @@ export const CreateIssueDialog = () => {
       </Button>
 
       <Dialog.Root open={open} onOpenChange={setOpen}>
-        <DialogContent onOpenAutoFocus={(e) => e.preventDefault()}>
-          <DialogTitle>Create issue</DialogTitle>
+        <DialogContent className="relative mx-4">
+          <Flex justify="between" align="center" mb="4">
+            <Text>Create issue</Text>
+
+            <Dialog.Close asChild>
+              <IconButton
+                aria-label="Close dialog"
+                variant="ghost"
+                size="1"
+                color="gray"
+              >
+                <Cross2Icon />
+              </IconButton>
+            </Dialog.Close>
+          </Flex>
           <IssueForm />
         </DialogContent>
       </Dialog.Root>

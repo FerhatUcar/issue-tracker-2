@@ -34,7 +34,7 @@ export const EmptyState = ({ status }: Props) => (
           : "Start by creating your first issue to get started."}
       </Text>
 
-      <CreateIssueDialog />
+      <CreateIssueDialog hasSpace />
     </Flex>
   </Card>
 );
