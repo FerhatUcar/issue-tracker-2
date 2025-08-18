@@ -1,4 +1,3 @@
-import React from "react";
 import prisma from "@/prisma/client";
 import IssueActions from "@/app/workspaces/[workspaceId]/issues/list/IssueActions";
 import { Status } from "@prisma/client";
@@ -6,11 +5,14 @@ import { Pagination } from "@/app/components";
 import IssueTable, {
   IssueQuery,
 } from "@/app/workspaces/[workspaceId]/issues/list/IssueTable";
-import { Badge, Box, Card, Flex, Heading, Text } from "@radix-ui/themes";
+import { Box, Button, Card, Flex, Heading, Text } from "@radix-ui/themes";
 import { columns } from "@/app/workspaces/[workspaceId]/issues/list/IssueColumns";
 import { getPaginatedIssuesWithAssignedUser } from "@/app/helpers";
 import { IssuesWithAssigning } from "@/app/types/types";
 import { EmptyState } from "@/app/workspaces/[workspaceId]/issues/_components";
+import Link from "next/link";
+import { IoMdArrowRoundBack } from "react-icons/io";
+import React from "react";
 
 type Props = {
   searchParams: IssueQuery;
@@ -73,14 +75,19 @@ const IssuesPage = async ({ searchParams, params }: Props) => {
     return (
       <Box className="space-y-6">
         <Flex direction="column" align="start">
-          <Heading size="6" className="mb-1">
+          <Heading size="6" mb="2">
             Issues
           </Heading>
           <Text size="3" className="text-gray-500">
-            Manage and track all issues in
-            <Badge className="mx-2">
-              {workspace?.name || "this workspace"}
-            </Badge>
+            <Link
+              href={`/workspaces/${params.workspaceId}`}
+              className="cursor-pointer"
+            >
+              <Button mr="2" variant="soft" size="1">
+                <IoMdArrowRoundBack /> {workspace?.name || "this workspace"}
+              </Button>
+            </Link>
+            Manage and track all issues
           </Text>
         </Flex>
 
@@ -96,12 +103,20 @@ const IssuesPage = async ({ searchParams, params }: Props) => {
   return (
     <Box className="space-y-6">
       <Flex direction="column" align="start">
-        <Heading size="6" className="mb-1">
+        <Heading size="6" mb="2">
           Issues
         </Heading>
+
         <Text size="3" className="text-gray-500">
-          {issueCount} {issueCount === 1 ? "issue" : "issues"} in
-          <Badge className="mx-2">{workspace?.name || "this workspace"}</Badge>
+          <Link
+            href={`/workspaces/${params.workspaceId}`}
+            className="cursor-pointer"
+          >
+            <Button mr="2" variant="soft" size="1">
+              <IoMdArrowRoundBack /> {workspace?.name || "this workspace"}
+            </Button>
+          </Link>
+          {issueCount} {issueCount === 1 ? "issue" : "issues"}
         </Text>
       </Flex>
 
