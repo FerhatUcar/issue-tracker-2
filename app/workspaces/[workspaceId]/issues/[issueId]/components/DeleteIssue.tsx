@@ -6,28 +6,23 @@ import { Spinner } from "@/app/components";
 import { TrashIcon } from "@radix-ui/react-icons";
 import { useIssueMutation } from "@/app/hooks";
 import toast from "react-hot-toast";
-import { useState } from "react";
 
 type Props = {
   issueId: number;
   workspaceId: string;
 };
 
-export const DeleteIssueButton = ({ issueId, workspaceId }: Props) => {
+export const DeleteIssue = ({ issueId, workspaceId }: Props) => {
   const router = useRouter();
-  const [isPending, setIsPending] = useState(false);
   const {
-    deleteIssue: { mutate, isError, reset },
+    deleteIssue: { mutate, isError, reset, isLoading },
   } = useIssueMutation();
 
   const handleDeleteIssue = () => {
     try {
-      setIsPending(true);
-
       mutate(issueId, {
         onSuccess: () => {
-          setIsPending(false);
-          router.push(`/workspace/${workspaceId}`);
+          router.push(`/workspaces/${workspaceId}`);
           router.refresh();
         },
       });
@@ -43,10 +38,10 @@ export const DeleteIssueButton = ({ issueId, workspaceId }: Props) => {
     <>
       <AlertDialog.Root>
         <AlertDialog.Trigger>
-          <Button color="red" disabled={isPending}>
+          <Button color="red" disabled={isLoading}>
             <TrashIcon className="-mr-1" />
             Delete
-            {isPending && <Spinner />}
+            {isLoading && <Spinner />}
           </Button>
         </AlertDialog.Trigger>
         <AlertDialog.Content>

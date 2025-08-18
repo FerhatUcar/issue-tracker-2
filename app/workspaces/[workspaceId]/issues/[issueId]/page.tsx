@@ -4,8 +4,8 @@ import { Box, Card, Flex, Grid, Separator } from "@radix-ui/themes";
 import IssueDetails from "@/app/workspaces/[workspaceId]/issues/[issueId]/IssueDetails";
 import {
   Comments,
-  DeleteIssueButton,
-  EditIssueButton,
+  DeleteIssue,
+  EditIssue,
 } from "@/app/workspaces/[workspaceId]/issues/[issueId]/components";
 import React, { cache } from "react";
 import { getServerSession } from "next-auth";
@@ -75,14 +75,20 @@ const IssueDetailPage = async ({ params }: Props) => {
             Update status
             <IssueStatus issue={issue} />
             <Separator className="w-full my-2" />
-            <EditIssueButton
-              issueId={issue.id}
-              workspaceId={params.workspaceId}
+            <EditIssue
+              issue={{
+                id: issue.id,
+                title: issue.title,
+                description: issue.description,
+                assignedToUserId: issue.assignedToUserId,
+              }}
             />
-            <DeleteIssueButton
-              issueId={issue.id}
-              workspaceId={params.workspaceId}
-            />
+            {issue.workspaceId && (
+              <DeleteIssue
+                issueId={issue.id}
+                workspaceId={issue?.workspaceId}
+              />
+            )}
           </Flex>
         </Card>
       )}

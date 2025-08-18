@@ -17,8 +17,8 @@ import { BsChatDots } from "react-icons/bs";
 const CreateIssueDialog = dynamic(
   () =>
     import(
-      "@/app/workspaces/[workspaceId]/issues/_components/CreateIssueDialog"
-    ).then((m) => m.CreateIssueDialog),
+      "@/app/workspaces/[workspaceId]/issues/_components/CreateIssue"
+    ).then((m) => m.CreateIssue),
   { ssr: false },
 );
 

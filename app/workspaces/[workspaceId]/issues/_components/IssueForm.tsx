@@ -33,9 +33,9 @@ const simpleMdeOptions: Options = {
   hideIcons: ["fullscreen", "side-by-side", "preview", "guide"] as const,
 };
 
-type Props = { issue?: Issue };
+type Props = { issue?: Partial<Issue>; onSuccess?: () => void };
 
-export const IssueForm = ({ issue }: Props) => {
+export const IssueForm = ({ issue, onSuccess }: Props) => {
   const router = useRouter();
   const params = useParams();
   const {
@@ -73,6 +73,7 @@ export const IssueForm = ({ issue }: Props) => {
 
     const payload = {
       ...data,
+      id: issue?.id,
       assignedToUserId,
       workspaceId,
     };
@@ -81,8 +82,14 @@ export const IssueForm = ({ issue }: Props) => {
       await mutateAsync(payload, {
         onSuccess: () => {
           toast.success("Issue submitted successfully!");
-          router.push(`/workspaces/${workspaceId}`);
-          router.refresh();
+
+          if (onSuccess) {
+            onSuccess();
+            router.refresh();
+          } else {
+            router.push(`/workspaces/${workspaceId}`);
+            router.refresh();
+          }
         },
       });
     } catch (error: unknown) {

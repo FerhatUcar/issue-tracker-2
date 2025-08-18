@@ -1,3 +1,3 @@
 export { EmptyState } from "./EmptyState";
-export { CreateIssueDialog } from "./CreateIssueDialog";
+export { CreateIssue } from "./CreateIssue";
 export { IssueForm } from "./IssueForm";
