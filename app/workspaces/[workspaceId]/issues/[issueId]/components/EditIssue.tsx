@@ -15,9 +15,10 @@ import { type Issue } from "@prisma/client";
 
 type Props = {
   issue: Partial<Issue>;
+  workspaceId: string;
 };
 
-export const EditIssue = ({ issue }: Props) => {
+export const EditIssue = ({ issue, workspaceId }: Props) => {
   const [open, setOpen] = useState(false);
 
   return (
@@ -44,7 +45,11 @@ export const EditIssue = ({ issue }: Props) => {
             </Dialog.Close>
           </Flex>
 
-          <IssueForm issue={issue} onSuccess={() => setOpen(false)} />
+          <IssueForm
+            issue={issue}
+            workspaceId={workspaceId}
+            onSuccess={() => setOpen(false)}
+          />
         </DialogContent>
       </Dialog.Root>
     </>

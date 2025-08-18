@@ -33,7 +33,11 @@ const simpleMdeOptions: Options = {
   hideIcons: ["fullscreen", "side-by-side", "preview", "guide"] as const,
 };
 
-type Props = { issue?: Partial<Issue>; onSuccess?: () => void };
+type Props = {
+  workspaceId?: string;
+  issue?: Partial<Issue>;
+  onSuccess?: () => void;
+};
 
 export const IssueForm = ({ issue, onSuccess }: Props) => {
   const router = useRouter();

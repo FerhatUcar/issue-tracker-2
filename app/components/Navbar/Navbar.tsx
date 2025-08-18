@@ -17,8 +17,6 @@ type Props = {
 export const Navbar = ({ data: { userId, count } }: Props) => {
   const session = useSession();
   const isLoggedIn = session.status === "authenticated";
-  const width = isLoggedIn ? 30 : 35;
-  const height = isLoggedIn ? 30 : 35;
 
   return (
     <nav className="px-5 py-3">
@@ -29,8 +27,8 @@ export const Navbar = ({ data: { userId, count } }: Props) => {
               <Image
                 src="/logo.png"
                 alt="Logo"
-                width={width}
-                height={height}
+                width={30}
+                height={30}
                 priority
                 style={{
                   objectFit: "contain",

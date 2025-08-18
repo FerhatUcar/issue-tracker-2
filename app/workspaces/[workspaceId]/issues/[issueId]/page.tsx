@@ -20,17 +20,16 @@ type Props = {
 const fetchIssue = cache((issueId: number) =>
   prisma.issue.findUnique({
     where: { id: issueId },
-    include: {
-      assignedToUser: true,
-      Workspace: {
-        include: {
-          memberships: {
-            include: {
-              user: true,
-            },
-          },
-        },
-      },
+    select: {
+      id: true,
+      title: true,
+      description: true,
+      status: true,
+      createdAt: true,
+      updatedAt: true,
+      assignedToUserId: true,
+      workspaceId: true,
+      assignedToUser: { select: { id: true, name: true, image: true } },
     },
   }),
 );
@@ -52,9 +51,17 @@ const IssueDetailPage = async ({ params }: Props) => {
     notFound();
   }
 
-  const isMember = issue.Workspace?.memberships.some(
-    (membership) => membership.user.email === session?.user?.email,
-  );
+  if (issue.workspaceId !== params.workspaceId) {
+    notFound();
+  }
+
+  const isMember = await prisma.membership.findFirst({
+    where: {
+      workspaceId: params.workspaceId,
+      userId: session?.user?.id,
+    },
+    select: { id: true },
+  });
 
   if (!isMember) {
     notFound();
@@ -76,6 +83,7 @@ const IssueDetailPage = async ({ params }: Props) => {
             <IssueStatus issue={issue} />
             <Separator className="w-full my-2" />
             <EditIssue
+              workspaceId={params.workspaceId}
               issue={{
                 id: issue.id,
                 title: issue.title,
@@ -83,12 +91,7 @@ const IssueDetailPage = async ({ params }: Props) => {
                 assignedToUserId: issue.assignedToUserId,
               }}
             />
-            {issue.workspaceId && (
-              <DeleteIssue
-                issueId={issue.id}
-                workspaceId={issue?.workspaceId}
-              />
-            )}
+            <DeleteIssue issueId={issue.id} workspaceId={params.workspaceId} />
           </Flex>
         </Card>
       )}

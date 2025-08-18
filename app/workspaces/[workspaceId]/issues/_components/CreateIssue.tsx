@@ -2,14 +2,7 @@
 
 import { useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
-import {
-  Box,
-  Button,
-  DialogContent,
-  Flex,
-  IconButton,
-  Text,
-} from "@radix-ui/themes";
+import { Box, Button, DialogContent, Flex, IconButton, Text } from "@radix-ui/themes";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import { AiFillPlusCircle } from "react-icons/ai";
 import { IssueForm } from "./IssueForm";
@@ -49,7 +42,7 @@ export const CreateIssue = ({ hasSpace = false }: Props) => {
               </IconButton>
             </Dialog.Close>
           </Flex>
-          <IssueForm />
+          <IssueForm onSuccess={() => setOpen(false)} />
         </DialogContent>
       </Dialog.Root>
     </Box>
