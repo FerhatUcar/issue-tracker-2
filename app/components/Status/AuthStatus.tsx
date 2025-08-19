@@ -1,8 +1,21 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { Avatar, Badge, Box, Button, DropdownMenu, Flex, Text } from "@radix-ui/themes";
-import { AvatarIcon, ExitIcon, GearIcon, PersonIcon } from "@radix-ui/react-icons";
+import {
+  Avatar,
+  Badge,
+  Box,
+  Button,
+  DropdownMenu,
+  Flex,
+  Text,
+} from "@radix-ui/themes";
+import {
+  AvatarIcon,
+  ExitIcon,
+  GearIcon,
+  PersonIcon,
+} from "@radix-ui/react-icons";
 import Skeleton from "react-loading-skeleton";
 import { IoTicketOutline } from "react-icons/io5";
 import { useParams } from "next/navigation";

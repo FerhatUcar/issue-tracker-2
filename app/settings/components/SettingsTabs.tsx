@@ -1,26 +1,13 @@
-// app/settings/SettingsTabs.tsx
 "use client";
 
 import Link from "next/link";
-import {
-  Badge,
-  Box,
-  Button,
-  Card,
-  Flex,
-  Grid,
-  Heading,
-  Separator,
-  Table,
-  Tabs,
-  Text,
-} from "@radix-ui/themes";
+import { Badge, Box, Button, Card, Flex, Grid, Heading, Separator, Table, Tabs, Text } from "@radix-ui/themes";
 import { IoMdStats } from "react-icons/io";
 import { IssueChart, PageTitle } from "@/app/components";
 import { ThemeToggle } from "@/app/settings/components/ThemeToggle";
 import { formatDate } from "@/app/helpers";
 import { MdOutlineWorkspaces } from "react-icons/md";
-import React from "react";
+import { HiOutlineArrowTopRightOnSquare } from "react-icons/hi2";
 import { AvatarIcon } from "@radix-ui/react-icons";
 
 type WorkspaceDTO = { id: string; name: string; createdAt: string };
@@ -84,10 +71,10 @@ export default function SettingsTabs(props: {
 
       <Tabs.Root defaultValue="profile">
         <Tabs.List>
-          <Tabs.Trigger value="profile">Profiel</Tabs.Trigger>
+          <Tabs.Trigger value="profile">Profile</Tabs.Trigger>
           <Tabs.Trigger value="workspaces">Workspaces</Tabs.Trigger>
           <Tabs.Trigger value="issues">Issues</Tabs.Trigger>
-          <Tabs.Trigger value="stats">Statistieken</Tabs.Trigger>
+          <Tabs.Trigger value="stats">Statistics</Tabs.Trigger>
         </Tabs.List>
 
         <Tabs.Content value="profile">
@@ -108,10 +95,15 @@ export default function SettingsTabs(props: {
                   href="https://myaccount.google.com/personal-info"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full md:w-44"
+                  className="w-full md:w-44 mt-4"
                 >
-                  <Button variant="soft" size="3" className="w-full">
-                    Change on Google
+                  <Button
+                    variant="soft"
+                    size="2"
+                    className="w-full flex flex-row items-center justify-between"
+                  >
+                    <Text size="1">Change on Google</Text>
+                    <HiOutlineArrowTopRightOnSquare />
                   </Button>
                 </Link>
               </Flex>
@@ -227,16 +219,12 @@ export default function SettingsTabs(props: {
 
         <Tabs.Content value="stats">
           <Grid columns={{ initial: "1", md: "2" }} gap="3" my="3">
-            <Card>
-              <Heading size="3" mb="2">
-                Issues per status
-              </Heading>
-              <IssueChart
-                open={stats.open}
-                inProgress={stats.inProgress}
-                closed={stats.closed}
-              />
-            </Card>
+            <IssueChart
+              open={stats.open}
+              inProgress={stats.inProgress}
+              closed={stats.closed}
+            />
+
             <Card>
               <Heading size="3" mb="2">
                 Summary
