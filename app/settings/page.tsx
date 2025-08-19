@@ -2,20 +2,23 @@ import prisma from "@/prisma/client";
 import { getServerSession } from "next-auth";
 import authOptions from "@/app/auth/authOptions";
 import { notFound } from "next/navigation";
-import SettingsTabs from "./components/SettingsTabs";
+import { SettingsTabs } from "./components";
 
 export default async function SettingsPage() {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.email) notFound();
 
-  // Haal de DB-user op (hier zit een echte id op)
+  if (!session?.user?.email) {
+    notFound();
+  }
+
   const user = await prisma.user.findUnique({
     where: { email: session.user.email },
   });
 
-  if (!user) notFound();
+  if (!user) {
+    notFound();
+  }
 
-  // Workspaces via memberships van de user
   const memberships = await prisma.membership.findMany({
     where: { userId: user.id },
     include: { workspace: true },
@@ -24,7 +27,7 @@ export default async function SettingsPage() {
   const workspaces = memberships.map((m) => ({
     id: m.workspace.id,
     name: m.workspace.name,
-    createdAt: m.workspace.createdAt.toISOString(), // serialize voor client
+    createdAt: m.workspace.createdAt.toISOString(),
   }));
 
   const workspaceIds = workspaces.map((w) => w.id);
@@ -54,13 +57,15 @@ export default async function SettingsPage() {
       }),
     ]);
 
-  const recentIssuesDTO = recentIssues.map((i) => ({
-    id: i.id,
-    title: i.title,
-    status: i.status as "OPEN" | "IN_PROGRESS" | "CLOSED",
-    createdAt: i.createdAt.toISOString(),
-    Workspaces: { id: i.Workspace?.id ?? "", name: i.Workspace?.name ?? "" },
-  }));
+  const recentIssuesDTO = recentIssues.map(
+    ({ id, status, title, createdAt, Workspace }) => ({
+      id,
+      title,
+      status: status as "OPEN" | "IN_PROGRESS" | "CLOSED",
+      createdAt: createdAt.toISOString(),
+      Workspaces: { id: Workspace?.id ?? "", name: Workspace?.name ?? "" },
+    }),
+  );
 
   return (
     <SettingsTabs

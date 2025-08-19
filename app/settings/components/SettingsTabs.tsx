@@ -1,7 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { Badge, Box, Button, Card, Flex, Grid, Heading, Separator, Table, Tabs, Text } from "@radix-ui/themes";
+import {
+  Badge,
+  Box,
+  Button,
+  Card,
+  Flex,
+  Grid,
+  Heading,
+  Separator,
+  Table,
+  Tabs,
+  Text,
+} from "@radix-ui/themes";
 import { IoMdStats } from "react-icons/io";
 import { IssueChart, PageTitle } from "@/app/components";
 import { ThemeToggle } from "@/app/settings/components/ThemeToggle";
@@ -19,13 +31,26 @@ type IssueDTO = {
   Workspaces: { id: string; name: string };
 };
 
-export default function SettingsTabs(props: {
-  user: { name: string; email: string };
+type Props = {
+  user: {
+    name: string | null;
+    email: string;
+  };
   Workspaces: WorkspaceDTO[];
-  stats: { open: number; inProgress: number; closed: number };
+  stats: {
+    open: number;
+    inProgress: number;
+    closed: number;
+  };
   recentIssues: IssueDTO[];
-}) {
-  const { user, Workspaces, stats, recentIssues } = props;
+};
+
+export const SettingsTabs = ({
+  user,
+  Workspaces,
+  stats,
+  recentIssues,
+}: Props) => {
   const totalIssues = stats.open + stats.inProgress + stats.closed;
 
   return (
@@ -43,7 +68,6 @@ export default function SettingsTabs(props: {
               >
                 <IoMdStats /> Total issues
               </Text>
-
               <Heading size="6">{totalIssues}</Heading>
             </Box>
           </Flex>
@@ -77,6 +101,7 @@ export default function SettingsTabs(props: {
           <Tabs.Trigger value="stats">Statistics</Tabs.Trigger>
         </Tabs.List>
 
+        {/* Profile */}
         <Tabs.Content value="profile">
           <Grid columns={{ initial: "1", md: "2" }} gap="3" my="3">
             <Card>
@@ -89,7 +114,7 @@ export default function SettingsTabs(props: {
                   Name: <strong>{user.name || "—"}</strong>
                 </Text>
                 <Text>
-                  E‑mail: <strong>{user.email}</strong>
+                  E-mail: <strong>{user.email}</strong>
                 </Text>
                 <Link
                   href="https://myaccount.google.com/personal-info"
@@ -116,7 +141,7 @@ export default function SettingsTabs(props: {
               <Separator my="3" />
               <Flex direction="column" gap="3">
                 <Flex align="center" justify="between">
-                  <Text>Notifications per e‑mail</Text>
+                  <Text>Notifications per e-mail</Text>
                   <Badge color="green">Aan</Badge>
                 </Flex>
                 <Flex align="center" justify="between">
@@ -128,6 +153,7 @@ export default function SettingsTabs(props: {
           </Grid>
         </Tabs.Content>
 
+        {/* Workspaces */}
         <Tabs.Content value="workspaces">
           <Card my="3">
             <Heading size="3" mb="2">
@@ -170,6 +196,7 @@ export default function SettingsTabs(props: {
           </Card>
         </Tabs.Content>
 
+        {/* Issues */}
         <Tabs.Content value="issues">
           <Card my="3">
             <Heading size="3" mb="2">
@@ -217,6 +244,7 @@ export default function SettingsTabs(props: {
           </Card>
         </Tabs.Content>
 
+        {/* Stats */}
         <Tabs.Content value="stats">
           <Grid columns={{ initial: "1", md: "2" }} gap="3" my="3">
             <IssueChart
@@ -224,7 +252,6 @@ export default function SettingsTabs(props: {
               inProgress={stats.inProgress}
               closed={stats.closed}
             />
-
             <Card>
               <Heading size="3" mb="2">
                 Summary
@@ -244,7 +271,7 @@ export default function SettingsTabs(props: {
       </Tabs.Root>
     </Box>
   );
-}
+};
 
 function Row({
   label,
