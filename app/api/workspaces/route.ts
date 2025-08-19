@@ -3,6 +3,7 @@ import authOptions from "@/app/auth/authOptions";
 import { getServerSession } from "next-auth";
 import prisma from "@/prisma/client";
 import { Workspace } from "@prisma/client";
+import { revalidatePath } from "next/cache";
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -87,6 +88,8 @@ export async function POST(req: Request) {
         },
       },
     });
+
+    revalidatePath("/workspaces");
 
     return NextResponse.json(workspace);
   } catch (err) {

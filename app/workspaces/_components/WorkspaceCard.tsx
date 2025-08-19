@@ -1,30 +1,22 @@
 import React from "react";
 import Link from "next/link";
 import { Avatar, Box, Card, Flex, Heading, Text } from "@radix-ui/themes";
-import { Workspace } from "@prisma/client";
+import type { WorkspaceCardData } from "@/app/types/workspace";
 
-type Props = {
-  workspace: Workspace & {
-    _count?: { issues?: number };
-    memberships?: {
-      user: {
-        name: string | null;
-        image: string | null;
-      };
-    }[];
-  };
-};
+type Props = { workspace: WorkspaceCardData };
 
-export const WorkspaceCard = ({ workspace }: Props) => (
-  <Link href={`/workspaces/${workspace.id}`} prefetch={false}>
+export const WorkspaceCard = ({
+  workspace: { id, name, _count, memberships },
+}: Props) => (
+  <Link href={`/workspaces/${id}`} prefetch={false}>
     <Card className="w-full">
       <Flex direction="column" justify="between" className="h-full">
         <Box>
           <Heading size="4">
-            {workspace.name?.charAt(0).toUpperCase() + workspace.name?.slice(1)}
+            {name?.charAt(0).toUpperCase() + name?.slice(1)}
           </Heading>
           <Text size="2" color="gray">
-            {workspace._count?.issues ?? 0} issue(s)
+            {_count?.issues ?? 0} issue(s)
           </Text>
         </Box>
 
@@ -33,7 +25,7 @@ export const WorkspaceCard = ({ workspace }: Props) => (
           mt="auto"
           style={{ position: "relative", height: "24px" }}
         >
-          {workspace.memberships?.slice(0, 4).map(({ user }, i) => (
+          {memberships?.slice(0, 4).map(({ user }, i) => (
             <Avatar
               key={i}
               size="1"
@@ -50,7 +42,7 @@ export const WorkspaceCard = ({ workspace }: Props) => (
             />
           ))}
 
-          {workspace.memberships && workspace.memberships.length > 4 && (
+          {memberships && memberships.length > 4 && (
             <Flex
               align="center"
               justify="center"
@@ -66,7 +58,7 @@ export const WorkspaceCard = ({ workspace }: Props) => (
                 border: "2px solid white",
               }}
             >
-              +{workspace.memberships.length - 4}
+              +{memberships.length - 4}
             </Flex>
           )}
         </Flex>

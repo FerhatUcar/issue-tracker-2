@@ -38,6 +38,7 @@ export const Actions = ({ workspaceId, workspaceName, isAdmin }: Props) => {
     mutate(workspaceId, {
       onSuccess: () => {
         router.push("/workspaces");
+        router.refresh();
       },
     });
   };

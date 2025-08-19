@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/prisma/client";
 import { getServerSession } from "next-auth";
 import authOptions from "@/app/auth/authOptions";
+import { revalidatePath } from "next/cache";
 
 export async function DELETE(
   req: NextRequest,
@@ -31,6 +32,8 @@ export async function DELETE(
     await prisma.issue.deleteMany({ where: { workspaceId: params.id } });
     await prisma.membership.deleteMany({ where: { workspaceId: params.id } });
     await prisma.workspace.delete({ where: { id: params.id } });
+
+    revalidatePath("/workspaces");
 
     return NextResponse.json({ success: true });
   } catch (error) {

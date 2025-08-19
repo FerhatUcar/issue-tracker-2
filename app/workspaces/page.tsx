@@ -2,11 +2,12 @@ import { getServerSession } from "next-auth";
 import authOptions from "@/app/auth/authOptions";
 import prisma from "@/prisma/client";
 import { redirect } from "next/navigation";
-import { Box, Card, Flex, Grid, Heading } from "@radix-ui/themes";
+import { Box, Card, Flex, Grid, Heading, Text } from "@radix-ui/themes";
 import { HiOutlinePlus } from "react-icons/hi2";
 import { CreateWorkspace } from "@/app/workspaces/_components/CreateWorkspace";
 import { WorkspaceCard } from "@/app/workspaces/_components";
 import { MdOutlineWorkspaces } from "react-icons/md";
+import { WorkspaceCardData, workspaceCardSelect } from "@/app/types/workspace";
 
 const WorkspacesPage = async () => {
   const session = await getServerSession(authOptions);
@@ -15,40 +16,10 @@ const WorkspacesPage = async () => {
     redirect("/");
   }
 
-  const user = await prisma.user.findUnique({
-    where: { email: session.user.email },
-    select: { id: true },
-  });
-
-  if (!user) {
-    redirect("/");
-  }
-
-  const memberships = await prisma.membership.findMany({
-    where: { userId: user.id },
-    include: {
-      workspace: {
-        include: {
-          memberships: {
-            take: 3,
-            include: {
-              user: {
-                select: {
-                  id: true,
-                  name: true,
-                  image: true,
-                },
-              },
-            },
-          },
-          _count: {
-            select: {
-              issues: true,
-            },
-          },
-        },
-      },
-    },
+  const workspaces: WorkspaceCardData[] = await prisma.workspace.findMany({
+    where: { memberships: { some: { user: { email: session.user.email } } } },
+    orderBy: { updatedAt: "desc" },
+    select: workspaceCardSelect,
   });
 
   return (
@@ -59,25 +30,41 @@ const WorkspacesPage = async () => {
         </Flex>
       </Heading>
 
-      <Grid
-        columns={{ initial: "1", sm: "3", md: "3", lg: "4" }}
-        gap="4"
-        width="auto"
-      >
-        {memberships
-          .map(({ workspace }) => workspace)
-          .map((workspace) => (
-            <WorkspaceCard key={workspace.id} workspace={workspace} />
+      {workspaces.length === 0 ? (
+        <Card>
+          <Box p="4" className="flex items-center justify-between">
+            <Text size="3">Je hebt nog geen workspaces.</Text>
+            <CreateWorkspace>
+              <Card className="cursor-pointer">
+                <Box className="flex justify-center items-center h-full p-2">
+                  <Flex align="center" gap="2">
+                    <HiOutlinePlus className="w-5 h-5" />
+                    <Text>Nieuwe workspace</Text>
+                  </Flex>
+                </Box>
+              </Card>
+            </CreateWorkspace>
+          </Box>
+        </Card>
+      ) : (
+        <Grid
+          columns={{ initial: "1", sm: "3", md: "3", lg: "4" }}
+          gap="4"
+          width="auto"
+        >
+          {workspaces.map((ws) => (
+            <WorkspaceCard key={ws.id} workspace={ws} />
           ))}
 
-        <CreateWorkspace>
-          <Card className="cursor-pointer">
-            <Box className="flex justify-center items-center h-full">
-              <HiOutlinePlus className="w-10 h-10" />
-            </Box>
-          </Card>
-        </CreateWorkspace>
-      </Grid>
+          <CreateWorkspace>
+            <Card className="cursor-pointer">
+              <Box className="flex justify-center items-center h-full">
+                <HiOutlinePlus className="w-10 h-10" />
+              </Box>
+            </Card>
+          </CreateWorkspace>
+        </Grid>
+      )}
     </>
   );
 };
