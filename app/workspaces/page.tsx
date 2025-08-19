@@ -51,8 +51,6 @@ const WorkspacesPage = async () => {
     },
   });
 
-  const workspaces = memberships.map((m) => m.workspace);
-
   return (
     <>
       <Heading as="h1" size="6" mb="4">
@@ -66,9 +64,11 @@ const WorkspacesPage = async () => {
         gap="4"
         width="auto"
       >
-        {workspaces.map((workspace) => (
-          <WorkspaceCard key={workspace.id} workspace={workspace} />
-        ))}
+        {memberships
+          .map(({ workspace }) => workspace)
+          .map((workspace) => (
+            <WorkspaceCard key={workspace.id} workspace={workspace} />
+          ))}
 
         <CreateWorkspace>
           <Card className="cursor-pointer">

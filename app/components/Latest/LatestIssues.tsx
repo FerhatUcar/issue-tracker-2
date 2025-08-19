@@ -40,7 +40,7 @@ export const LatestIssues = async ({ workspaceId }: Props) => {
       </Flex>
 
       {hasIssues ? (
-        <Box className="h-[calc(100%-90px)]">
+        <Box className="h-[calc(100%-75px)]">
           {issues.map((issue) => (
             <Link
               href={`/workspaces/${workspaceId}/issues/${issue.id}`}
