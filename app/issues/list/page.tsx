@@ -1,7 +1,7 @@
 import prisma from "@/prisma/client";
 import { Status } from "@prisma/client";
-import { Pagination } from "@/app/components";
-import { Box, Card, Flex, Heading, Text } from "@radix-ui/themes";
+import { PageTitle, Pagination } from "@/app/components";
+import { Box, Card, Flex, Text } from "@radix-ui/themes";
 import IssueTable, {
   IssueQuery,
 } from "@/app/workspaces/[workspaceId]/issues/list/IssueTable";
@@ -70,13 +70,15 @@ const AllIssuesPage = async ({ searchParams }: Props) => {
 
   return (
     <Box className="space-y-4">
-      <Box>
-        <Heading size="4">My Issues List</Heading>
-        <Text size="2" className="text-gray-500">
-          {issueCount} {issueCount === 1 ? "issue" : "issues"} assigned to you
-          across all workspaces
-        </Text>
-      </Box>
+      <PageTitle
+        title="My Issues List"
+        description={
+          <>
+            {issueCount} {issueCount === 1 ? "issue" : "issues"} assigned to you
+            across all workspaces
+          </>
+        }
+      />
 
       {issues.length === 0 ? (
         <Card>

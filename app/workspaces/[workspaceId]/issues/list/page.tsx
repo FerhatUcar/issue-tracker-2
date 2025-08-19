@@ -105,7 +105,7 @@ const IssuesPage = async ({ searchParams, params: { workspaceId } }: Props) => {
       <Flex direction="column" align="start">
         <Box>
           <Heading size="6" mb="2">
-            Issues
+            Issues: {workspace?.name}
           </Heading>
 
           <Flex align="center" gap="2">
@@ -119,8 +119,7 @@ const IssuesPage = async ({ searchParams, params: { workspaceId } }: Props) => {
             </Link>
 
             <Text size="2" className="text-gray-500">
-              All issues in {workspace?.name ?? "this workspace"}: {issueCount}{" "}
-              {issueCount === 1 ? "issue" : "issues"}
+              Total: {issueCount}
             </Text>
           </Flex>
         </Box>

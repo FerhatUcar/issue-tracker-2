@@ -1,8 +1,9 @@
 import { Box, Heading, Text } from "@radix-ui/themes";
+import { ReactNode } from "react";
 
 type Props = {
   title: string;
-  description: string;
+  description: string | ReactNode;
 };
 
 export const PageTitle = ({ title, description }: Props) => (
