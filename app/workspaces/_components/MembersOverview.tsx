@@ -1,12 +1,11 @@
-import { Avatar, Badge, Box, Button, Card, Flex, Text } from "@radix-ui/themes";
+import { Badge, Box, Button, Flex, Heading, Text } from "@radix-ui/themes";
 import prisma from "@/prisma/client";
-import { getServerSession } from "next-auth";
-import authOptions from "@/app/auth/authOptions";
-import { notFound } from "next/navigation";
-import { PiCrownDuotone } from "react-icons/pi";
 import Link from "next/link";
+import authOptions from "@/app/auth/authOptions";
+import { getServerSession } from "next-auth";
+import { notFound } from "next/navigation";
 import { IoMdArrowRoundBack } from "react-icons/io";
-import { MemberActionsMenu } from "@/app/workspaces/_components";
+import { MembersList } from "@/app/workspaces/_components";
 
 type Props = { workspaceId: string };
 
@@ -34,8 +33,38 @@ export const MembersOverview = async ({ workspaceId }: Props) => {
     notFound();
   }
 
+  const members = workspace.memberships.map(({ user, role }) => {
+    const isCurrentUser = user.email === session.user.email!;
+    const isAdmin = role === "ADMIN";
+    const iAmAdmin = currentMembership.role === "ADMIN";
+    const showMenu = iAmAdmin && !isAdmin && !isCurrentUser;
+
+    return {
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        image: user.image,
+      },
+      role,
+      isCurrentUser,
+      showMenu,
+    };
+  });
+
   return (
     <>
+      <Box mb="4">
+        <Heading as="h1" size="6">
+          <Flex direction="row" gap="2" align="center">
+            Members
+          </Flex>
+        </Heading>
+        <Text size="2" color="gray">
+          All members of the workspace.
+        </Text>
+      </Box>
+
       <Flex align="center" gap="2" mb="4">
         <Button asChild variant="soft" size="2" className="mb-4">
           <Link href={`/workspaces/${workspaceId}`}>
@@ -47,49 +76,7 @@ export const MembersOverview = async ({ workspaceId }: Props) => {
       </Flex>
 
       <Flex direction="column" gap="3">
-        {workspace.memberships.map(({ user, role }) => {
-          const isCurrentUser = user.email === session.user.email!;
-          const isAdmin = role === "ADMIN";
-          const iAmAdmin = currentMembership.role === "ADMIN";
-          const showMenu = iAmAdmin && !isAdmin && !isCurrentUser;
-
-          return (
-            <Card key={user.id} variant="surface">
-              <Flex align="center" gap="3" justify="between">
-                <Flex align="center" gap="3">
-                  <Avatar
-                    fallback={user.name?.[0] ?? "?"}
-                    radius="large"
-                    src={user.image ?? ""}
-                    size="3"
-                  />
-                  <Flex direction="column">
-                    <Text weight="bold">{user.name}</Text>
-                    <Text size="1" color="gray">
-                      {user.email}
-                    </Text>
-                  </Flex>
-                </Flex>
-
-                <Flex align="center" gap="2">
-                  {isAdmin && (
-                    <PiCrownDuotone className="mr-2" size={18} color="gold" />
-                  )}
-
-                  {showMenu && (
-                    <Box className="mr-2 flex items-center">
-                      <MemberActionsMenu
-                        workspaceId={workspaceId}
-                        userId={user.id}
-                        userName={user.name ?? "Member"}
-                      />
-                    </Box>
-                  )}
-                </Flex>
-              </Flex>
-            </Card>
-          );
-        })}
+        <MembersList workspaceId={workspaceId} members={members} />
       </Flex>
     </>
   );

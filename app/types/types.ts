@@ -13,6 +13,7 @@ export type CommentWithAuthor = Prisma.CommentGetPayload<{
   include: { author: true };
 }>;
 
+export type ROLE = "ADMIN" | "MEMBER";
 export type ReactionType = "LIKE" | "DISLIKE";
 export type MyReaction = ReactionType | "NONE";
 

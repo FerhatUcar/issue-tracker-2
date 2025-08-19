@@ -5,3 +5,4 @@ export { getPaginatedIssuesWithAssignedUser } from "./get-paginated-issues";
 export { getComments } from "./get-comments";
 export { formatDate } from "./format-date";
 export { clampNonNegative } from "./clamp-non-negative";
+export { delay } from "./delay";

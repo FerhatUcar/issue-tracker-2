@@ -8,22 +8,32 @@ import { PiCrownDuotone } from "react-icons/pi";
 
 type Props = {
   /**
-   * A unique identifier for a workspace.
-   */
+   * Workspace ID
+   * */
   workspaceId: string;
 
   /**
    * User ID
-   */
+   * */
   userId: string;
 
   /**
    * Name of the user
-   */
+   * */
   userName: string;
+
+  /**
+   * Callback function to be called when the user clicks the "Promote to admin" button.
+   */
+  onPromote?: () => void;
 };
 
-export const MemberActionsMenu = ({ workspaceId, userId, userName }: Props) => (
+export const MembersMenu = ({
+  workspaceId,
+  userId,
+  userName,
+  onPromote,
+}: Props) => (
   <DropdownMenu.Root>
     <DropdownMenu.Trigger>
       <IconButton variant="ghost" color="gray" size="3" aria-label="Actions">
@@ -36,8 +46,12 @@ export const MemberActionsMenu = ({ workspaceId, userId, userName }: Props) => (
       onCloseAutoFocus={(e) => e.preventDefault()}
     >
       <DropdownMenu.Item onSelect={(e) => e.preventDefault()}>
-        {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
-        <form action={promoteToAdmin}>
+        <form
+          action={promoteToAdmin}
+          onSubmit={() => {
+            onPromote?.();
+          }}
+        >
           <input type="hidden" name="userId" value={userId} />
           <input type="hidden" name="workspaceId" value={workspaceId} />
           <button

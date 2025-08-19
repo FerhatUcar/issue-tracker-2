@@ -8,6 +8,8 @@
 :root {
   --border-radius: 0.375rem;
   --border-radius-editor: 0.5rem;
+
+  --glow-color-2: rgba(112, 210, 255, 0.3);
 }
 
 .light {
@@ -96,7 +98,7 @@
    🧱 UI Elements (Radix Themes)
 ===================== */
 .rt-TextFieldInput:where(.rt-r-size-3) + .rt-TextFieldChrome {
-    border-radius: max(var(--radius-2), var(--radius-full)) !important;
+  border-radius: max(var(--radius-2), var(--radius-full)) !important;
 }
 
 .rt-TableHeader {
@@ -142,4 +144,27 @@ body {
 
 .rt-Separator[data-orientation="horizontal"] {
   width: 100% !important;
+}
+
+/* ===== Admin promotion pulse ===== */
+@keyframes admin-pulse {
+  0% {
+    box-shadow: 0 0 0 0 var(--glow-color-2);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(56, 189, 248, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(56, 189, 248, 0);
+  }
+}
+
+.admin-glow {
+  animation: admin-pulse 0.6s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-glow {
+    animation: none;
+  }
 }

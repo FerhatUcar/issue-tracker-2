@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import prisma from "@/prisma/client";
 import { z } from "zod";
+import { delay } from "@/app/helpers";
 
 const PromoteSchema = z.object({
   userId: z.string().min(1),
@@ -20,6 +21,9 @@ export const promoteToAdmin = async (formData: FormData) => {
   }
 
   const { userId, workspaceId } = parsed.data;
+
+  // wait for the animation to finish
+  await delay(500);
 
   await prisma.membership.updateMany({
     where: { workspaceId, userId },
