@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import { FormEventHandler, useMemo } from "react";
 import { z } from "zod";
-import { Spinner } from "@/app/components";
+import { Skeleton, Spinner } from "@/app/components";
 import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
 import { Issue } from "@prisma/client";
@@ -20,13 +20,14 @@ import { useParams, useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { patchIssueSchema } from "@/app/validations";
 import type { Options } from "easymde";
-import { AiOutlineSend } from "react-icons/ai";
+import { MdOutlineRocketLaunch } from "react-icons/md";
 import { useDataQuery, useIssueMutation } from "@/app/hooks";
 import { User } from "next-auth";
 import IssueFormSkeleton from "@/app/workspaces/[workspaceId]/issues/_components/IssueFormSkeleton";
 
 const SimpleMDE = dynamic(() => import("react-simplemde-editor"), {
   ssr: false,
+  loading: () => <Skeleton className="h-40" />,
 });
 
 const simpleMdeOptions: Options = {
@@ -50,7 +51,7 @@ export const IssueForm = ({ issue, onSuccess }: Props) => {
     ? params?.workspaceId[0]
     : params?.workspaceId;
 
-  const { data: users, isLoading: isLoadingUsers } = useDataQuery<User>(
+  const { data: users = [], isLoading: isLoadingUsers } = useDataQuery<User>(
     "users",
     workspaceId,
   );
@@ -129,6 +130,7 @@ export const IssueForm = ({ issue, onSuccess }: Props) => {
               placeholder="Issue title..."
               inputMode="text"
               autoComplete="off"
+              className="rounded-sm"
               {...register("title")}
             />
           </Flex>
@@ -141,7 +143,7 @@ export const IssueForm = ({ issue, onSuccess }: Props) => {
             render={({ field }) => (
               <Select.Root
                 value={field.value || "unassigned"}
-                onValueChange={(val) => field.onChange(val)}
+                onValueChange={field.onChange}
               >
                 <Select.Trigger
                   className="w-full"
@@ -152,7 +154,7 @@ export const IssueForm = ({ issue, onSuccess }: Props) => {
                     <Select.Label>Suggestions</Select.Label>
                     <Select.Item value="unassigned">Unassigned</Select.Item>
                     <Select.Separator />
-                    {users?.map(({ id, name }) => (
+                    {users.map(({ id, name }) => (
                       <Select.Item key={id} value={id}>
                         {name}
                       </Select.Item>
@@ -185,10 +187,17 @@ export const IssueForm = ({ issue, onSuccess }: Props) => {
             disabled={isSubmitting || !!errors.title || !!errors.description}
             type="submit"
             variant="soft"
+            className="w-full"
+            size="3"
           >
-            <AiOutlineSend />
-            {issue ? "Update Issue" : "Submit New Issue"}
-            {isSubmitting && <Spinner />}
+            {isSubmitting ? (
+              <Spinner />
+            ) : (
+              <>
+                <MdOutlineRocketLaunch />
+                {issue ? "Update Issue" : "Submit Issue"}
+              </>
+            )}
           </Button>
         </Flex>
       </form>

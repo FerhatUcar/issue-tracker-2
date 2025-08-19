@@ -48,7 +48,7 @@ export const LatestIssues = async ({ workspaceId }: Props) => {
             >
               <Box
                 mb="3"
-                className="bg-neutral-200/40 hover:bg-neutral-200 dark:bg-neutral-900/50 dark:hover:bg-neutral-900 transition rounded-lg px-4 py-2 min-h-[48px] content-center"
+                className="bg-neutral-200/30 hover:bg-neutral-200/50 dark:bg-neutral-900/50 dark:hover:bg-neutral-900 transition rounded-lg pl-3 pr-2 py-2 min-h-[48px] content-center"
               >
                 <Flex justify="between" align="center">
                   <Flex direction="row" align="center" height="5" gap="2">
