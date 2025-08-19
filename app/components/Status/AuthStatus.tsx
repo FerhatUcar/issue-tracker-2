@@ -124,7 +124,7 @@ export const AuthStatus = ({ userId, count }: Props) => {
               href={`/workspaces/${workspaceIdString}/issues/list?assignedToUserId=${userId}`}
             >
               <DropdownMenu.Item>
-                <Flex justify="between" width="100%" align="center" gap="2">
+                <Flex width="100%" align="center" gap="2">
                   <IoTicketOutline />
                   <Text>Workspace issues</Text>
                 </Flex>

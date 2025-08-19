@@ -19,7 +19,7 @@ type Props = {
   params: { workspaceId: string };
 };
 
-const IssuesPage = async ({ searchParams, params }: Props) => {
+const IssuesPage = async ({ searchParams, params: { workspaceId } }: Props) => {
   const statuses: Status[] = Object.values(Status);
   const status: Status | undefined = statuses.includes(searchParams.status)
     ? searchParams.status
@@ -50,7 +50,7 @@ const IssuesPage = async ({ searchParams, params }: Props) => {
       where: {
         status,
         assignedToUserId,
-        workspaceId: params.workspaceId,
+        workspaceId,
       },
       orderBy,
       page: (page - 1) * 10,
@@ -61,12 +61,12 @@ const IssuesPage = async ({ searchParams, params }: Props) => {
       where: {
         status,
         assignedToUserId,
-        workspaceId: params.workspaceId,
+        workspaceId,
       },
     }),
 
     prisma.workspace.findUnique({
-      where: { id: params.workspaceId },
+      where: { id: workspaceId },
       select: { name: true },
     }),
   ]);
@@ -80,7 +80,7 @@ const IssuesPage = async ({ searchParams, params }: Props) => {
           </Heading>
           <Text size="3" className="text-gray-500">
             <Link
-              href={`/workspaces/${params.workspaceId}`}
+              href={`/workspaces/${workspaceId}`}
               className="cursor-pointer"
             >
               <Button mr="2" variant="soft" size="1">
@@ -92,7 +92,7 @@ const IssuesPage = async ({ searchParams, params }: Props) => {
         </Flex>
 
         <Card className="p-4">
-          <IssueActions workspaceId={params.workspaceId} />
+          <IssueActions workspaceId={workspaceId} />
         </Card>
 
         <EmptyState status={status} />
@@ -101,35 +101,41 @@ const IssuesPage = async ({ searchParams, params }: Props) => {
   }
 
   return (
-    <Box className="space-y-6">
+    <Box className="space-y-4">
       <Flex direction="column" align="start">
-        <Heading size="6" mb="2">
-          Issues
-        </Heading>
+        <Box>
+          <Heading size="6" mb="2">
+            Issues
+          </Heading>
 
-        <Text size="3" className="text-gray-500">
-          <Link
-            href={`/workspaces/${params.workspaceId}`}
-            className="cursor-pointer"
-          >
-            <Button mr="2" variant="soft" size="1">
-              <IoMdArrowRoundBack /> {workspace?.name || "this workspace"}
-            </Button>
-          </Link>
-          {issueCount} {issueCount === 1 ? "issue" : "issues"}
-        </Text>
+          <Flex align="center" gap="2">
+            <Link
+              href={`/workspaces/${workspaceId}`}
+              className="cursor-pointer"
+            >
+              <Button variant="soft" size="1">
+                <IoMdArrowRoundBack /> Back
+              </Button>
+            </Link>
+
+            <Text size="2" className="text-gray-500">
+              All issues in {workspace?.name ?? "this workspace"}: {issueCount}{" "}
+              {issueCount === 1 ? "issue" : "issues"}
+            </Text>
+          </Flex>
+        </Box>
       </Flex>
 
       <Card className="p-4">
-        <IssueActions workspaceId={params.workspaceId} />
+        <IssueActions workspaceId={workspaceId} />
       </Card>
 
-      <Card className="overflow-hidden">
+      <Card className="overflow-hidden shadow">
         <IssueTable
           searchParams={searchParams}
           issuesWithAssigning={issues}
           workspaceName={workspace?.name ?? ""}
-          workspaceId={params.workspaceId}
+          workspaceId={workspaceId}
         />
       </Card>
 

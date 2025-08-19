@@ -1,3 +1,4 @@
+import { cache } from "react";
 import prisma from "@/prisma/client";
 import { notFound } from "next/navigation";
 import { Box, Card, Flex, Grid, Separator } from "@radix-ui/themes";
@@ -7,7 +8,6 @@ import {
   DeleteIssue,
   EditIssue,
 } from "@/app/workspaces/[workspaceId]/issues/[issueId]/components";
-import React, { cache } from "react";
 import { getServerSession } from "next-auth";
 import authOptions from "@/app/auth/authOptions";
 import AssigneeSelect from "@/app/workspaces/[workspaceId]/issues/[issueId]/AssigneeSelect";
