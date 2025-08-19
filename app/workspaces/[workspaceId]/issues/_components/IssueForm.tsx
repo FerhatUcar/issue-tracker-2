@@ -18,7 +18,7 @@ import {
 import "easymde/dist/easymde.min.css";
 import { useParams, useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
-import { patchIssueSchema } from "@/app/validationSchema";
+import { patchIssueSchema } from "@/app/validations";
 import type { Options } from "easymde";
 import { AiOutlineSend } from "react-icons/ai";
 import { useDataQuery, useIssueMutation } from "@/app/hooks";

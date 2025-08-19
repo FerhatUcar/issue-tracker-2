@@ -1,4 +1,4 @@
-import { patchIssueSchema } from "@/app/validationSchema";
+import { patchIssueSchema } from "@/app/validations";
 import prisma from "@/prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
