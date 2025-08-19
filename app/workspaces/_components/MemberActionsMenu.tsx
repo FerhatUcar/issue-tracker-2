@@ -1,6 +1,6 @@
 "use client";
 
-import { DropdownMenu, Flex, IconButton, Text } from "@radix-ui/themes";
+import { DropdownMenu, IconButton, Text } from "@radix-ui/themes";
 import { DotsVerticalIcon } from "@radix-ui/react-icons";
 import { DeleteMember } from "@/app/workspaces/_components";
 import { promoteToAdmin } from "@/app/workspaces/actions";
@@ -35,19 +35,20 @@ export const MemberActionsMenu = ({ workspaceId, userId, userName }: Props) => (
       align="end"
       onCloseAutoFocus={(e) => e.preventDefault()}
     >
-      {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
-      <form action={promoteToAdmin}>
-        <input type="hidden" name="userId" value={userId} />
-        <input type="hidden" name="workspaceId" value={workspaceId} />
-        <DropdownMenu.Item asChild>
-          <button type="submit">
-            <Flex align="center" gap="2">
-              <PiCrownDuotone size={18} />
-              <Text>Promote to admin</Text>
-            </Flex>
+      <DropdownMenu.Item onSelect={(e) => e.preventDefault()}>
+        {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
+        <form action={promoteToAdmin}>
+          <input type="hidden" name="userId" value={userId} />
+          <input type="hidden" name="workspaceId" value={workspaceId} />
+          <button
+            type="submit"
+            className="flex w-full items-center gap-2 text-left"
+          >
+            <PiCrownDuotone size={18} />
+            <Text>Promote to admin</Text>
           </button>
-        </DropdownMenu.Item>
-      </form>
+        </form>
+      </DropdownMenu.Item>
 
       <DeleteMember
         userId={userId}
