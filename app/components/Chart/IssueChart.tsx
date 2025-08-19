@@ -1,7 +1,7 @@
 "use client";
 
 import { Card } from "@radix-ui/themes";
-import { ResponsiveContainer, BarChart, XAxis, YAxis, Bar } from "recharts";
+import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
 import { useThemeToggle } from "@/app/providers";
 
 type Props = {
@@ -35,9 +35,12 @@ export const IssueChart = ({ open, inProgress, closed }: Props) => {
   return (
     <Card>
       <ResponsiveContainer height={300}>
-        <BarChart data={data}>
+        <BarChart
+          data={data}
+          margin={{ top: 16, right: 0, left: 0, bottom: 0 }}
+        >
           <XAxis tick={{ fill: tickColor }} dataKey="label" />
-          <YAxis tick={{ fill: tickColor }} allowDecimals={false}  />
+          <YAxis tick={{ fill: tickColor }} allowDecimals={false} width={40} />
           <Bar
             dataKey="value"
             barSize={60}
