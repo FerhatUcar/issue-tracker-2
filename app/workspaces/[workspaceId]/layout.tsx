@@ -1,13 +1,9 @@
+import { ReactNode } from "react";
+
 type Props = {
-  children: React.ReactNode;
+  children: ReactNode;
 };
 
-const WorkspaceLayout = ({ children }: Props) => {
-  return (
-    <>
-      <main>{children}</main>
-    </>
-  );
-};
+const WorkspaceLayout = ({ children }: Props) => <main>{children}</main>;
 
 export default WorkspaceLayout;

@@ -1,24 +1,9 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import {
-  Avatar,
-  Badge,
-  Box,
-  Button,
-  DropdownMenu,
-  Flex,
-  Text,
-} from "@radix-ui/themes";
-import {
-  AvatarIcon,
-  ExitIcon,
-  MoonIcon,
-  PersonIcon,
-  SunIcon,
-} from "@radix-ui/react-icons";
+import { Avatar, Badge, Box, Button, DropdownMenu, Flex, Text } from "@radix-ui/themes";
+import { AvatarIcon, ExitIcon, GearIcon, PersonIcon } from "@radix-ui/react-icons";
 import Skeleton from "react-loading-skeleton";
-import { useThemeToggle } from "@/app/providers";
 import { IoTicketOutline } from "react-icons/io5";
 import { useParams } from "next/navigation";
 import { Login, Logout } from "@/app/components";
@@ -30,7 +15,6 @@ type Props = { userId: string; count: number };
 export const AuthStatus = ({ userId, count }: Props) => {
   const { status, data: session } = useSession();
   const { workspaceId } = useParams();
-  const { appearance, toggleAppearance } = useThemeToggle();
   const [openIn, setOpenIn] = useState(false);
   const [openOut, setOpenOut] = useState(false);
 
@@ -86,13 +70,6 @@ export const AuthStatus = ({ userId, count }: Props) => {
             </Flex>
           </DropdownMenu.Label>
 
-          <DropdownMenu.Item onClick={toggleAppearance}>
-            <Flex direction="row" align="center" gap="2">
-              {appearance === "dark" ? <SunIcon /> : <MoonIcon />}
-              <Text>{appearance === "dark" ? "Light" : "Dark"} mode</Text>
-            </Flex>
-          </DropdownMenu.Item>
-
           <Link href={`/issues/list?assignedToUserId=${userId}`}>
             <DropdownMenu.Item>
               <Flex
@@ -115,6 +92,15 @@ export const AuthStatus = ({ userId, count }: Props) => {
                     {count}
                   </Badge>
                 )}
+              </Flex>
+            </DropdownMenu.Item>
+          </Link>
+
+          <Link href="/settings">
+            <DropdownMenu.Item>
+              <Flex direction="row" align="center" gap="2">
+                <GearIcon />
+                <Text>Settings</Text>
               </Flex>
             </DropdownMenu.Item>
           </Link>
