@@ -17,10 +17,12 @@ import {
 import { IoMdStats } from "react-icons/io";
 import { IssueChart, PageTitle } from "@/app/components";
 import { ThemeToggle } from "@/app/settings/components/ThemeToggle";
-import { formatDate } from "@/app/helpers";
+import { formatDate, getStatusToColor } from "@/app/helpers";
 import { MdOutlineWorkspaces } from "react-icons/md";
 import { HiOutlineArrowTopRightOnSquare } from "react-icons/hi2";
 import { AvatarIcon } from "@radix-ui/react-icons";
+import { getStatusLabel } from "@/app/workspaces/[workspaceId]/issues/helpers";
+import { Row } from "@/app/settings/components/Row";
 
 type WorkspaceDTO = { id: string; name: string; createdAt: string };
 type IssueDTO = {
@@ -54,7 +56,7 @@ export const SettingsTabs = ({
   const totalIssues = stats.open + stats.inProgress + stats.closed;
 
   return (
-    <Box>
+    <>
       <PageTitle title="Settings" description="Manage your account settings." />
 
       <Grid columns={{ initial: "1", md: "3" }} gap="3" mb="4">
@@ -101,7 +103,6 @@ export const SettingsTabs = ({
           <Tabs.Trigger value="stats">Statistics</Tabs.Trigger>
         </Tabs.List>
 
-        {/* Profile */}
         <Tabs.Content value="profile">
           <Grid columns={{ initial: "1", md: "2" }} gap="3" my="3">
             <Card>
@@ -153,7 +154,6 @@ export const SettingsTabs = ({
           </Grid>
         </Tabs.Content>
 
-        {/* Workspaces */}
         <Tabs.Content value="workspaces">
           <Card my="3">
             <Heading size="3" mb="2">
@@ -196,7 +196,6 @@ export const SettingsTabs = ({
           </Card>
         </Tabs.Content>
 
-        {/* Issues */}
         <Tabs.Content value="issues">
           <Card my="3">
             <Heading size="3" mb="2">
@@ -228,8 +227,8 @@ export const SettingsTabs = ({
                         </Link>
                       </Table.RowHeaderCell>
                       <Table.Cell>
-                        <Badge color={statusToColor(issue.status)}>
-                          {labelForStatus(issue.status)}
+                        <Badge color={getStatusToColor(issue.status)}>
+                          {getStatusLabel(issue.status)}
                         </Badge>
                       </Table.Cell>
                       <Table.Cell>{issue.Workspaces.name || "—"}</Table.Cell>
@@ -244,7 +243,6 @@ export const SettingsTabs = ({
           </Card>
         </Tabs.Content>
 
-        {/* Stats */}
         <Tabs.Content value="stats">
           <Grid columns={{ initial: "1", md: "2" }} gap="3" my="3">
             <IssueChart
@@ -269,50 +267,6 @@ export const SettingsTabs = ({
           </Grid>
         </Tabs.Content>
       </Tabs.Root>
-    </Box>
+    </>
   );
 };
-
-function Row({
-  label,
-  value,
-  color,
-}: {
-  label: string;
-  value: number;
-  color: "orange" | "yellow" | "green";
-}) {
-  return (
-    <Flex align="center" justify="between">
-      <Text>{label}</Text>
-      <Badge color={color}>{value}</Badge>
-    </Flex>
-  );
-}
-
-function statusToColor(
-  status: "OPEN" | "IN_PROGRESS" | "CLOSED",
-): "red" | "yellow" | "green" | "gray" {
-  switch (status) {
-    case "OPEN":
-      return "red";
-    case "IN_PROGRESS":
-      return "yellow";
-    case "CLOSED":
-      return "green";
-    default:
-      return "gray";
-  }
-}
-function labelForStatus(status: "OPEN" | "IN_PROGRESS" | "CLOSED") {
-  switch (status) {
-    case "OPEN":
-      return "Open";
-    case "IN_PROGRESS":
-      return "In progress";
-    case "CLOSED":
-      return "Closed";
-    default:
-      return status;
-  }
-}

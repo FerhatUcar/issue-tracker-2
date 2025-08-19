@@ -32,6 +32,17 @@ export default async function SettingsPage() {
 
   const workspaceIds = workspaces.map((w) => w.id);
 
+  if (workspaceIds.length === 0) {
+    return (
+      <SettingsTabs
+        user={{ name: user.name ?? "", email: user.email ?? "" }}
+        Workspaces={[]}
+        stats={{ open: 0, inProgress: 0, closed: 0 }}
+        recentIssues={[]}
+      />
+    );
+  }
+
   const [openCount, inProgressCount, closedCount, recentIssues] =
     await Promise.all([
       prisma.issue.count({
@@ -52,7 +63,7 @@ export default async function SettingsPage() {
           title: true,
           status: true,
           createdAt: true,
-          Workspace: { select: { id: true, name: true } }, // ⬅️ niet "Workspace"
+          Workspace: { select: { id: true, name: true } },
         },
       }),
     ]);
