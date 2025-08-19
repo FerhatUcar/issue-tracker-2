@@ -1,16 +1,15 @@
 "use client";
 
-import React, { useState, Suspense, useCallback } from "react";
+import { Suspense, useCallback, useState } from "react";
 import { Flex, IconButton } from "@radix-ui/themes";
-import Link from "next/link";
 import IssueStatusFilter from "@/app/workspaces/[workspaceId]/issues/list/IssueStatusFilter";
 import IssueUserFilter from "@/app/workspaces/[workspaceId]/issues/list/IssueUserFilter";
-import { AiFillPlusCircle } from "react-icons/ai";
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import { useRecoilState } from "recoil";
 import { searchState } from "@/app/state/selectors";
 import { SearchField } from "./components";
 import { useEscapeKey } from "./hooks";
+import { CreateIssue } from "@/app/workspaces/[workspaceId]/issues/_components";
 
 type Props = {
   workspaceId: string;
@@ -45,11 +44,7 @@ const IssueActions = ({ workspaceId }: Props) => {
         <IconButton variant="soft" size="3" onClick={handleToggleSearch}>
           <MagnifyingGlassIcon width="18" height="18" />
         </IconButton>
-        <Link href={`/workspaces/${workspaceId}/issues/new`}>
-          <IconButton variant="soft" size="3">
-            <AiFillPlusCircle />
-          </IconButton>
-        </Link>
+        <CreateIssue hasText={false} />
       </Flex>
     </Flex>
   );

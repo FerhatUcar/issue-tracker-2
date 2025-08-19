@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { type ComponentProps, useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import {
   Box,
@@ -14,30 +14,40 @@ import { Cross2Icon } from "@radix-ui/react-icons";
 import { AiFillPlusCircle } from "react-icons/ai";
 import { IssueForm } from "./IssueForm";
 
+type ButtonProps = ComponentProps<typeof Button>;
+type CommonBtn = Pick<ButtonProps, "onClick" | "variant" | "size">;
+
 type Props = {
   hasSpace?: boolean;
+  hasText?: boolean;
 };
 
-export const CreateIssue = ({ hasSpace = false }: Props) => {
+export const CreateIssue = ({ hasSpace = false, hasText = true }: Props) => {
   const [open, setOpen] = useState(false);
 
+  const baseButtonProps: CommonBtn = {
+    onClick: () => setOpen(true),
+    variant: "soft",
+    size: "3",
+  };
+
   return (
-    <Box className={hasSpace ? "my-4" : "mt-4"}>
-      <Button
-        onClick={() => setOpen(true)}
-        className="w-full justify-start mt-3"
-        variant="soft"
-        size="3"
-      >
-        <AiFillPlusCircle />
-        Create new issue
-      </Button>
+    <Box className={hasSpace ? "my-4" : ""}>
+      {hasText ? (
+        <Button className="w-full justify-start mt-3" {...baseButtonProps}>
+          <AiFillPlusCircle />
+          Create new issue
+        </Button>
+      ) : (
+        <IconButton {...baseButtonProps}>
+          <AiFillPlusCircle />
+        </IconButton>
+      )}
 
       <Dialog.Root open={open} onOpenChange={setOpen}>
         <DialogContent className="relative mx-4">
           <Flex justify="between" align="center" mb="4">
             <Text>Create issue</Text>
-
             <Dialog.Close asChild>
               <IconButton
                 aria-label="Close dialog"

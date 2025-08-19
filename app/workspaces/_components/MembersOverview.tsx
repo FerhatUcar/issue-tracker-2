@@ -36,18 +36,14 @@ export const MembersOverview = async ({ workspaceId }: Props) => {
 
   return (
     <>
-      <Flex align="center" gap="2">
+      <Flex align="center" gap="2" mb="4">
         <Button asChild variant="soft" size="2" className="mb-4">
           <Link href={`/workspaces/${workspaceId}`}>
-            <Flex align="center" gap="2">
-              <IoMdArrowRoundBack size={18} />
-            </Flex>
+            <IoMdArrowRoundBack size={18} />
           </Link>
         </Button>
 
-        <Badge size="2" className="mb-4">
-          {workspace.name}
-        </Badge>
+        <Badge size="2">{workspace.name}</Badge>
       </Flex>
 
       <Flex direction="column" gap="3">
