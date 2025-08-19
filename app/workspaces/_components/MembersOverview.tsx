@@ -1,4 +1,4 @@
-import { Badge, Box, Button, Flex, Heading, Text } from "@radix-ui/themes";
+import { Badge, Button, Flex } from "@radix-ui/themes";
 import prisma from "@/prisma/client";
 import Link from "next/link";
 import authOptions from "@/app/auth/authOptions";
@@ -6,6 +6,7 @@ import { getServerSession } from "next-auth";
 import { notFound } from "next/navigation";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { MembersList } from "@/app/workspaces/_components";
+import { PageTitle } from "@/app/components";
 
 type Props = { workspaceId: string };
 
@@ -54,16 +55,7 @@ export const MembersOverview = async ({ workspaceId }: Props) => {
 
   return (
     <>
-      <Box mb="4">
-        <Heading as="h1" size="6">
-          <Flex direction="row" gap="2" align="center">
-            Members
-          </Flex>
-        </Heading>
-        <Text size="2" color="gray">
-          All members of the workspace.
-        </Text>
-      </Box>
+      <PageTitle title="Members" description="All members of the workspace." />
 
       <Flex align="center" gap="2" mb="4">
         <Button asChild variant="soft" size="2" className="mb-4">

@@ -2,11 +2,12 @@ import { getServerSession } from "next-auth";
 import authOptions from "@/app/auth/authOptions";
 import prisma from "@/prisma/client";
 import { redirect } from "next/navigation";
-import { Box, Card, Flex, Grid, Heading, Text } from "@radix-ui/themes";
+import { Box, Card, Flex, Grid, Text } from "@radix-ui/themes";
 import { HiOutlinePlus } from "react-icons/hi2";
 import { CreateWorkspace } from "@/app/workspaces/_components/CreateWorkspace";
 import { WorkspaceCard } from "@/app/workspaces/_components";
 import { WorkspaceCardData, workspaceCardSelect } from "@/app/types/workspace";
+import { PageTitle } from "@/app/components";
 
 const WorkspacesPage = async () => {
   const session = await getServerSession(authOptions);
@@ -23,16 +24,7 @@ const WorkspacesPage = async () => {
 
   return (
     <>
-      <Box mb="4">
-        <Heading as="h1" size="6">
-          <Flex direction="row" gap="2" align="center">
-            Workspaces
-          </Flex>
-        </Heading>
-        <Text size="2" color="gray">
-          Manage your workspaces and issues.
-        </Text>
-      </Box>
+      <PageTitle title="Workspaces" description="Manage your workspaces." />
 
       {workspaces.length === 0 ? (
         <Card>

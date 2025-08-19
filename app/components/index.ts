@@ -14,6 +14,7 @@ export { Login } from "./Login";
 export { Logout } from "./Logout";
 export { IssueChart } from "./Chart";
 export { Pagination } from "./Pagination";
+export { PageTitle } from "./PageTitle";
 export { CommentForm } from "./CommentForm";
 export { ConfirmationDialog } from "./ConfirmationDialog";
 export { ConfirmationInputDialog } from "./ConfirmationDialog";
