@@ -65,7 +65,7 @@ export const AuthStatus = ({ userId, count }: Props) => {
               fallback="?"
               size="2"
               radius="large"
-              className="cursor-pointer hover:border-2 border-gray-300 transition-all"
+              className="cursor-pointer transition-transform duration-200 hover:scale-105"
               referrerPolicy="no-referrer"
             />
             {count > 0 && (
@@ -74,7 +74,11 @@ export const AuthStatus = ({ userId, count }: Props) => {
           </Box>
         </DropdownMenu.Trigger>
 
-        <DropdownMenu.Content side="left" align="start">
+        <DropdownMenu.Content
+          side="left"
+          align="start"
+          className="min-w-[200px]"
+        >
           <DropdownMenu.Label>
             <Flex direction="row" align="center" gap="2">
               <AvatarIcon />

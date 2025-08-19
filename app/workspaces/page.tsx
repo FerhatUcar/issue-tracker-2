@@ -6,7 +6,6 @@ import { Box, Card, Flex, Grid, Heading, Text } from "@radix-ui/themes";
 import { HiOutlinePlus } from "react-icons/hi2";
 import { CreateWorkspace } from "@/app/workspaces/_components/CreateWorkspace";
 import { WorkspaceCard } from "@/app/workspaces/_components";
-import { MdOutlineWorkspaces } from "react-icons/md";
 import { WorkspaceCardData, workspaceCardSelect } from "@/app/types/workspace";
 
 const WorkspacesPage = async () => {
@@ -24,22 +23,27 @@ const WorkspacesPage = async () => {
 
   return (
     <>
-      <Heading as="h1" size="6" mb="4">
-        <Flex direction="row" gap="2" align="center">
-          <MdOutlineWorkspaces /> Workspaces
-        </Flex>
-      </Heading>
+      <Box mb="4">
+        <Heading as="h1" size="6">
+          <Flex direction="row" gap="2" align="center">
+            Workspaces
+          </Flex>
+        </Heading>
+        <Text size="2" color="gray">
+          Manage your workspaces and issues.
+        </Text>
+      </Box>
 
       {workspaces.length === 0 ? (
         <Card>
           <Box p="4" className="flex items-center justify-between">
-            <Text size="3">Je hebt nog geen workspaces.</Text>
+            <Text size="3">You do not have any workspaces.</Text>
             <CreateWorkspace>
               <Card className="cursor-pointer">
                 <Box className="flex justify-center items-center h-full p-2">
                   <Flex align="center" gap="2">
                     <HiOutlinePlus className="w-5 h-5" />
-                    <Text>Nieuwe workspace</Text>
+                    <Text>New workspace</Text>
                   </Flex>
                 </Box>
               </Card>
@@ -57,7 +61,7 @@ const WorkspacesPage = async () => {
           ))}
 
           <CreateWorkspace>
-            <Card className="cursor-pointer">
+            <Card className="cursor-pointer transition-transform duration-300 hover:scale-105">
               <Box className="flex justify-center items-center h-full">
                 <HiOutlinePlus className="w-10 h-10" />
               </Box>

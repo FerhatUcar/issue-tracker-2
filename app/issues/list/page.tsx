@@ -69,17 +69,13 @@ const AllIssuesPage = async ({ searchParams }: Props) => {
   }));
 
   return (
-    <Box className="space-y-6">
-      <Box className="flex items-center justify-between">
-        <Box>
-          <Heading size="4" className="mb-1">
-            My Issues List
-          </Heading>
-          <Text size="2" className="text-gray-500">
-            {issueCount} {issueCount === 1 ? "issue" : "issues"} assigned to you
-            across all workspaces
-          </Text>
-        </Box>
+    <Box className="space-y-4">
+      <Box>
+        <Heading size="4">My Issues List</Heading>
+        <Text size="2" className="text-gray-500">
+          {issueCount} {issueCount === 1 ? "issue" : "issues"} assigned to you
+          across all workspaces
+        </Text>
       </Box>
 
       {issues.length === 0 ? (

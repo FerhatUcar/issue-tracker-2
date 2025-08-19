@@ -8,8 +8,8 @@ type Props = { workspace: WorkspaceCardData };
 export const WorkspaceCard = ({
   workspace: { id, name, _count, memberships },
 }: Props) => (
-  <Link href={`/workspaces/${id}`} prefetch={false}>
-    <Card className="w-full">
+  <Link href={`/workspaces/${id}`}>
+    <Card className="w-full transition-transform duration-300 hover:scale-105">
       <Flex direction="column" justify="between" className="h-full">
         <Box>
           <Heading size="4">
