@@ -8,3 +8,4 @@ export { clampNonNegative } from "./clamp-non-negative";
 export { getStatusToColor } from "./get-status-to-color";
 export { delay } from "./delay";
 export { extractAxiosError } from "./extract-axios-error";
+export { applyReaction } from "./apply-reactions";
