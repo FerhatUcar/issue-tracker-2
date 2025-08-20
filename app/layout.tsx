@@ -13,6 +13,7 @@ import {
 } from "@/app/providers";
 import { NavbarWrapper } from "@/app/components";
 import dynamic from "next/dynamic";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 const PushNotifications = dynamic(
   () => import("@/app/components/PushNotificationInitializer"),
@@ -27,8 +28,7 @@ export const metadata: Metadata = {
   manifest: "/manifest.json",
 };
 
-// eslint-disable-next-line @typescript-eslint/require-await
-const RootLayout = async ({ children }: { children: ReactNode }) => (
+const RootLayout = ({ children }: { children: ReactNode }) => (
   <html lang="en">
     <head>
       <meta name="theme-color" content="#000000" />
@@ -50,6 +50,9 @@ const RootLayout = async ({ children }: { children: ReactNode }) => (
             </ThemeProvider>
           </RecoilContextProvider>
         </AuthProvider>
+        {process.env.NODE_ENV === "development" && (
+          <ReactQueryDevtools initialIsOpen={false} />
+        )}
       </QueryClientProvider>
     </body>
   </html>
