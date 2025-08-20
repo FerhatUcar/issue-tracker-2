@@ -168,3 +168,16 @@ body {
     animation: none;
   }
 }
+
+@keyframes rocket {
+    0%, 100% {
+        transform: translateY(0) rotate(-45deg);
+    }
+    50% {
+        transform: translateY(-30px) rotate(-45deg);
+    }
+}
+
+.animate-rocket {
+    animation: rocket 3s ease-in-out infinite;
+}
