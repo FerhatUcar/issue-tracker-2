@@ -5,16 +5,7 @@ import { commentsKey } from "@/app/query-keys";
 import { CommentWithReactions, MyReaction } from "@/app/types/types";
 import { extractAxiosError } from "@/app/helpers";
 import { Reaction } from "@/app/types/reactions";
-
-const ReactionResponse = z.object({
-  likesCount: z.number(),
-  dislikesCount: z.number(),
-  myReaction: z.union([
-    z.literal("NONE"),
-    z.literal("LIKE"),
-    z.literal("DISLIKE"),
-  ]),
-});
+import { ReactionResponse } from "@/app/validations";
 
 type ReactionResponse = z.infer<typeof ReactionResponse>;
 

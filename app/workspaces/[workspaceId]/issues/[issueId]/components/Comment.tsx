@@ -44,7 +44,7 @@ export const Comment = ({ comment, issueId }: Props) => {
   const [open, setOpen] = useState(false);
 
   const currentUserId = session?.user?.id;
-  const canModify = currentUserId === comment.authorId;
+  const canModify = currentUserId === comment.author?.id;
 
   const handleDelete = () => {
     deleteComment.mutate({ commentId: comment.id, issueId });
