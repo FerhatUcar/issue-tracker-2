@@ -1,11 +1,10 @@
 import axios from "axios";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
-import { useSession } from "next-auth/react";
 import { commentsKey } from "@/app/query-keys";
-import { CommentWithReactions } from "@/app/types/types";
+import { CommentWithReactions, MyReaction } from "@/app/types/types";
 import { extractAxiosError } from "@/app/helpers";
-import { Action, Delta, Reaction } from "@/app/types/reactions";
+import { Reaction } from "@/app/types/reactions";
 
 const ReactionResponse = z.object({
   likesCount: z.number(),
@@ -19,40 +18,14 @@ const ReactionResponse = z.object({
 
 type ReactionResponse = z.infer<typeof ReactionResponse>;
 
-type Input = {
+export type Input = {
   commentId: number;
   type: "LIKE" | "DISLIKE";
   issueId: number;
 };
 
-const TRANSITIONS: Record<Reaction, Record<Action, Delta>> = {
-  NONE: {
-    LIKE: { likes: +1, dislikes: 0, next: "LIKE" },
-    DISLIKE: { likes: 0, dislikes: +1, next: "DISLIKE" },
-  },
-  LIKE: {
-    LIKE: { likes: -1, dislikes: 0, next: "NONE" },
-    DISLIKE: { likes: -1, dislikes: +1, next: "DISLIKE" },
-  },
-  DISLIKE: {
-    LIKE: { likes: +1, dislikes: -1, next: "LIKE" },
-    DISLIKE: { likes: 0, dislikes: -1, next: "NONE" },
-  },
-} as const;
-
-const toCacheReaction = (
-  reaction: Reaction,
-): CommentWithReactions["myReaction"] => {
-  if (reaction === "NONE") {
-    return undefined;
-  }
-  return reaction;
-};
-
 export const useCommentReaction = () => {
   const qc = useQueryClient();
-  const { data: session } = useSession();
-  const userId = session?.user?.id;
 
   return useMutation({
     mutationFn: async ({
@@ -80,53 +53,95 @@ export const useCommentReaction = () => {
       }
     },
 
-    onMutate: async (vars: Input) => {
-      const key = commentsKey(vars.issueId, userId);
+    onMutate: async ({ issueId, commentId, type }) => {
+      const key = commentsKey(issueId);
       await qc.cancelQueries({ queryKey: key });
       const prev = qc.getQueryData<CommentWithReactions[]>(key);
 
-      qc.setQueryData<CommentWithReactions[]>(key, (old) => {
-        if (!old) {
-          return old;
-        }
+      qc.setQueryData<CommentWithReactions[]>(key, (list) =>
+        list ? applyReaction(list, commentId, type) : list,
+      );
 
-        return old.map((c) => {
-          if (c.id !== vars.commentId) {
-            return c;
-          }
-
-          const current = (c.myReaction ?? "NONE") as Reaction;
-          const d = TRANSITIONS[current][vars.type];
-
-          const nextLikes = Math.max(0, (c.likesCount ?? 0) + d.likes);
-          const nextDislikes = Math.max(0, (c.dislikesCount ?? 0) + d.dislikes);
-          const nextMyReaction = toCacheReaction(d.next);
-
-          return {
-            ...c,
-            likesCount: nextLikes,
-            dislikesCount: nextDislikes,
-            myReaction: nextMyReaction,
-          } as CommentWithReactions;
-        });
-      });
-
-      return { prev, key } as {
-        prev: CommentWithReactions[] | undefined;
-        key: ReturnType<typeof commentsKey>;
-      };
+      return { prev, key };
     },
 
-    onError: (_err, _vars, ctx) => {
-      if (ctx && ctx.prev && ctx.key) {
+    onError: (_e, _vars, ctx) => {
+      if (ctx?.prev) {
         qc.setQueryData(ctx.key, ctx.prev);
       }
     },
 
+    onSuccess: ({ likesCount, dislikesCount, myReaction }, vars) => {
+      const key = commentsKey(vars.issueId);
+
+      qc.setQueryData<CommentWithReactions[]>(
+        key,
+        (list) =>
+          list?.map((c) =>
+            c.id === vars.commentId
+              ? {
+                  ...c,
+                  likesCount,
+                  dislikesCount,
+                  myReaction,
+                }
+              : c,
+          ) ?? list,
+      );
+    },
+
     onSettled: async (_data, _err, vars) => {
       await qc.invalidateQueries({
-        queryKey: commentsKey(vars.issueId, userId),
+        queryKey: commentsKey(vars.issueId),
       });
     },
   });
 };
+
+function applyReaction(
+  list: CommentWithReactions[],
+  commentId: number,
+  next: Exclude<MyReaction, "NONE">,
+) {
+  return list.map((c) => {
+    if (c.id !== commentId) {
+      return c;
+    }
+
+    const was: Reaction = c.myReaction ?? "NONE";
+
+    let likes = c.likesCount ?? 0;
+    let dislikes = c.dislikesCount ?? 0;
+
+    if (was === next) {
+      // toggle off
+      if (next === "LIKE") {
+        likes = Math.max(0, likes - 1);
+      } else {
+        dislikes = Math.max(0, dislikes - 1);
+      }
+
+      return {
+        ...c,
+        myReaction: "NONE" as const,
+        likesCount: likes,
+        dislikesCount: dislikes,
+      };
+    } else {
+      // switch
+      if (next === "LIKE") {
+        likes += 1;
+        if (was === "DISLIKE") dislikes = Math.max(0, dislikes - 1);
+      } else {
+        dislikes += 1;
+        if (was === "LIKE") likes = Math.max(0, likes - 1);
+      }
+      return {
+        ...c,
+        myReaction: next,
+        likesCount: likes,
+        dislikesCount: dislikes,
+      };
+    }
+  });
+}

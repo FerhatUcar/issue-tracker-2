@@ -21,7 +21,6 @@ import { CommentWithReactions } from "@/app/types/types";
 import { useSession } from "next-auth/react";
 import { useCommentReaction } from "@/app/hooks";
 import { formatDate } from "@/app/helpers";
-import { useRouter } from "next/navigation";
 
 type Props = {
   /**
@@ -36,7 +35,6 @@ type Props = {
 };
 
 export const Comment = ({ comment, issueId }: Props) => {
-  const router = useRouter();
   const { data: session } = useSession();
   const { deleteComment, updateComment } = useCommentMutation();
   const { mutate, isPending } = useCommentReaction();
@@ -69,22 +67,16 @@ export const Comment = ({ comment, issueId }: Props) => {
     }
   };
 
-  const handleEdit = (e: ChangeEvent<HTMLTextAreaElement>) =>
-    setEditedContent(e.target.value);
+  const handleEdit = ({
+    target: { value },
+  }: ChangeEvent<HTMLTextAreaElement>) => setEditedContent(value);
 
   const onReact = (type: "LIKE" | "DISLIKE") => {
     if (isPending) {
       return;
     }
 
-    mutate(
-      { commentId: comment.id, issueId, type },
-      {
-        onSuccess: () => {
-          router.refresh();
-        },
-      },
-    );
+    mutate({ commentId: comment.id, issueId, type });
   };
 
   return (
@@ -96,7 +88,7 @@ export const Comment = ({ comment, issueId }: Props) => {
               {comment.author?.name ?? "Anonymous"}
             </Text>
             <Text className="text-xs text-gray-500">
-              {formatDate(comment.createdAt)}
+              {formatDate(comment.createdAt ?? "")}
             </Text>
           </Flex>
 
@@ -108,9 +100,9 @@ export const Comment = ({ comment, issueId }: Props) => {
                   variant="soft"
                   mt="2"
                   onClick={handleUpdate}
-                  disabled={!editedContent.trim() || updateComment.isLoading}
+                  disabled={!editedContent.trim() || updateComment.isPending}
                 >
-                  {updateComment.isLoading ? (
+                  {updateComment.isPending ? (
                     "Saving..."
                   ) : (
                     <Flex align="center" gap="2">
@@ -134,13 +126,11 @@ export const Comment = ({ comment, issueId }: Props) => {
             <LikeButton
               count={comment.likesCount ?? 0}
               active={comment.myReaction === "LIKE"}
-              // disabled={isPending}
               onClick={() => onReact("LIKE")}
             />
             <DislikeButton
               count={comment.dislikesCount ?? 0}
               active={comment.myReaction === "DISLIKE"}
-              // disabled={isPending}
               onClick={() => onReact("DISLIKE")}
             />
           </Flex>

@@ -138,6 +138,7 @@ export async function PATCH(
     });
   } catch (e) {
     console.error("PATCH /api/comments/[commentId]/reaction failed:", e);
+
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 },
