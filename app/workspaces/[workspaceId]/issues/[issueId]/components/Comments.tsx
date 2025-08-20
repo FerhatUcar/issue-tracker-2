@@ -12,7 +12,7 @@ type Props = {
 };
 
 export const Comments = ({ issueId }: Props) => {
-  const { data: comments = [], isLoading, isFetching } = useComments(issueId);
+  const { data: comments = [], isLoading } = useComments(issueId);
 
   return (
     <Card mt="4">
@@ -24,37 +24,35 @@ export const Comments = ({ issueId }: Props) => {
         </Text>
       </Box>
 
-      {comments.length === 0 ? (
+      {!comments.length && isLoading && <Skeleton count={3} />}
+
+      {!comments.length && !isLoading ? (
         <Box className="text-sm text-gray-500">No comments yet.</Box>
       ) : (
         <Flex direction="row" gap="2" content="center" align="start">
-          {isLoading || isFetching ? (
-            <Skeleton />
-          ) : (
-            <Box className="space-y-4 w-full">
-              {comments.map((comment) => {
-                const { author } = comment;
-                const fallback = (
-                  author?.name?.[0] ??
-                  author?.email?.[0] ??
-                  "?"
-                ).toUpperCase();
+          <Box className="space-y-4 w-full">
+            {comments.map((comment) => {
+              const { author } = comment;
+              const fallback = (
+                author?.name?.[0] ??
+                author?.email?.[0] ??
+                "?"
+              ).toUpperCase();
 
-                return (
-                  <Flex direction="row" gap="2" key={comment.id}>
-                    <Avatar
-                      src={author?.image ?? ""}
-                      fallback={fallback}
-                      size="2"
-                      radius="large"
-                      referrerPolicy="no-referrer"
-                    />
-                    <Comment comment={comment} issueId={issueId} />
-                  </Flex>
-                );
-              })}
-            </Box>
-          )}
+              return (
+                <Flex direction="row" gap="2" key={comment.id}>
+                  <Avatar
+                    src={author?.image ?? ""}
+                    fallback={fallback}
+                    size="2"
+                    radius="large"
+                    referrerPolicy="no-referrer"
+                  />
+                  <Comment comment={comment} issueId={issueId} />
+                </Flex>
+              );
+            })}
+          </Box>
         </Flex>
       )}
 

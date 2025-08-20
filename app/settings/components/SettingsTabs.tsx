@@ -24,8 +24,8 @@ import { AvatarIcon } from "@radix-ui/react-icons";
 import { getStatusLabel } from "@/app/workspaces/[workspaceId]/issues/helpers";
 import { Row } from "@/app/settings/components/Row";
 
-type WorkspaceDTO = { id: string; name: string; createdAt: string };
-type IssueDTO = {
+type Workspace = { id: string; name: string; createdAt: string };
+type Issue = {
   id: number;
   title: string;
   status: "OPEN" | "IN_PROGRESS" | "CLOSED";
@@ -38,13 +38,13 @@ type Props = {
     name: string | null;
     email: string;
   };
-  Workspaces: WorkspaceDTO[];
+  Workspaces: Workspace[];
   stats: {
     open: number;
     inProgress: number;
     closed: number;
   };
-  recentIssues: IssueDTO[];
+  recentIssues: Issue[];
 };
 
 export const SettingsTabs = ({
@@ -85,7 +85,7 @@ export const SettingsTabs = ({
             <AvatarIcon /> Account
           </Text>
           <Flex direction="column">
-            <Text>{user.name || "Naam onbekend"}</Text>
+            <Text>{user.name || "Name unknown"}</Text>
             <Text color="gray" size="1">
               {user.email}
             </Text>

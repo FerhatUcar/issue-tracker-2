@@ -1,6 +1,6 @@
 "use client";
 
-import React, { ChangeEvent, useState } from "react";
+import { ChangeEvent, useState } from "react";
 import {
   Box,
   Button,
@@ -60,20 +60,20 @@ type Props = {
 
 export const Comment = ({ comment, issueId }: Props) => {
   const { data: session } = useSession();
+  const { deleteComment, updateComment } = useCommentMutation();
   const { reactToComment } = useCommentReaction();
-
-  const currentUserId = session?.user?.id;
-  const canModify = currentUserId === comment.authorId;
 
   const [isEditing, setIsEditing] = useState(false);
   const [editedContent, setEditedContent] = useState(comment.content);
-  const { deleteComment, updateComment } = useCommentMutation();
   const [open, setOpen] = useState(false);
   const [likes, setLikes] = useState(comment.likesCount ?? 0);
   const [dislikes, setDislikes] = useState(comment.dislikesCount ?? 0);
   const [myReaction, setMyReaction] = useState<MyReaction>(
     comment.myReaction ?? "NONE",
   );
+
+  const currentUserId = session?.user?.id;
+  const canModify = currentUserId === comment.authorId;
 
   const handleDelete = () => {
     deleteComment.mutate({ commentId: comment.id, issueId });
@@ -120,16 +120,16 @@ export const Comment = ({ comment, issueId }: Props) => {
 
     applyOptimistic(type);
 
-    reactToComment.mutate(
-      { commentId: comment.id, issueId, type },
-      {
-        onSuccess: ({ likesCount, dislikesCount, myReaction }) => {
-          setLikes(likesCount);
-          setDislikes(dislikesCount);
-          setMyReaction(myReaction);
-        },
-      },
-    );
+    // reactToComment.mutate(
+    //   { commentId: comment.id, issueId, type },
+    //   {
+    //     onSuccess: ({ likesCount, dislikesCount, myReaction }) => {
+    //       setLikes(likesCount);
+    //       setDislikes(dislikesCount);
+    //       setMyReaction(myReaction);
+    //     },
+    //   },
+    // );
   };
 
   return (
