@@ -11,10 +11,9 @@ import {
   RecoilContextProvider,
   ThemeProvider,
 } from "@/app/providers";
-import { NavbarWrapper } from "@/app/components";
+import { NavbarWrapper, TopLoadingBar } from "@/app/components";
 // import dynamic from "next/dynamic";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { cookies } from "next/headers";
 
 // const PushNotifications = dynamic(
 //   () => import("@/app/components/PushNotificationInitializer"),
@@ -30,13 +29,8 @@ export const metadata: Metadata = {
 };
 
 const RootLayout = ({ children }: { children: ReactNode }) => {
-  const cookie = cookies().get("ri.theme")?.value;
-  // "light" | "dark" | undefined
-  const appearance =
-    cookie === "light" || cookie === "dark" ? cookie : undefined;
-
   return (
-    <html lang="en" className={appearance ? appearance : ""}>
+    <html lang="en">
       <head>
         <meta name="theme-color" content="#000000" />
         <link rel="manifest" href="/manifest.json" />
@@ -51,6 +45,7 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
               <ThemeProvider>
                 {/*<PushNotifications />*/}
                 <NavbarWrapper />
+                <TopLoadingBar topOffset={55} height={2} />
                 <main>
                   <Container className="p-5">{children}</Container>
                 </main>

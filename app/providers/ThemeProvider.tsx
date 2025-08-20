@@ -1,7 +1,15 @@
 "use client";
 
 import { Theme } from "@radix-ui/themes";
-import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import {
+  createContext,
+  ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
 export type Appearance = "light" | "dark";
 

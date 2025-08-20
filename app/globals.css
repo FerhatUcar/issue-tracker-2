@@ -35,7 +35,7 @@
 .dark {
   /* DARK MODE */
   --color-bg-body: rgba(27, 27, 27, 0.8);
-  --color-bg-nav: rgba(44, 44, 44, 0.8);
+  --color-bg-nav: rgba(44, 44, 44, 1);
 
   --color-bg-editor: #141414;
   --color-bg-editor-title: #141414;

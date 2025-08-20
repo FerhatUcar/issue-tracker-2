@@ -18,4 +18,5 @@ export { PageTitle } from "./PageTitle";
 export { CommentForm } from "./CommentForm";
 export { ConfirmationDialog } from "./ConfirmationDialog";
 export { ConfirmationInputDialog } from "./ConfirmationDialog";
+export { TopLoadingBar } from "./TopLoadingBar";
 export { LikeButton, DislikeButton } from "./Reactions";
