@@ -1,4 +1,3 @@
-import { cache } from "react";
 import prisma from "@/prisma/client";
 import { notFound } from "next/navigation";
 import { Box, Card, Flex, Grid, Separator } from "@radix-ui/themes";
@@ -12,30 +11,14 @@ import { getServerSession } from "next-auth";
 import authOptions from "@/app/auth/authOptions";
 import AssigneeSelect from "@/app/workspaces/[workspaceId]/issues/[issueId]/AssigneeSelect";
 import IssueStatus from "@/app/workspaces/[workspaceId]/issues/_components/IssueStatus";
+import { fetchIssue } from "@/app/workspaces/[workspaceId]/issues/[issueId]/actions";
 
 type Props = {
   params: { issueId: string; workspaceId: string };
 };
 
-const fetchIssue = cache((issueId: number) =>
-  prisma.issue.findUnique({
-    where: { id: issueId },
-    select: {
-      id: true,
-      title: true,
-      description: true,
-      status: true,
-      createdAt: true,
-      updatedAt: true,
-      assignedToUserId: true,
-      workspaceId: true,
-      assignedToUser: { select: { id: true, name: true, image: true } },
-    },
-  }),
-);
-
-export async function generateMetadata({ params }: Props) {
-  const issue = await fetchIssue(parseInt(params.issueId));
+export async function generateMetadata({ params: { issueId } }: Props) {
+  const issue = await fetchIssue(parseInt(issueId));
 
   return {
     title: issue?.title,
@@ -43,21 +26,21 @@ export async function generateMetadata({ params }: Props) {
   };
 }
 
-const IssueDetailPage = async ({ params }: Props) => {
+const IssueDetailPage = async ({ params: { issueId, workspaceId } }: Props) => {
   const session = await getServerSession(authOptions);
-  const issue = await fetchIssue(parseInt(params.issueId));
+  const issue = await fetchIssue(parseInt(issueId));
 
   if (!issue) {
     notFound();
   }
 
-  if (issue.workspaceId !== params.workspaceId) {
+  if (issue.workspaceId !== workspaceId) {
     notFound();
   }
 
   const isMember = await prisma.membership.findFirst({
     where: {
-      workspaceId: params.workspaceId,
+      workspaceId,
       userId: session?.user?.id,
     },
     select: { id: true },
@@ -70,7 +53,7 @@ const IssueDetailPage = async ({ params }: Props) => {
   return (
     <Grid columns={{ initial: "1", sm: "5" }} gap="4">
       <Box className="md:col-span-4">
-        <IssueDetails issue={issue} workspaceId={params.workspaceId} />
+        <IssueDetails issue={issue} workspaceId={workspaceId} />
         <Comments issueId={issue.id} />
       </Box>
 
@@ -83,7 +66,7 @@ const IssueDetailPage = async ({ params }: Props) => {
             <IssueStatus issue={issue} />
             <Separator className="w-full my-2" />
             <EditIssue
-              workspaceId={params.workspaceId}
+              workspaceId={workspaceId}
               issue={{
                 id: issue.id,
                 title: issue.title,
@@ -91,7 +74,7 @@ const IssueDetailPage = async ({ params }: Props) => {
                 assignedToUserId: issue.assignedToUserId,
               }}
             />
-            <DeleteIssue issueId={issue.id} workspaceId={params.workspaceId} />
+            <DeleteIssue issueId={issue.id} workspaceId={workspaceId} />
           </Flex>
         </Card>
       )}

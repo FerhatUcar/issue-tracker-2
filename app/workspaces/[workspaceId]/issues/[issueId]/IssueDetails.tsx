@@ -1,13 +1,5 @@
 import { StatusBadge } from "@/app/components";
-import {
-  Avatar,
-  Box,
-  Card,
-  Flex,
-  Heading,
-  IconButton,
-  Text,
-} from "@radix-ui/themes";
+import { Avatar, Box, Card, Flex, Heading, IconButton, Text } from "@radix-ui/themes";
 import ReactMarkdown from "react-markdown";
 import React from "react";
 import Link from "next/link";
@@ -34,19 +26,20 @@ const IssueDetails = ({
   <Card>
     <Flex direction="row" gap="2" align="center">
       <Link href={`/workspaces/${workspaceId}`}>
-        <IconButton size="4" variant="soft">
-          <IoMdArrowRoundBack size={20} />
+        <IconButton size="4" variant="soft" color="gray" title="Back">
+          <IoMdArrowRoundBack />
         </IconButton>
       </Link>
 
-      <Box className="w-full bg-gray-100 dark:bg-black/20 px-2 rounded-lg">
+      <Box className="w-full px-2 rounded-lg">
         <Flex justify="between" align="center" py="2">
-          <Flex align="center" gap="3">
+          <Flex direction="column" align="start" gap="1">
             <StatusBadge status={status} />
             <Text className="text-xs text-gray-500">
               {formatDate(createdAt, false)}
             </Text>
           </Flex>
+
           {assignedToUser && (
             <Avatar
               src={assignedToUser.image ?? ""}
