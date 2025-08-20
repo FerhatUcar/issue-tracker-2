@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { usePathname } from "next/navigation";
 import { Flex, Separator } from "@radix-ui/themes";
 import Link from "next/link";

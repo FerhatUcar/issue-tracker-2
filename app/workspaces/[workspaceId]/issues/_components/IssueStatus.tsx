@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { Select } from "@radix-ui/themes";
 import { Issue, Status } from "@prisma/client";
 import toast, { Toaster } from "react-hot-toast";
@@ -11,6 +10,7 @@ export const statuses: { label: string; value?: Status }[] = [
   { label: "All" },
   { label: "Open", value: "OPEN" },
   { label: "In Progress", value: "IN_PROGRESS" },
+  { label: "Review", value: "REVIEW" },
   { label: "Closed", value: "CLOSED" },
 ];
 

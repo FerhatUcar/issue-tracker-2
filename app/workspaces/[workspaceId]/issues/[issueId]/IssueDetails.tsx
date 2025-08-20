@@ -1,7 +1,14 @@
 import { StatusBadge } from "@/app/components";
-import { Avatar, Box, Card, Flex, Heading, IconButton, Text } from "@radix-ui/themes";
+import {
+  Avatar,
+  Box,
+  Card,
+  Flex,
+  Heading,
+  IconButton,
+  Text,
+} from "@radix-ui/themes";
 import ReactMarkdown from "react-markdown";
-import React from "react";
 import Link from "next/link";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { IssuesWithAssigning } from "@/app/types/types";
@@ -9,7 +16,7 @@ import { formatDate } from "@/app/helpers";
 
 type Props = {
   /**
-   * The issue object containing details about the
+   * The issue object containing details like title, description, status, and timestamps.
    */
   issue: IssuesWithAssigning;
 

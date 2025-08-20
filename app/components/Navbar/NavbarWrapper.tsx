@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import prisma from "@/prisma/client";
-import { Navbar } from "@/app/components/Navbar/Navbar";
 import authOptions from "@/app/auth/authOptions";
+import { Navbar } from "@/app/components/Navbar/Navbar";
 
 export default async function NavbarWrapper() {
   const session = await getServerSession(authOptions);

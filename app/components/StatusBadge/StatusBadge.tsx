@@ -1,13 +1,13 @@
-import React from "react";
 import { Status } from "@prisma/client";
 import { Badge } from "@radix-ui/themes";
+import { Colors } from "@/app/types/status";
 
-type Colors = "red" | "yellow" | "green";
 type StatusMap = Record<Status, { label: string; color: Colors }>;
 
 const statusMap: StatusMap = {
   OPEN: { label: "Open", color: "red" },
   IN_PROGRESS: { label: "In Progress", color: "yellow" },
+  REVIEW: { label: "Review", color: "orange" },
   CLOSED: { label: "Closed", color: "green" },
 };
 
