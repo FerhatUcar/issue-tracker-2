@@ -5,8 +5,19 @@ import { usePathname } from "next/navigation";
 import { Box } from "@radix-ui/themes";
 
 type Props = {
+  /**
+   * Offset from the top of the page in pixels.
+   */
   topOffset?: number;
+
+  /**
+   * Height of the loading bar in pixels.
+   */
   height?: number;
+
+  /**
+   * Additional CSS classes to apply to the loading bar.
+   */
   className?: string;
 };
 

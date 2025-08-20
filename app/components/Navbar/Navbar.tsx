@@ -26,19 +26,6 @@ export const Navbar = ({ data: { userId, count } }: Props) => {
             <Flex align="center" gap="3">
               <Link href="/" className="relative inline-block">
                 <MdOutlineRocketLaunch className="transition-transform duration-200 hover:scale-125" />
-
-                {/*<Image*/}
-                {/*  src="/logo.png"*/}
-                {/*  alt="Logo"*/}
-                {/*  width={30}*/}
-                {/*  height={30}*/}
-                {/*  priority*/}
-                {/*  style={{*/}
-                {/*    objectFit: "contain",*/}
-                {/*    width: "auto",*/}
-                {/*    height: "auto",*/}
-                {/*  }}*/}
-                {/*/>*/}
               </Link>
               {isLoggedIn && <Separator orientation="vertical" />}
               <NavLinks />
