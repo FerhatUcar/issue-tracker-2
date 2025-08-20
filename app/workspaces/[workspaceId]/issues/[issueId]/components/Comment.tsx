@@ -17,34 +17,11 @@ import {
   LikeButton,
 } from "@/app/components";
 import toast from "react-hot-toast";
-import { CommentWithReactions, MyReaction } from "@/app/types/types";
+import { CommentWithReactions } from "@/app/types/types";
 import { useSession } from "next-auth/react";
 import { useCommentReaction } from "@/app/hooks";
-import { clampNonNegative, formatDate } from "@/app/helpers";
-
-type Reaction = "NONE" | "LIKE" | "DISLIKE";
-type Action = "LIKE" | "DISLIKE";
-
-type Delta = {
-  likes: -1 | 0 | 1;
-  dislikes: -1 | 0 | 1;
-  next: Reaction;
-};
-
-const TRANSITIONS: Record<Reaction, Record<Action, Delta>> = {
-  NONE: {
-    LIKE: { likes: +1, dislikes: 0, next: "LIKE" },
-    DISLIKE: { likes: 0, dislikes: +1, next: "DISLIKE" },
-  },
-  LIKE: {
-    LIKE: { likes: -1, dislikes: 0, next: "NONE" },
-    DISLIKE: { likes: -1, dislikes: +1, next: "DISLIKE" },
-  },
-  DISLIKE: {
-    LIKE: { likes: +1, dislikes: -1, next: "LIKE" },
-    DISLIKE: { likes: 0, dislikes: -1, next: "NONE" },
-  },
-} as const;
+import { formatDate } from "@/app/helpers";
+import { useRouter } from "next/navigation";
 
 type Props = {
   /**
@@ -59,18 +36,14 @@ type Props = {
 };
 
 export const Comment = ({ comment, issueId }: Props) => {
+  const router = useRouter();
   const { data: session } = useSession();
   const { deleteComment, updateComment } = useCommentMutation();
-  const { reactToComment } = useCommentReaction();
+  const { mutate, isPending } = useCommentReaction();
 
   const [isEditing, setIsEditing] = useState(false);
   const [editedContent, setEditedContent] = useState(comment.content);
   const [open, setOpen] = useState(false);
-  const [likes, setLikes] = useState(comment.likesCount ?? 0);
-  const [dislikes, setDislikes] = useState(comment.dislikesCount ?? 0);
-  const [myReaction, setMyReaction] = useState<MyReaction>(
-    comment.myReaction ?? "NONE",
-  );
 
   const currentUserId = session?.user?.id;
   const canModify = currentUserId === comment.authorId;
@@ -99,37 +72,19 @@ export const Comment = ({ comment, issueId }: Props) => {
   const handleEdit = (e: ChangeEvent<HTMLTextAreaElement>) =>
     setEditedContent(e.target.value);
 
-  const applyOptimistic = (action: Action) => {
-    const delta = TRANSITIONS[myReaction][action];
-
-    if (delta.likes !== 0) {
-      setLikes((v) => clampNonNegative(v + delta.likes));
-    }
-
-    if (delta.dislikes !== 0) {
-      setDislikes((v) => clampNonNegative(v + delta.dislikes));
-    }
-
-    setMyReaction(delta.next);
-  };
-
-  const onReact = (type: Action) => {
-    if (reactToComment.isLoading) {
+  const onReact = (type: "LIKE" | "DISLIKE") => {
+    if (isPending) {
       return;
     }
 
-    applyOptimistic(type);
-
-    // reactToComment.mutate(
-    //   { commentId: comment.id, issueId, type },
-    //   {
-    //     onSuccess: ({ likesCount, dislikesCount, myReaction }) => {
-    //       setLikes(likesCount);
-    //       setDislikes(dislikesCount);
-    //       setMyReaction(myReaction);
-    //     },
-    //   },
-    // );
+    mutate(
+      { commentId: comment.id, issueId, type },
+      {
+        onSuccess: () => {
+          router.refresh();
+        },
+      },
+    );
   };
 
   return (
@@ -177,15 +132,15 @@ export const Comment = ({ comment, issueId }: Props) => {
         <Flex justify="between" align="center">
           <Flex align="center" gap="4">
             <LikeButton
-              count={likes}
-              active={myReaction === "LIKE"}
-              disabled={reactToComment.isLoading}
+              count={comment.likesCount ?? 0}
+              active={comment.myReaction === "LIKE"}
+              // disabled={isPending}
               onClick={() => onReact("LIKE")}
             />
             <DislikeButton
-              count={dislikes}
-              active={myReaction === "DISLIKE"}
-              disabled={reactToComment.isLoading}
+              count={comment.dislikesCount ?? 0}
+              active={comment.myReaction === "DISLIKE"}
+              // disabled={isPending}
               onClick={() => onReact("DISLIKE")}
             />
           </Flex>

@@ -1,9 +1,12 @@
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
 import { useSession } from "next-auth/react";
+import { commentsKey } from "@/app/query-keys";
+import { CommentWithReactions } from "@/app/types/types";
+import { extractAxiosError } from "@/app/helpers";
+import { Action, Delta, Reaction } from "@/app/types/reactions";
 
-const ErrorResponse = z.object({ error: z.string() });
 const ReactionResponse = z.object({
   likesCount: z.number(),
   dislikesCount: z.number(),
@@ -13,40 +16,45 @@ const ReactionResponse = z.object({
     z.literal("DISLIKE"),
   ]),
 });
+
 type ReactionResponse = z.infer<typeof ReactionResponse>;
 
 type Input = {
   commentId: number;
   type: "LIKE" | "DISLIKE";
-
-  /**
-   * Optional: Only for cache invalidation of this issue's comment list
-   */
-  issueId?: number;
+  issueId: number;
 };
 
-const extractAxiosError = (err: unknown): string => {
-  const ax = err as AxiosError;
-  const data = ax.response?.data;
+const TRANSITIONS: Record<Reaction, Record<Action, Delta>> = {
+  NONE: {
+    LIKE: { likes: +1, dislikes: 0, next: "LIKE" },
+    DISLIKE: { likes: 0, dislikes: +1, next: "DISLIKE" },
+  },
+  LIKE: {
+    LIKE: { likes: -1, dislikes: 0, next: "NONE" },
+    DISLIKE: { likes: -1, dislikes: +1, next: "DISLIKE" },
+  },
+  DISLIKE: {
+    LIKE: { likes: +1, dislikes: -1, next: "LIKE" },
+    DISLIKE: { likes: 0, dislikes: -1, next: "NONE" },
+  },
+} as const;
 
-  if (typeof data === "string") {
-    return data;
+const toCacheReaction = (
+  reaction: Reaction,
+): CommentWithReactions["myReaction"] => {
+  if (reaction === "NONE") {
+    return undefined;
   }
-
-  const parsed = ErrorResponse.safeParse(data);
-
-  if (parsed.success) {
-    return parsed.data.error;
-  }
-
-  return ax.response?.statusText || ax.message || "Failed to react";
+  return reaction;
 };
 
 export const useCommentReaction = () => {
   const qc = useQueryClient();
-  const session = useSession();
+  const { data: session } = useSession();
+  const userId = session?.user?.id;
 
-  const mutate = useMutation({
+  return useMutation({
     mutationFn: async ({
       commentId,
       type,
@@ -55,6 +63,7 @@ export const useCommentReaction = () => {
         const res = await axios.patch(`/api/comments/${commentId}/reaction`, {
           type,
         });
+
         const parsed = ReactionResponse.safeParse(res.data);
 
         if (!parsed.success) {
@@ -63,25 +72,61 @@ export const useCommentReaction = () => {
 
         return parsed.data;
       } catch (err) {
-        throw new Error(extractAxiosError(err));
+        if (axios.isAxiosError(err)) {
+          throw new Error(extractAxiosError(err));
+        }
+
+        throw new Error("Unknown error");
       }
     },
 
-    onSuccess: async (_data, variables) => {
-      await qc.invalidateQueries({
-        queryKey: ["comment", variables.commentId],
+    onMutate: async (vars: Input) => {
+      const key = commentsKey(vars.issueId, userId);
+      await qc.cancelQueries({ queryKey: key });
+      const prev = qc.getQueryData<CommentWithReactions[]>(key);
+
+      qc.setQueryData<CommentWithReactions[]>(key, (old) => {
+        if (!old) {
+          return old;
+        }
+
+        return old.map((c) => {
+          if (c.id !== vars.commentId) {
+            return c;
+          }
+
+          const current = (c.myReaction ?? "NONE") as Reaction;
+          const d = TRANSITIONS[current][vars.type];
+
+          const nextLikes = Math.max(0, (c.likesCount ?? 0) + d.likes);
+          const nextDislikes = Math.max(0, (c.dislikesCount ?? 0) + d.dislikes);
+          const nextMyReaction = toCacheReaction(d.next);
+
+          return {
+            ...c,
+            likesCount: nextLikes,
+            dislikesCount: nextDislikes,
+            myReaction: nextMyReaction,
+          } as CommentWithReactions;
+        });
       });
 
-      if (typeof variables.issueId === "number") {
-        await qc.invalidateQueries({
-          queryKey: [
-            "comments",
-            { issueId: variables.commentId, userId: session?.data?.user?.id },
-          ],
-        });
+      return { prev, key } as {
+        prev: CommentWithReactions[] | undefined;
+        key: ReturnType<typeof commentsKey>;
+      };
+    },
+
+    onError: (_err, _vars, ctx) => {
+      if (ctx && ctx.prev && ctx.key) {
+        qc.setQueryData(ctx.key, ctx.prev);
       }
     },
-  });
 
-  return { reactToComment: mutate };
+    onSettled: async (_data, _err, vars) => {
+      await qc.invalidateQueries({
+        queryKey: commentsKey(vars.issueId, userId),
+      });
+    },
+  });
 };
