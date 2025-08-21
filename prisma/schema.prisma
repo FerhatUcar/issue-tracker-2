@@ -27,17 +27,28 @@ enum ReactionType {
 }
 
 model Issue {
-  id               Int        @id @default(autoincrement())
-  title            String     @db.VarChar(255)
-  description      String
-  status           Status     @default(OPEN)
-  createdAt        DateTime   @default(now())
-  updatedAt        DateTime   @default(now()) @updatedAt
-  assignedToUserId String?    @db.VarChar(255)
-  assignedToUser   User?      @relation(fields: [assignedToUserId], references: [id])
-  Comment          Comment[]
-  Workspace        Workspace? @relation(fields: [workspaceId], references: [id])
-  workspaceId      String?
+  id          Int      @id @default(autoincrement())
+  title       String   @db.VarChar(255)
+  description String
+  status      Status   @default(OPEN)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
+
+  // temporary optional
+  authorId String?
+  author   User?   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  assignedToUserId String? @db.VarChar(255)
+  assignedToUser   User?   @relation("AssignedIssues", fields: [assignedToUserId], references: [id])
+
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  Comment Comment[]
+
+  @@index([authorId])
+  @@index([workspaceId])
+  @@index([assignedToUserId])
 }
 
 model Account {
@@ -67,18 +78,22 @@ model Session {
 }
 
 model User {
-  id             String       @id @default(cuid())
-  name           String?
-  email          String?      @unique
-  emailVerified  DateTime?
-  image          String?
-  accounts       Account[]
-  sessions       Session[]
-  assignedIssues Issue[]
-  Comment        Comment[]
-  Membership     Membership[]
-  Invite         Invite[]
-  Workspace      Workspace[]
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+
+  accounts Account[]
+  sessions Session[]
+
+  assignedIssues Issue[] @relation("AssignedIssues")
+  authoredIssues Issue[]
+
+  Comment    Comment[]
+  Membership Membership[]
+  Invite     Invite[]
+  Workspace  Workspace[]
 
   reactions CommentReaction[]
 }
