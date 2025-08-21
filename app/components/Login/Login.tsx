@@ -3,8 +3,9 @@
 import Image from "next/image";
 import { useState } from "react";
 import { signIn } from "next-auth/react";
-import { Box, Button, Dialog, Flex, IconButton, Text } from "@radix-ui/themes";
+import { Button, Dialog, Flex, IconButton, Text } from "@radix-ui/themes";
 import { Cross2Icon } from "@radix-ui/react-icons";
+import { FaFacebookF } from "react-icons/fa";
 
 type Props = {
   callbackUrl?: string;
@@ -39,7 +40,7 @@ export const Login = ({ callbackUrl = "/", open, setOpen }: Props) => {
         <Dialog.Title mb="0">Log in</Dialog.Title>
         <Text className="text-gray-600">With your Google account</Text>
 
-        <Box className="mt-6">
+        <Flex direction="column" align="center" gap="2" className="mt-6">
           <Button
             type="button"
             variant="soft"
@@ -57,7 +58,18 @@ export const Login = ({ callbackUrl = "/", open, setOpen }: Props) => {
               </Flex>
             )}
           </Button>
-        </Box>
+          <Button
+            type="button"
+            variant="soft"
+            size="3"
+            className="w-full rounded bg-blue-600 text-white py-2 disabled:opacity-60"
+            onClick={() => signIn("facebook", { callbackUrl: "/" })}
+            title="Continue with Facebook"
+          >
+            <FaFacebookF />
+            Continue with Facebook
+          </Button>
+        </Flex>
       </Dialog.Content>
     </Dialog.Root>
   );
