@@ -28,9 +28,9 @@ type Workspace = { id: string; name: string; createdAt: string };
 type Issue = {
   id: number;
   title: string;
-  status: "OPEN" | "IN_PROGRESS" | "CLOSED";
-  createdAt: string;
-  Workspaces: { id: string; name: string };
+  status: "OPEN" | "IN_PROGRESS" | "CLOSED" | "REVIEW";
+  createdAt: Date;
+  workspace: { id: string; name: string };
 };
 
 type Props = {
@@ -38,7 +38,7 @@ type Props = {
     name: string | null;
     email: string;
   };
-  Workspaces: Workspace[];
+  workspace: Workspace[];
   stats: {
     open: number;
     inProgress: number;
@@ -49,7 +49,7 @@ type Props = {
 
 export const SettingsTabs = ({
   user,
-  Workspaces,
+  workspace,
   stats,
   recentIssues,
 }: Props) => {
@@ -78,7 +78,7 @@ export const SettingsTabs = ({
           <Text size="2" color="gray" className="flex items-center gap-2 mb-2">
             <MdOutlineWorkspaces /> Workspaces
           </Text>
-          <Heading size="6">{Workspaces.length}</Heading>
+          <Heading size="6">{workspace.length}</Heading>
         </Card>
         <Card>
           <Text size="2" color="gray" className="flex items-center gap-2 mb-2">
@@ -160,7 +160,7 @@ export const SettingsTabs = ({
               Your workspaces
             </Heading>
             <Separator my="3" />
-            {Workspaces.length === 0 ? (
+            {workspace.length === 0 ? (
               <Flex align="center" justify="between">
                 <Text>No workspaces found.</Text>
                 <Link href="/workspaces/new" prefetch={false}>
@@ -177,7 +177,7 @@ export const SettingsTabs = ({
                   </Table.Row>
                 </Table.Header>
                 <Table.Body>
-                  {Workspaces.map((ws) => (
+                  {workspace.map((ws) => (
                     <Table.Row key={ws.id}>
                       <Table.RowHeaderCell>{ws.name}</Table.RowHeaderCell>
                       <Table.Cell>{formatDate(ws.createdAt)}</Table.Cell>
@@ -219,7 +219,7 @@ export const SettingsTabs = ({
                     <Table.Row key={issue.id}>
                       <Table.RowHeaderCell>
                         <Link
-                          href={`/workspaces/${issue.Workspaces.id}/issues/${issue.id}`}
+                          href={`/workspaces/${issue.workspace.id}/issues/${issue.id}`}
                           prefetch={false}
                           className="hover:underline"
                         >
@@ -231,7 +231,7 @@ export const SettingsTabs = ({
                           {getStatusLabel(issue.status)}
                         </Badge>
                       </Table.Cell>
-                      <Table.Cell>{issue.Workspaces.name || "—"}</Table.Cell>
+                      <Table.Cell>{issue.workspace.name || "—"}</Table.Cell>
                       <Table.Cell>
                         {formatDate(issue.createdAt, true)}
                       </Table.Cell>
