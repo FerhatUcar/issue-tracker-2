@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
       assignedToUser: assignedToUserId
         ? { connect: { id: assignedToUserId } }
         : undefined,
-      Workspace: {
+      workspace: {
         connect: { id: workspaceId ?? "" },
       },
     },
