@@ -7,7 +7,7 @@ export const Row = ({
 }: {
   label: string;
   value: number;
-  color: "orange" | "yellow" | "green";
+  color: "red" | "orange" | "yellow" | "green";
 }) => (
   <Flex align="center" justify="between">
     <Text>{label}</Text>

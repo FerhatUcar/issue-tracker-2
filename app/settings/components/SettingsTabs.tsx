@@ -42,6 +42,7 @@ type Props = {
   stats: {
     open: number;
     inProgress: number;
+    review: number;
     closed: number;
   };
   recentIssues: Issue[];
@@ -53,7 +54,8 @@ export const SettingsTabs = ({
   stats,
   recentIssues,
 }: Props) => {
-  const totalIssues = stats.open + stats.inProgress + stats.closed;
+  const totalIssues =
+    stats.open + stats.inProgress + stats.review + stats.closed;
 
   return (
     <>
@@ -248,6 +250,7 @@ export const SettingsTabs = ({
             <IssueChart
               open={stats.open}
               inProgress={stats.inProgress}
+              review={stats.review}
               closed={stats.closed}
             />
             <Card>
@@ -255,12 +258,13 @@ export const SettingsTabs = ({
                 Summary
               </Heading>
               <Flex direction="column" gap="2">
-                <Row label="Open" value={stats.open} color="orange" />
+                <Row label="Open" value={stats.open} color="red" />
                 <Row
                   label="In progress"
                   value={stats.inProgress}
                   color="yellow"
                 />
+                <Row label="Review" value={stats.review} color="orange" />
                 <Row label="Closed" value={stats.closed} color="green" />
               </Flex>
             </Card>

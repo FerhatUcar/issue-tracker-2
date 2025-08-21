@@ -46,23 +46,27 @@ export default async function SettingsPage() {
       <SettingsTabs
         user={{ name: user.name ?? "", email: user.email ?? "" }}
         workspace={[]}
-        stats={{ open: 0, inProgress: 0, closed: 0 }}
+        stats={{ open: 0, inProgress: 0, review: 0, closed: 0 }}
         recentIssues={[]}
       />
     );
   }
 
-  const [openCount, inProgressCount, closedCount] = await Promise.all([
-    prisma.issue.count({
-      where: { workspaceId: { in: workspaceIds }, status: "OPEN" },
-    }),
-    prisma.issue.count({
-      where: { workspaceId: { in: workspaceIds }, status: "IN_PROGRESS" },
-    }),
-    prisma.issue.count({
-      where: { workspaceId: { in: workspaceIds }, status: "CLOSED" },
-    }),
-  ]);
+  const [openCount, inProgressCount, reviewCount, closedCount] =
+    await Promise.all([
+      prisma.issue.count({
+        where: { workspaceId: { in: workspaceIds }, status: "OPEN" },
+      }),
+      prisma.issue.count({
+        where: { workspaceId: { in: workspaceIds }, status: "IN_PROGRESS" },
+      }),
+      prisma.issue.count({
+        where: { workspaceId: { in: workspaceIds }, status: "REVIEW" },
+      }),
+      prisma.issue.count({
+        where: { workspaceId: { in: workspaceIds }, status: "CLOSED" },
+      }),
+    ]);
 
   const recentIssues = (await prisma.issue.findMany({
     where: { workspaceId: { in: workspaceIds } },
@@ -92,12 +96,13 @@ export default async function SettingsPage() {
     <SettingsTabs
       user={{ name: user.name ?? "", email: user.email ?? "" }}
       workspace={workspaces}
+      recentIssues={recentIssuesDTO}
       stats={{
         open: openCount,
         inProgress: inProgressCount,
+        review: reviewCount,
         closed: closedCount,
       }}
-      recentIssues={recentIssuesDTO}
     />
   );
 }

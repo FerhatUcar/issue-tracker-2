@@ -10,6 +10,7 @@ export type Item = {
 export const getSummaryData = (
   open: number,
   inProgress: number,
+  review: number,
   closed: number,
 ): Item[] => [
   {
@@ -24,6 +25,13 @@ export const getSummaryData = (
     status: "IN_PROGRESS",
     color:
       "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-300",
+  },
+  {
+    label: "Review",
+    value: review,
+    status: "REVIEW",
+    color:
+      "bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-300",
   },
   {
     label: "Closed",

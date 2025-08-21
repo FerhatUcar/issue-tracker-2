@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Card, Flex, Text, Box } from "@radix-ui/themes";
+import { Box, Card, Flex, Text } from "@radix-ui/themes";
 import Link from "next/link";
 import classnames from "classnames";
 import { getSummaryData, Item } from "./get-summary-data";
@@ -18,6 +18,11 @@ type Props = {
   inProgress: number;
 
   /**
+   * Number of issues in review
+   */
+  review: number;
+
+  /**
    * Number of closed issues
    */
   closed: number;
@@ -30,8 +35,14 @@ type Props = {
   workspaceId: string;
 };
 
-export const Summary = ({ open, inProgress, closed, workspaceId }: Props) => {
-  const items: Item[] = getSummaryData(open, inProgress, closed);
+export const Summary = ({
+  open,
+  inProgress,
+  review,
+  closed,
+  workspaceId,
+}: Props) => {
+  const items: Item[] = getSummaryData(open, inProgress, review, closed);
 
   return (
     <Card>

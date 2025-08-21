@@ -16,17 +16,23 @@ type Props = {
   inProgress: number;
 
   /**
+   * Number of issues in review
+   */
+  review: number;
+
+  /**
    * Number of closed issues
    */
   closed: number;
 };
 
-export const IssueChart = ({ open, inProgress, closed }: Props) => {
+export const IssueChart = ({ open, inProgress, review, closed }: Props) => {
   const { appearance } = useThemeToggle();
 
   const data = [
     { label: "Open", value: open },
     { label: "In Progress", value: inProgress },
+    { label: "Review", value: review },
     { label: "Closed", value: closed },
   ];
 
