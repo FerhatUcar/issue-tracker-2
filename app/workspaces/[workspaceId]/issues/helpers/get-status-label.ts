@@ -6,6 +6,8 @@ export const getStatusLabel = (status: Status): string => {
       return "Open";
     case "IN_PROGRESS":
       return "In progress";
+    case "REVIEW":
+      return "Review";
     case "CLOSED":
       return "Closed";
     default:

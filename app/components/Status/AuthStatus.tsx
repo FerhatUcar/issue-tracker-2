@@ -109,6 +109,19 @@ export const AuthStatus = ({ userId, count }: Props) => {
             </DropdownMenu.Item>
           </Link>
 
+          {workspaceIdString && (
+            <Link
+              href={`/workspaces/${workspaceIdString}/issues/list?assignedToUserId=${userId}`}
+            >
+              <DropdownMenu.Item>
+                <Flex width="100%" align="center" gap="2">
+                  <IoTicketOutline />
+                  <Text>Workspace list</Text>
+                </Flex>
+              </DropdownMenu.Item>
+            </Link>
+          )}
+
           <Link href="/settings">
             <DropdownMenu.Item>
               <Flex direction="row" align="center" gap="2">
@@ -117,19 +130,6 @@ export const AuthStatus = ({ userId, count }: Props) => {
               </Flex>
             </DropdownMenu.Item>
           </Link>
-
-          {workspaceIdString && (
-            <Link
-              href={`/workspaces/${workspaceIdString}/issues/list?assignedToUserId=${userId}`}
-            >
-              <DropdownMenu.Item>
-                <Flex width="100%" align="center" gap="2">
-                  <IoTicketOutline />
-                  <Text>Workspace issues</Text>
-                </Flex>
-              </DropdownMenu.Item>
-            </Link>
-          )}
 
           <DropdownMenu.Separator />
           <DropdownMenu.Item onClick={() => setOpenOut(true)}>
