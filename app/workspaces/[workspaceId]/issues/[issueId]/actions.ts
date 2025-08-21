@@ -8,6 +8,7 @@ export const fetchIssue = cache((issueId: number) =>
       id: true,
       title: true,
       description: true,
+      authorId: true,
       status: true,
       createdAt: true,
       updatedAt: true,
