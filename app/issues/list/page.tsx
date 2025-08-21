@@ -2,9 +2,7 @@ import prisma from "@/prisma/client";
 import { Status } from "@prisma/client";
 import { PageTitle, Pagination } from "@/app/components";
 import { Box, Card, Flex, Text } from "@radix-ui/themes";
-import IssueTable, {
-  IssueQuery,
-} from "@/app/workspaces/[workspaceId]/issues/list/IssueTable";
+import IssueTable, { IssueQuery } from "@/app/workspaces/[workspaceId]/issues/list/IssueTable";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import authOptions from "@/app/auth/authOptions";
@@ -38,7 +36,7 @@ const AllIssuesPage = async ({ searchParams }: Props) => {
       },
       include: {
         assignedToUser: true,
-        Workspace: true,
+        workspace: true,
         Comment: true,
       },
       orderBy: { createdAt: "desc" },

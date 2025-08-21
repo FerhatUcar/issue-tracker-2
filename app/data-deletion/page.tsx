@@ -9,6 +9,7 @@ import {
   Separator,
   Text,
 } from "@radix-ui/themes";
+import { PageTitle } from "@/app/components";
 
 export const metadata: Metadata = {
   title: "User Data Deletion | Rocket Issues",
@@ -19,14 +20,12 @@ export const metadata: Metadata = {
 
 export default function DataDeletionPage() {
   return (
-    <Box className="mx-auto max-w-2xl p-6">
-      <Heading as="h1" size="6" className="mb-2">
-        User Data Deletion
-      </Heading>
-      <Text size="2" color="gray" className="block mb-5">
-        This page explains how to delete your Rocket Issues account and any
-        personal data collected via Facebook or Google sign-in.
-      </Text>
+    <Box className="space-y-4">
+      <PageTitle
+        title="User Data Deletion"
+        description=" This page explains how to delete your Rocket Issues account and any
+        personal data collected via Facebook or Google sign-in."
+      />
 
       <Card className="mb-6">
         <Box p="4">
@@ -46,11 +45,11 @@ export default function DataDeletionPage() {
 
           <Flex gap="3" className="mt-4" wrap="wrap">
             <Button asChild variant="soft" color="red">
-              <Link href="/settings#account">Go to Account Settings</Link>
+              <Link href="/settings">Go to Account Settings</Link>
             </Button>
-            <Button asChild variant="outline">
-              <Link href="/privacy">Privacy Policy</Link>
-            </Button>
+            {/*<Button asChild variant="outline">*/}
+            {/*  <Link href="/privacy">Privacy Policy</Link>*/}
+            {/*</Button>*/}
           </Flex>
         </Box>
       </Card>
