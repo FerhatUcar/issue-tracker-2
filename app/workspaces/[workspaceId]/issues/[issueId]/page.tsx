@@ -14,7 +14,6 @@ import authOptions from "@/app/auth/authOptions";
 import AssigneeSelect from "@/app/workspaces/[workspaceId]/issues/[issueId]/AssigneeSelect";
 import IssueStatus from "@/app/workspaces/[workspaceId]/issues/_components/IssueStatus";
 import { fetchIssue } from "@/app/workspaces/[workspaceId]/issues/[issueId]/actions";
-import React from "react";
 
 type Props = {
   params: { issueId: string; workspaceId: string };

@@ -47,9 +47,9 @@ export async function POST(request: NextRequest) {
       title,
       description,
       author: { connect: { id: userId } },
-      assignedToUser: assignedToUserId
-        ? { connect: { id: assignedToUserId } }
-        : undefined,
+      ...(assignedToUserId
+        ? { assignedToUser: { connect: { id: assignedToUserId } } }
+        : {}),
       workspace: { connect: { id: workspaceId } },
     },
     select: {

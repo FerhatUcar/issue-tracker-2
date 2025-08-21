@@ -7,14 +7,7 @@ import { Skeleton, Spinner } from "@/app/components";
 import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
 import { Issue } from "@prisma/client";
-import {
-  Box,
-  Button,
-  Callout,
-  Flex,
-  Select,
-  TextField,
-} from "@radix-ui/themes";
+import { Box, Button, Callout, Flex, Select, TextField } from "@radix-ui/themes";
 import "easymde/dist/easymde.min.css";
 import { useParams, useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
@@ -27,7 +20,7 @@ import IssueFormSkeleton from "@/app/workspaces/[workspaceId]/issues/_components
 
 const SimpleMDE = dynamic(() => import("react-simplemde-editor"), {
   ssr: false,
-  loading: () => <Skeleton className="h-40" />,
+  loading: () => <Skeleton className="h-20" />,
 });
 
 const simpleMdeOptions: Options = {
@@ -136,7 +129,7 @@ export const IssueForm = ({ issue, onSuccess }: Props) => {
           </Flex>
         </TextField.Root>
 
-        {!isLoadingUsers && (
+        {users.length && !isLoadingUsers ? (
           <Controller
             name="assignedToUserId"
             control={control}
@@ -164,6 +157,8 @@ export const IssueForm = ({ issue, onSuccess }: Props) => {
               </Select.Root>
             )}
           />
+        ) : (
+          <Skeleton />
         )}
 
         <Box className="relative z-0 min-h-0">
