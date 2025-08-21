@@ -1,18 +1,8 @@
-import { StatusBadge } from "@/app/components";
-import {
-  Avatar,
-  Box,
-  Card,
-  Flex,
-  Heading,
-  IconButton,
-  Text,
-} from "@radix-ui/themes";
+import { Avatar, Box, Card, Flex, Heading, IconButton } from "@radix-ui/themes";
 import ReactMarkdown from "react-markdown";
 import Link from "next/link";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { IssuesWithAssigning } from "@/app/types/types";
-import { formatDate } from "@/app/helpers";
 
 type Props = {
   /**
@@ -27,32 +17,31 @@ type Props = {
 };
 
 const IssueDetails = ({
-  issue: { title, description, status, createdAt, assignedToUser },
+  issue: { title, description, assignedToUser },
   workspaceId,
 }: Props) => (
   <Card>
-    <Flex direction="row" gap="2" align="center">
-      <Link href={`/workspaces/${workspaceId}`}>
-        <IconButton size="4" variant="soft" color="gray" title="Back">
-          <IoMdArrowRoundBack />
-        </IconButton>
-      </Link>
-
-      <Box className="w-full px-2 rounded-lg">
+    <Flex
+      direction="row"
+      gap="2"
+      align="center"
+      className="bg-neutral-100 dark:bg-neutral-900 pl-2 rounded-lg"
+    >
+      <Box className="w-full rounded-lg">
         <Flex justify="between" align="center" py="2">
-          <Flex direction="column" align="start" gap="1">
-            <StatusBadge status={status} />
-            <Text className="text-xs text-gray-500">
-              {formatDate(createdAt, false)}
-            </Text>
-          </Flex>
+          <Link href={`/workspaces/${workspaceId}`}>
+            <IconButton size="1" variant="soft" title="Back">
+              <IoMdArrowRoundBack />
+            </IconButton>
+          </Link>
 
           {assignedToUser && (
             <Avatar
               src={assignedToUser.image ?? ""}
               fallback={assignedToUser.name?.[0] ?? "?"}
-              size="2"
+              size="1"
               radius="large"
+              className="mr-2"
               title={assignedToUser.name ?? "Assigned user"}
               referrerPolicy="no-referrer"
             />

@@ -66,6 +66,7 @@ const AssigneeSelect = ({ issue }: Props) => {
       <Select.Root
         defaultValue={issue.assignedToUserId || "unassigned"}
         onValueChange={handleOnValueChange}
+        size="1"
       >
         <Select.Trigger className="w-full" placeholder="Assign..." />
         <Select.Content>

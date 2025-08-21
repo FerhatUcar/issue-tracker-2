@@ -1,17 +1,20 @@
 import prisma from "@/prisma/client";
 import { notFound } from "next/navigation";
-import { Box, Card, Flex, Grid, Separator } from "@radix-ui/themes";
+import { Box, Card, Flex, Grid, Text } from "@radix-ui/themes";
 import IssueDetails from "@/app/workspaces/[workspaceId]/issues/[issueId]/IssueDetails";
 import {
   Comments,
   DeleteIssue,
   EditIssue,
+  Reporter,
+  Status,
 } from "@/app/workspaces/[workspaceId]/issues/[issueId]/components";
 import { getServerSession } from "next-auth";
 import authOptions from "@/app/auth/authOptions";
 import AssigneeSelect from "@/app/workspaces/[workspaceId]/issues/[issueId]/AssigneeSelect";
 import IssueStatus from "@/app/workspaces/[workspaceId]/issues/_components/IssueStatus";
 import { fetchIssue } from "@/app/workspaces/[workspaceId]/issues/[issueId]/actions";
+import React from "react";
 
 type Props = {
   params: { issueId: string; workspaceId: string };
@@ -60,11 +63,28 @@ const IssueDetailPage = async ({ params: { issueId, workspaceId } }: Props) => {
       {session && (
         <Card>
           <Flex direction="column" gap="3">
-            Update Assignee
-            <AssigneeSelect issue={issue} />
-            Update status
-            <IssueStatus issue={issue} />
-            <Separator className="w-full my-2" />
+            <Reporter issue={issue} />
+            <Status status={issue.status} />
+            <Flex
+              align="start"
+              direction="column"
+              gap="3"
+              className="text-xs text-gray-400 rounded-md p-2 bg-neutral-100 dark:bg-neutral-900"
+            >
+              <Text weight="bold">Update assignee</Text>
+              <AssigneeSelect issue={issue} />
+            </Flex>
+
+            <Flex
+              align="start"
+              direction="column"
+              gap="3"
+              className="text-xs text-gray-400 rounded-md p-2 bg-neutral-100 dark:bg-neutral-900"
+            >
+              <Text weight="bold"> Update status</Text>
+              <IssueStatus issue={issue} />
+            </Flex>
+
             <EditIssue
               workspaceId={workspaceId}
               issue={{
