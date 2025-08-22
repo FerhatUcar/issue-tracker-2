@@ -38,7 +38,7 @@ export const DeleteIssue = ({ issueId, workspaceId }: Props) => {
     <>
       <AlertDialog.Root>
         <AlertDialog.Trigger>
-          <Button color="red" disabled={isLoading}>
+          <Button color="red" className="w-full" disabled={isLoading}>
             <TrashIcon className="-mr-1" />
             Delete
             {isLoading && <Spinner />}

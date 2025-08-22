@@ -84,16 +84,25 @@ const IssueDetailPage = async ({ params: { issueId, workspaceId } }: Props) => {
               <IssueStatus issue={issue} />
             </Flex>
 
-            <EditIssue
-              workspaceId={workspaceId}
-              issue={{
-                id: issue.id,
-                title: issue.title,
-                description: issue.description,
-                assignedToUserId: issue.assignedToUserId,
-              }}
-            />
-            <DeleteIssue issueId={issue.id} workspaceId={workspaceId} />
+            <Flex
+              align="start"
+              direction="column"
+              width="100%"
+              gap="3"
+              className="text-xs text-gray-400 rounded-md p-2 bg-neutral-100 dark:bg-neutral-900"
+            >
+              <Text weight="bold">Actions</Text>
+              <EditIssue
+                workspaceId={workspaceId}
+                issue={{
+                  id: issue.id,
+                  title: issue.title,
+                  description: issue.description,
+                  assignedToUserId: issue.assignedToUserId,
+                }}
+              />
+              <DeleteIssue issueId={issue.id} workspaceId={workspaceId} />
+            </Flex>
           </Flex>
         </Card>
       )}

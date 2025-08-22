@@ -1,3 +1,18 @@
 export type Reaction = "NONE" | "LIKE" | "DISLIKE";
-export type Action = "LIKE" | "DISLIKE";
-export type Delta = { likes: -1 | 0 | 1; dislikes: -1 | 0 | 1; next: Reaction };
+
+export type CommentDTO = {
+  id: number;
+  content: string;
+  issueId: number;
+  createdAt: string;
+  updatedAt: string;
+  likesCount: number;
+  dislikesCount: number;
+  author: {
+    id: string;
+    name: string | null;
+    email: string | null;
+    image: string | null;
+  } | null;
+  myReaction: Reaction;
+};
