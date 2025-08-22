@@ -1,12 +1,12 @@
 import { z } from "zod";
-import { baseMinLength } from "@/app/validations/helpers";
+
+const Id = z.union([z.string().uuid(), z.string().cuid()]);
 
 export const issueSchema = z.object({
-  title: baseMinLength("Title is required").max(255),
-  description: baseMinLength("Description is required").max(65535),
-  workspaceId: z.string().min(1),
-  assignedToUserId: z.preprocess(
-    (v) => (v === "" || v === null ? undefined : v),
-    z.string().uuid().optional(),
-  ),
+  title: z.string().trim().min(1).max(200),
+  description: z.string().trim().max(10000),
+  workspaceId: Id, // accept uuid OR cuid
+  assignedToUserId: Id.nullable().optional(), // idem for assignee
 });
+
+export type NewIssueInput = z.infer<typeof issueSchema>;

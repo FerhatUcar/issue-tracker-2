@@ -3,7 +3,6 @@ import prisma from "@/prisma/client";
 import { issueSchema } from "@/app/validations";
 import { getServerSession } from "next-auth";
 import authOptions from "@/app/auth/authOptions";
-import { z } from "zod";
 
 export async function GET() {
   const uniqueUserIssues = await prisma.issue.findMany({
@@ -13,44 +12,75 @@ export async function GET() {
   return NextResponse.json(uniqueUserIssues);
 }
 
-type NewIssueInput = z.infer<typeof issueSchema>;
-
 export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions);
   const userId = session?.user?.id;
 
+  // Auth check
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const body = (await request.json()) as NewIssueInput;
-  const parsed = issueSchema.safeParse(body);
-
+  // Validate body
+  const parsed = issueSchema.safeParse(await request.json());
   if (!parsed.success) {
-    return NextResponse.json(parsed.error.errors, { status: 400 });
+    return NextResponse.json(
+      { errors: parsed.error.flatten() },
+      { status: 400 },
+    );
   }
+  const { title, description, workspaceId, assignedToUserId } = parsed.data;
 
-  const { assignedToUserId, workspaceId, title, description } = parsed.data;
+  // Optional: assert that session.user.id itself is a UUID if your DB expects @db.Uuid
+  // If your User.id is @db.Uuid, uncomment:
+  // if (!/^[0-9a-fA-F-]{36}$/.test(userId)) {
+  //   return NextResponse.json({ error: "Session user id is not a UUID" }, { status: 400 });
+  // }
 
-  // Check if the user is a member of the workspace
-  const isMember = await prisma.membership.findFirst({
+  // Ensure the current user is a member of the workspace
+  const membership = await prisma.membership.findFirst({
     where: { workspaceId, userId },
     select: { id: true },
   });
-
-  if (!isMember) {
+  if (!membership) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
+  // If assignedToUserId provided (and not null), ensure that user exists and is a member too (optional but smart)
+  if (assignedToUserId) {
+    const assignee = await prisma.user.findUnique({
+      where: { id: assignedToUserId },
+      select: { id: true },
+    });
+    if (!assignee) {
+      return NextResponse.json(
+        { error: "Assignee not found" },
+        { status: 400 },
+      );
+    }
+    // Optional: require assignee to be member of the same workspace
+    const assigneeMember = await prisma.membership.findFirst({
+      where: { workspaceId, userId: assignedToUserId },
+      select: { id: true },
+    });
+    if (!assigneeMember) {
+      return NextResponse.json(
+        { error: "Assignee not in workspace" },
+        { status: 400 },
+      );
+    }
+  }
+
+  // Create the issue
   const newIssue = await prisma.issue.create({
     data: {
       title,
       description,
+      workspace: { connect: { id: workspaceId } },
       author: { connect: { id: userId } },
       ...(assignedToUserId
         ? { assignedToUser: { connect: { id: assignedToUserId } } }
         : {}),
-      workspace: { connect: { id: workspaceId } },
     },
     select: {
       id: true,

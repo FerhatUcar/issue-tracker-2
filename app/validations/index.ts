@@ -1,4 +1,4 @@
-export { issueSchema } from "./issue-schema";
+export { issueSchema, type NewIssueInput } from "./issue-schema";
 export {
   patchIssueSchema,
   PatchBody,
