@@ -93,7 +93,6 @@ const IssueDetailPage = async ({ params: { issueId, workspaceId } }: Props) => {
             >
               <Text weight="bold">Actions</Text>
               <EditIssue
-                workspaceId={workspaceId}
                 issue={{
                   id: issue.id,
                   title: issue.title,
