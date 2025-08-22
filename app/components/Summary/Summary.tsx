@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Box, Card, Flex, Text } from "@radix-ui/themes";
+import { Box, Card, Grid, Text } from "@radix-ui/themes";
 import Link from "next/link";
 import classnames from "classnames";
 import { getSummaryData, Item } from "./get-summary-data";
@@ -46,7 +46,7 @@ export const Summary = ({
 
   return (
     <Card>
-      <Flex gap="3">
+      <Grid columns={{ initial: "2", sm: "2", md: "4" }} gap="2">
         {items.map(({ label, value, status, color }) => (
           <Box
             key={label}
@@ -69,7 +69,7 @@ export const Summary = ({
             </Link>
           </Box>
         ))}
-      </Flex>
+      </Grid>
     </Card>
   );
 };

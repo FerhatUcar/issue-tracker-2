@@ -27,16 +27,16 @@ const LoadingIssuesPage = async () => {
                   <Skeleton />
                 </Box>
               </Table.Cell>
-              <Table.Cell className="hidden md:table-cell">
+              <Table.Cell>
                 <Skeleton />
               </Table.Cell>
-              <Table.Cell className="hidden md:table-cell">
+              <Table.Cell>
                 <Skeleton />
               </Table.Cell>
-              <Table.Cell className="hidden md:table-cell">
+              <Table.Cell>
                 <Skeleton />
               </Table.Cell>
-              <Table.Cell className="hidden md:table-cell">
+              <Table.Cell>
                 <Skeleton />
               </Table.Cell>
             </Table.Row>

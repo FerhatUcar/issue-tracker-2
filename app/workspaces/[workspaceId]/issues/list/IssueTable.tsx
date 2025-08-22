@@ -1,7 +1,7 @@
 "use client";
 
-import React, { FC, useEffect, useState } from "react";
-import { Avatar, Flex, Table } from "@radix-ui/themes";
+import React, { FC, useEffect, useMemo, useState } from "react";
+import { Avatar, Flex, Table, Text } from "@radix-ui/themes";
 import NextLink from "next/link";
 import { ArrowDownIcon, ArrowUpIcon } from "@radix-ui/react-icons";
 import { Link, StatusBadge } from "@/app/components";
@@ -30,27 +30,12 @@ type IssueTableProps = {
 
   /**
    * The list of issues with their assigned user information.
+   * Must include `workspace` via Prisma include.
    */
   issuesWithAssigning: IssuesWithAssigning[];
 
   /**
-   * A unique identifier representing a specific workspace.
-   * This ID is typically used to differentiate between various workspaces
-   * within a system or application.
-   */
-  workspaceId: string;
-
-  /**
-   * Specifies the name of the workspace.
-   * This variable holds a string representing the unique name assigned to the workspace.
-   * Typically used to identify or label a specific workspace in applications or systems.
-   * When empty, the individual workspace name from each issue will be used.
-   */
-  workspaceName: string;
-
-  /**
-   * Optional prop to show workspace names from individual issues
-   * instead of using the single workspaceName prop
+   * Force showing workspace per issue (even if all belong to the same workspace).
    */
   showWorkspacePerIssue?: boolean;
 };
@@ -58,37 +43,37 @@ type IssueTableProps = {
 const IssueTable: FC<IssueTableProps> = ({
   searchParams,
   issuesWithAssigning,
-  workspaceId,
-  workspaceName,
   showWorkspacePerIssue = false,
 }) => {
   const { status } = useSession();
-  const [sort, setSort] = useState("asc");
+  const [sort, setSort] = useState<"asc" | "desc">("asc");
   const searchValue = useRecoilValue(searchValueState);
   const [filteredList, setFilteredList] =
     useState<IssuesWithAssigning[]>(issuesWithAssigning);
 
-  const updatedList = [...issuesWithAssigning];
+  // Determine if issues span multiple workspaces
+  const isCrossWorkspace = useMemo(() => {
+    if (showWorkspacePerIssue) return true;
+    const ids = new Set(
+      issuesWithAssigning.map((i) => i.workspace?.id ?? "__no_ws__"),
+    );
+    return ids.size > 1;
+  }, [issuesWithAssigning, showWorkspacePerIssue]);
 
-  useEffect(
-    () =>
-      setFilteredList(
-        updatedList.filter(
-          ({ title }) =>
-            title.toLowerCase().indexOf(searchValue.toLowerCase()) !== -1,
-        ),
+  useEffect(() => {
+    const q = searchValue.toLowerCase();
+    setFilteredList(
+      issuesWithAssigning.filter(({ title }) =>
+        title.toLowerCase().includes(q),
       ),
+    );
+  }, [searchValue, issuesWithAssigning]);
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [searchValue, issuesWithAssigning],
-  );
-
-  const handleOnSort = () => setSort(sort === "asc" ? "desc" : "asc");
+  const handleOnSort = () =>
+    setSort((prev) => (prev === "asc" ? "desc" : "asc"));
 
   const hideLastColumnOnSignOff =
     status === "unauthenticated" || status === "loading" ? -1 : undefined;
-
-  const isCrossWorkspace = showWorkspacePerIssue || workspaceId === "";
 
   return (
     <Table.Root variant="surface">
@@ -123,47 +108,64 @@ const IssueTable: FC<IssueTableProps> = ({
           ))}
         </Table.Row>
       </Table.Header>
+
       <Table.Body>
-        {filteredList.map((issue) => (
-          <Table.Row
-            key={issue.id}
-            className="hover:bg-sky-800/10 transition-colors"
-          >
-            <Table.Cell>
-              <Flex align="center" justify="between">
-                <Link
-                  href={`/workspaces/${isCrossWorkspace ? issue.workspaceId : workspaceId}/issues/${issue.id}`}
-                >
-                  {issue.title}
-                </Link>
-              </Flex>
-            </Table.Cell>
-            <Table.Cell>
-              <StatusBadge status={issue.status} />
-            </Table.Cell>
-            <Table.Cell>
-              {isCrossWorkspace ? issue.Workspace?.name : workspaceName}
-            </Table.Cell>
-            <Table.Cell className="hidden md:table-cell">
-              {issue.createdAt.toDateString()}
-            </Table.Cell>
-            {status === "authenticated" && (
+        {filteredList.map((issue) => {
+          const wsId = issue.workspace?.id;
+          const wsName = issue.workspace?.name ?? "Unknown workspace";
+          const created = issue.createdAt;
+
+          return (
+            <Table.Row
+              key={issue.id}
+              className="hover:bg-sky-800/10 transition-colors"
+            >
               <Table.Cell>
-                {issue.assignedToUserId ? (
-                  <Avatar
-                    src={issue.assignedToUser?.image ?? ""}
-                    fallback="?"
-                    size="2"
-                    radius="large"
-                    referrerPolicy="no-referrer"
-                  />
-                ) : (
-                  "Unassigned"
-                )}
+                <Flex align="center" justify="between">
+                  {wsId ? (
+                    <Link href={`/workspaces/${wsId}/issues/${issue.id}`}>
+                      {issue.title}
+                    </Link>
+                  ) : (
+                    <Text>{issue.title}</Text>
+                  )}
+                </Flex>
               </Table.Cell>
-            )}
-          </Table.Row>
-        ))}
+
+              <Table.Cell>
+                <StatusBadge status={issue.status} />
+              </Table.Cell>
+
+              <Table.Cell>
+                {
+                  isCrossWorkspace
+                    ? wsName
+                    : wsName /* kolom blijft consistent */
+                }
+              </Table.Cell>
+
+              <Table.Cell className="hidden md:table-cell">
+                {created ? created.toDateString() : ""}
+              </Table.Cell>
+
+              {status === "authenticated" && (
+                <Table.Cell>
+                  {issue.assignedToUserId ? (
+                    <Avatar
+                      src={issue.assignedToUser?.image ?? ""}
+                      fallback="?"
+                      size="2"
+                      radius="large"
+                      referrerPolicy="no-referrer"
+                    />
+                  ) : (
+                    "Unassigned"
+                  )}
+                </Table.Cell>
+              )}
+            </Table.Row>
+          );
+        })}
       </Table.Body>
     </Table.Root>
   );

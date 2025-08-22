@@ -68,6 +68,12 @@ const AllIssuesPage = async ({ searchParams }: Props) => {
     name,
   }));
 
+  const issuesWithAssigning = issues.map((issue) => ({
+    ...issue,
+    workspaceName: issue.workspace?.name ?? "",
+    workspaceId: issue.workspace?.id ?? "",
+  }));
+
   return (
     <Box className="space-y-4">
       <PageTitle
@@ -100,9 +106,7 @@ const AllIssuesPage = async ({ searchParams }: Props) => {
           <Card className="overflow-hidden">
             <IssueTable
               searchParams={searchParams}
-              issuesWithAssigning={issues}
-              workspaceName=""
-              workspaceId=""
+              issuesWithAssigning={issuesWithAssigning}
               showWorkspacePerIssue
             />
           </Card>
