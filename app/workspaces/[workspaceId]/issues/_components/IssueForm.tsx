@@ -7,14 +7,7 @@ import { Skeleton, Spinner } from "@/app/components";
 import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
 import { Issue } from "@prisma/client";
-import {
-  Box,
-  Button,
-  Callout,
-  Flex,
-  Select,
-  TextField,
-} from "@radix-ui/themes";
+import { Box, Button, Callout, Flex, Select, TextField } from "@radix-ui/themes";
 import "easymde/dist/easymde.min.css";
 import { useParams, useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
@@ -35,7 +28,6 @@ const simpleMdeOptions: Options = {
 };
 
 type Props = {
-  workspaceId?: string;
   issue?: Partial<Issue>;
   onSuccess?: () => void;
 };
@@ -47,10 +39,12 @@ export const IssueForm = ({ issue, onSuccess }: Props) => {
     upsertIssue: { mutateAsync },
   } = useIssueMutation();
 
+  // Resolve workspaceId from a route if not provided by props
   const workspaceId = Array.isArray(params?.workspaceId)
     ? params?.workspaceId[0]
-    : params?.workspaceId;
+    : (params?.workspaceId as string | undefined);
 
+  // Load users for assignee select
   const { data: users = [], isLoading: isLoadingUsers } = useDataQuery<User>(
     "users",
     workspaceId,
@@ -60,34 +54,49 @@ export const IssueForm = ({ issue, onSuccess }: Props) => {
     register,
     control,
     handleSubmit,
-    formState: { errors, isSubmitting, isLoading },
+    formState: { errors, isSubmitting },
   } = useForm<z.infer<typeof patchIssueSchema>>({
     resolver: zodResolver(patchIssueSchema),
     defaultValues: {
-      title: issue?.title || "",
-      description: issue?.description || "",
+      title: issue?.title ?? "",
+      description: issue?.description ?? "",
+      // store "unassigned" as UI sentinel; convert to null before submit
       assignedToUserId: issue?.assignedToUserId ?? "unassigned",
     },
   });
 
-  const defaultDescription = useMemo(() => issue?.description ?? "", [issue]);
+  const defaultDescription = useMemo(
+    () => issue?.description ?? "",
+    [issue?.description],
+  );
+
+  const isEdit = typeof issue?.id === "number" && !Number.isNaN(issue.id);
 
   const onSubmit = handleSubmit(async (data) => {
     const assignedToUserId =
       data.assignedToUserId === "unassigned" ? null : data.assignedToUserId;
 
-    const payload = {
-      ...data,
-      id: issue?.id,
-      assignedToUserId,
-      workspaceId,
-    };
+    // Build payload conditionally:
+    // - CREATE: include workspaceId
+    // - PATCH: never include workspaceId
+    const payload = isEdit
+      ? {
+          id: issue.id, // existing id for patch
+          title: data.title,
+          description: data.description,
+          assignedToUserId,
+        }
+      : {
+          title: data.title,
+          description: data.description,
+          assignedToUserId,
+          workspaceId, // only for POST/create
+        };
 
     try {
       await mutateAsync(payload, {
         onSuccess: () => {
           toast.success("Issue submitted successfully!");
-
           if (onSuccess) {
             onSuccess();
             router.refresh();
@@ -98,16 +107,16 @@ export const IssueForm = ({ issue, onSuccess }: Props) => {
         },
       });
     } catch (error: unknown) {
-      const errorMessage =
+      const msg =
         error instanceof Error ? error.message : "An unexpected error occurred";
-      toast.error(`An unexpected error occurred: ${errorMessage}`);
+      toast.error(`An unexpected error occurred: ${msg}`);
     }
   });
 
   const handleFormSubmit: FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
-
-    void onSubmit(e);
+    // Do NOT pass the event to onSubmit; RHF doesn't need it
+    void onSubmit();
   };
 
   return (
@@ -120,7 +129,8 @@ export const IssueForm = ({ issue, onSuccess }: Props) => {
         </Callout.Root>
       )}
 
-      {isLoading && <IssueFormSkeleton />}
+      {/* Show a skeleton while users are loading if needed */}
+      {isLoadingUsers && <IssueFormSkeleton />}
 
       <form className="space-y-4" onSubmit={handleFormSubmit}>
         <TextField.Root className="relative z-10 pointer-events-auto">
@@ -136,13 +146,14 @@ export const IssueForm = ({ issue, onSuccess }: Props) => {
           </Flex>
         </TextField.Root>
 
-        {users.length && !isLoadingUsers ? (
+        {!isLoadingUsers && users.length > 0 ? (
           <Controller
             name="assignedToUserId"
             control={control}
             render={({ field }) => (
               <Select.Root
-                value={field.value || "unassigned"}
+                // make sure the select always has a string value
+                value={(field.value as string | null) ?? "unassigned"}
                 onValueChange={field.onChange}
               >
                 <Select.Trigger
@@ -175,7 +186,7 @@ export const IssueForm = ({ issue, onSuccess }: Props) => {
             defaultValue={defaultDescription}
             render={({ field: { onChange, value } }) => (
               <SimpleMDE
-                value={value}
+                value={value ?? ""}
                 onChange={onChange}
                 options={simpleMdeOptions}
                 placeholder="Description"
@@ -197,7 +208,7 @@ export const IssueForm = ({ issue, onSuccess }: Props) => {
             ) : (
               <>
                 <MdOutlineRocketLaunch />
-                {issue ? "Update Issue" : "Submit Issue"}
+                {isEdit ? "Update Issue" : "Submit Issue"}
               </>
             )}
           </Button>
