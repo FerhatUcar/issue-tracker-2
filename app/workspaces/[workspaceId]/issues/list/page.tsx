@@ -130,12 +130,7 @@ const IssuesPage = async ({ searchParams, params: { workspaceId } }: Props) => {
       </Card>
 
       <Card className="overflow-hidden shadow">
-        <IssueTable
-          searchParams={searchParams}
-          issuesWithAssigning={issues}
-          workspaceName={workspace?.name ?? ""}
-          workspaceId={workspaceId}
-        />
+        <IssueTable searchParams={searchParams} issuesWithAssigning={issues} />
       </Card>
 
       {issueCount > 10 && (

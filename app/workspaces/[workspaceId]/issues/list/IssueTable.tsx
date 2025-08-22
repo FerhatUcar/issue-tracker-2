@@ -53,10 +53,14 @@ const IssueTable: FC<IssueTableProps> = ({
 
   // Determine if issues span multiple workspaces
   const isCrossWorkspace = useMemo(() => {
-    if (showWorkspacePerIssue) return true;
+    if (showWorkspacePerIssue) {
+      return true;
+    }
+
     const ids = new Set(
       issuesWithAssigning.map((i) => i.workspace?.id ?? "__no_ws__"),
     );
+
     return ids.size > 1;
   }, [issuesWithAssigning, showWorkspacePerIssue]);
 
@@ -118,7 +122,7 @@ const IssueTable: FC<IssueTableProps> = ({
           return (
             <Table.Row
               key={issue.id}
-              className="hover:bg-sky-800/10 transition-colors"
+              className="hover:bg-sky-800/10 transition-colors text-xs"
             >
               <Table.Cell>
                 <Flex align="center" justify="between">
@@ -136,14 +140,7 @@ const IssueTable: FC<IssueTableProps> = ({
                 <StatusBadge status={issue.status} />
               </Table.Cell>
 
-              <Table.Cell>
-                {
-                  isCrossWorkspace
-                    ? wsName
-                    : wsName /* kolom blijft consistent */
-                }
-              </Table.Cell>
-
+              <Table.Cell>{isCrossWorkspace ? wsName : wsName}</Table.Cell>
               <Table.Cell className="hidden md:table-cell">
                 {created ? created.toDateString() : ""}
               </Table.Cell>

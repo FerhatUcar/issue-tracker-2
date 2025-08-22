@@ -10,12 +10,18 @@ import { redirect } from "next/navigation";
 import authOptions from "@/app/auth/authOptions";
 import { GiBoxTrap } from "react-icons/gi";
 import { WorkspaceSelect } from "@/app/issues/_components";
+import { getPaginatedIssuesWithAssignedUser } from "@/app/helpers";
+import { IssuesWithAssigning } from "@/app/types/types";
 
 type Props = {
   searchParams: IssueQuery;
+  params: { workspaceId: string };
 };
 
-const AllIssuesPage = async ({ searchParams }: Props) => {
+const AllIssuesPage = async ({
+  searchParams,
+  params: { workspaceId },
+}: Props) => {
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.id) {
@@ -27,24 +33,26 @@ const AllIssuesPage = async ({ searchParams }: Props) => {
     ? searchParams.status
     : undefined;
 
+  const assignedToUserId =
+    searchParams.assignedToUserId === "All"
+      ? undefined
+      : searchParams.assignedToUserId;
   const page = parseInt(searchParams.page) || 1;
   const pageSize = 10;
 
   const [issues, issueCount, memberships] = await Promise.all([
-    prisma.issue.findMany({
+    getPaginatedIssuesWithAssignedUser({
       where: {
-        assignedToUserId: session.user.id,
         status,
+        assignedToUserId,
+        workspaceId,
       },
-      include: {
-        assignedToUser: true,
-        workspace: true,
-        Comment: true,
+      orderBy: {
+        createdAt: "desc",
       },
-      orderBy: { createdAt: "desc" },
-      skip: (page - 1) * pageSize,
-      take: pageSize,
-    }),
+      page: (page - 1) * pageSize,
+      pageSize,
+    }) as Promise<IssuesWithAssigning[]>,
 
     prisma.issue.count({
       where: {
@@ -66,12 +74,6 @@ const AllIssuesPage = async ({ searchParams }: Props) => {
   const workspaceOptions = workspaces.map(({ id, name }) => ({
     id,
     name,
-  }));
-
-  const issuesWithAssigning = issues.map((issue) => ({
-    ...issue,
-    workspaceName: issue.workspace?.name ?? "",
-    workspaceId: issue.workspace?.id ?? "",
   }));
 
   return (
@@ -106,7 +108,7 @@ const AllIssuesPage = async ({ searchParams }: Props) => {
           <Card className="overflow-hidden">
             <IssueTable
               searchParams={searchParams}
-              issuesWithAssigning={issuesWithAssigning}
+              issuesWithAssigning={issues}
               showWorkspacePerIssue
             />
           </Card>

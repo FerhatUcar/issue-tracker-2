@@ -63,10 +63,9 @@ export const CreateWorkspace = ({ children }: PropsWithChildren) => {
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger>{children}</Dialog.Trigger>
 
-      <Dialog.Content style={{ maxWidth: 400 }}>
+      <Dialog.Content>
         <Dialog.Title>Create new workspace</Dialog.Title>
 
-        {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
         <form onSubmit={onSubmit}>
           <Flex direction="column" gap="3">
             <TextField.Root>

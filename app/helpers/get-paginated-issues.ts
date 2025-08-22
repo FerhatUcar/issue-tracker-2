@@ -26,5 +26,7 @@ export const getPaginatedIssuesWithAssignedUser = async ({
     take: pageSize,
     include: {
       assignedToUser: true,
+      workspace: true,
+      Comment: true,
     },
   });
