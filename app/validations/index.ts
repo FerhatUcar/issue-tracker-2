@@ -1,8 +1,12 @@
 export { issueSchema } from "./issue-schema";
-export { patchIssueSchema } from "./patch-issue-schema";
+export {
+  patchIssueSchema,
+  PatchBody,
+  type PatchIssueData,
+} from "./patch-issue-schema";
 export {
   CommentArray,
-  PatchBody,
+  PatchBodyComment,
   Params,
   PostCommentBody,
   QueryIssueId,

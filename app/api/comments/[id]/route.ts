@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/prisma/client";
 import { getServerSession } from "next-auth";
 import authOptions from "@/app/auth/authOptions";
-import { Params, PatchBody } from "@/app/validations";
+import { Params, PatchBodyComment } from "@/app/validations";
 
 export async function DELETE(
   _req: NextRequest,
@@ -46,7 +46,7 @@ export async function PATCH(req: NextRequest, ctx: { params: { id: string } }) {
 
   // validate
   const id = Params.parse(ctx.params).id;
-  const body = PatchBody.parse(await req.json());
+  const body = PatchBodyComment.parse(await req.json());
 
   // ownership (of admin‑check, whatever your rules are)
   const existing = await prisma.comment.findUnique({

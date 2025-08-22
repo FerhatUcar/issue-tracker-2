@@ -1,85 +1,114 @@
-import { patchIssueSchema } from "@/app/validations";
-import prisma from "@/prisma/client";
 import { NextRequest, NextResponse } from "next/server";
+import prisma from "@/prisma/client";
 import { getServerSession } from "next-auth";
 import authOptions from "@/app/auth/authOptions";
-import { Issue } from "@prisma/client";
+import { Params, PatchBody, PatchIssueData } from "@/app/validations";
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  ctx: { params: { id: string } },
 ) {
+  // AuthN
   const session = await getServerSession(authOptions);
 
-  if (!session) {
-    return NextResponse.json({}, { status: 401 });
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { assignedToUserId, status, title, description, ...body } =
-    (await request.json()) as Issue;
+  // Params
+  const parseParams = Params.safeParse(ctx.params);
 
-  const validation = patchIssueSchema.safeParse(body);
+  if (!parseParams.success) {
+    return NextResponse.json(
+      { errors: parseParams.error.flatten() },
+      { status: 400 },
+    );
+  }
+  const issueId = parseParams.data.id;
 
-  if (!validation.success) {
-    return NextResponse.json(validation.error.format(), {
-      status: 400,
-    });
+  // Body
+  const parseBody = PatchBody.safeParse(await request.json());
+  if (!parseBody.success) {
+    return NextResponse.json(
+      { errors: parseBody.error.flatten() },
+      { status: 400 },
+    );
+  }
+  const body: PatchIssueData = parseBody.data;
+
+  // Ensure the issue exists (and optionally check workspace membership/authorization here)
+  const existing = await prisma.issue.findUnique({
+    where: { id: issueId },
+    select: { id: true },
+  });
+
+  if (!existing) {
+    return NextResponse.json({ error: "Issue not found" }, { status: 404 });
   }
 
-  if (assignedToUserId) {
+  // If assignedToUserId provided (and not null), it must exist
+  if (
+    Object.prototype.hasOwnProperty.call(body, "assignedToUserId") &&
+    body.assignedToUserId
+  ) {
     const user = await prisma.user.findUnique({
-      where: { id: assignedToUserId },
+      where: { id: body.assignedToUserId },
     });
 
     if (!user) {
-      return NextResponse.json({ error: "Invalid user." }, { status: 400 });
+      return NextResponse.json({ error: "Invalid assignee" }, { status: 400 });
     }
   }
 
-  const issue = await prisma.issue.findUnique({
-    where: { id: Number(params.id) },
-    select: { id: true, workspaceId: true },
-  });
-
-  if (!issue) {
-    return NextResponse.json({ error: "Invalid issue" }, { status: 404 });
-  }
-
-  const updatedIssue = await prisma.issue.update({
-    where: { id: issue.id },
+  // Build update payload; Prisma ignores undefined and applies null to unassign
+  const updated = await prisma.issue.update({
+    where: { id: issueId },
     data: {
-      title,
-      description,
-      assignedToUserId,
-      status,
+      title: body.title,
+      description: body.description,
+      status: body.status,
+      assignedToUserId: body.assignedToUserId ?? undefined, // allow null to unassign, undefined = don't touch
     },
   });
 
-  return NextResponse.json(updatedIssue);
+  return NextResponse.json(updated, { status: 200 });
 }
 
 export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } },
+  _request: NextRequest,
+  ctx: { params: { id: string } },
 ) {
+  // AuthN
   const session = await getServerSession(authOptions);
 
-  if (!session) {
-    return NextResponse.json({}, { status: 401 });
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const issue = await prisma.issue.findUnique({
-    where: { id: parseInt(params.id) },
-    select: { id: true, workspaceId: true },
-  });
+  // Params
+  const parseParams = Params.safeParse(ctx.params);
 
-  if (!issue) {
-    return NextResponse.json({ error: "Invalid issue" }, { status: 404 });
+  if (!parseParams.success) {
+    return NextResponse.json(
+      { errors: parseParams.error.flatten() },
+      { status: 400 },
+    );
   }
 
-  await prisma.issue.delete({
-    where: { id: issue.id },
-  });
+  const issueId = parseParams.data.id;
 
-  return NextResponse.json({});
+  // Ensure the issue exists (and optionally check workspace membership/authorization here)
+  const existing = await prisma.issue.findUnique({
+    where: { id: issueId },
+    select: { id: true },
+  });
+  if (!existing) {
+    return NextResponse.json({ error: "Issue not found" }, { status: 404 });
+  }
+
+  // Delete it; rely on DB constraints/cascade for related rows if configured
+  await prisma.issue.delete({ where: { id: issueId } });
+
+  // 204 = No Content is the correct semantic response for a successful delete
+  return new NextResponse(null, { status: 204 });
 }

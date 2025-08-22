@@ -29,7 +29,7 @@ export const Params = z.object({
   id: z.string().regex(/^\d+$/, "id must be a number type").transform(Number),
 });
 
-export const PatchBody = z
+export const PatchBodyComment = z
   .object({
     content: z.string().trim().min(1, "Content is mandatory").max(5000),
   })
