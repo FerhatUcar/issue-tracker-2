@@ -63,7 +63,7 @@ export const CreateWorkspace = ({ children }: PropsWithChildren) => {
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger>{children}</Dialog.Trigger>
 
-      <Dialog.Content>
+      <Dialog.Content className="mx-4">
         <Dialog.Title>Create new workspace</Dialog.Title>
 
         <form onSubmit={onSubmit}>

@@ -49,7 +49,7 @@ export const IssueChart = ({ open, inProgress, review, closed }: Props) => {
           <YAxis tick={{ fill: tickColor }} allowDecimals={false} width={40} />
           <Bar
             dataKey="value"
-            barSize={60}
+            barSize={50}
             style={{ fill: "var(--accent-9)" }}
           />
         </BarChart>

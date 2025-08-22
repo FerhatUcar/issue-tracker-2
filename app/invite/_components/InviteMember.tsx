@@ -106,7 +106,7 @@ export const InviteMember = ({
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Trigger>{children}</Dialog.Trigger>
 
-      <Dialog.Content style={{ maxWidth: 400 }}>
+      <Dialog.Content className="mx-4">
         <Dialog.Title>Invite member</Dialog.Title>
 
         {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
