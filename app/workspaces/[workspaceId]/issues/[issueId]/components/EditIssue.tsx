@@ -2,23 +2,16 @@
 
 import { useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
-import {
-  Button,
-  DialogContent,
-  Flex,
-  IconButton,
-  Text,
-} from "@radix-ui/themes";
+import { Button, DialogContent, Flex, IconButton, Text } from "@radix-ui/themes";
 import { Cross2Icon, Pencil2Icon } from "@radix-ui/react-icons";
 import { IssueForm } from "@/app/workspaces/[workspaceId]/issues/_components/IssueForm";
 import { type Issue } from "@prisma/client";
 
 type Props = {
   issue: Partial<Issue>;
-  workspaceId: string;
 };
 
-export const EditIssue = ({ issue, workspaceId }: Props) => {
+export const EditIssue = ({ issue }: Props) => {
   const [open, setOpen] = useState(false);
 
   return (
@@ -45,11 +38,7 @@ export const EditIssue = ({ issue, workspaceId }: Props) => {
             </Dialog.Close>
           </Flex>
 
-          <IssueForm
-            issue={issue}
-            workspaceId={workspaceId}
-            onSuccess={() => setOpen(false)}
-          />
+          <IssueForm issue={issue} onSuccess={() => setOpen(false)} />
         </DialogContent>
       </Dialog.Root>
     </>
