@@ -20,7 +20,7 @@ export async function DELETE(
   });
 
   const isAdmin = workspace?.memberships.some(
-    (member) => member.userId === session.user.id && member.role === "ADMIN",
+    ({ userId, role }) => userId === session.user.id && role === "ADMIN",
   );
 
   if (!isAdmin) {

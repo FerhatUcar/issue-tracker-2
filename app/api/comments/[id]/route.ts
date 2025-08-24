@@ -15,7 +15,7 @@ export async function DELETE(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const id = Params.parse(ctx.params).id;
+  const { id } = Params.parse(ctx.params);
 
   // ownership
   const existing = await prisma.comment.findUnique({
@@ -45,8 +45,8 @@ export async function PATCH(req: NextRequest, ctx: { params: { id: string } }) {
   }
 
   // validate
-  const id = Params.parse(ctx.params).id;
-  const body = PatchBodyComment.parse(await req.json());
+  const { id } = Params.parse(ctx.params);
+  const { content } = PatchBodyComment.parse(await req.json());
 
   // ownership (of admin‑check, whatever your rules are)
   const existing = await prisma.comment.findUnique({
@@ -64,7 +64,7 @@ export async function PATCH(req: NextRequest, ctx: { params: { id: string } }) {
 
   const updated = await prisma.comment.update({
     where: { id },
-    data: { content: body.content },
+    data: { content },
     include: { author: true },
   });
 

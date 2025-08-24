@@ -4,94 +4,143 @@ import { getServerSession } from "next-auth";
 import authOptions from "@/app/auth/authOptions";
 import { Resend } from "resend";
 import { nanoid } from "nanoid";
-import { Invite } from "@prisma/client";
+import { InviteBody, WorkspaceParams } from "@/app/validations";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  ctx: { params: { id: string } },
 ) {
+  // AuthN
   const session = await getServerSession(authOptions);
-  const body = (await request.json()) as Invite;
-  const workspaceId = params.id;
+  const requester = session?.user;
 
-  if (!session?.user?.email) {
+  if (!requester?.id || !requester.email) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  if (!body.email) {
-    return NextResponse.json({ error: "Email is mandatory" }, { status: 400 });
+  const paramsParsed = WorkspaceParams.safeParse(ctx.params);
+
+  if (!paramsParsed.success) {
+    return NextResponse.json(
+      { errors: paramsParsed.error.flatten() },
+      { status: 400 },
+    );
   }
 
+  const workspaceId = paramsParsed.data.id;
+
+  const bodyParsed = InviteBody.safeParse(await request.json());
+
+  if (!bodyParsed.success) {
+    return NextResponse.json(
+      { errors: bodyParsed.error.flatten() },
+      { status: 400 },
+    );
+  }
+
+  const { email } = bodyParsed.data;
+
+  // Prevent self-invite
+  if (email.toLowerCase() === requester.email.toLowerCase()) {
+    return NextResponse.json(
+      { error: "You cannot invite yourself" },
+      { status: 400 },
+    );
+  }
+
+  // Authorization: requester must be ADMIN of the workspace
+  const requesterMembership = await prisma.membership.findFirst({
+    where: { workspaceId, userId: requester.id, role: "ADMIN" },
+    select: { id: true },
+  });
+
+  if (!requesterMembership) {
+    return NextResponse.json({ error: "No admin rights" }, { status: 403 });
+  }
+
+  // If a user already exists and is already a member, block
+  const existingUser = await prisma.user.findUnique({
+    where: { email: email.toLowerCase() },
+    select: { id: true },
+  });
+
+  if (existingUser) {
+    const isAlreadyMember = await prisma.membership.findUnique({
+      where: { userId_workspaceId: { userId: existingUser.id, workspaceId } },
+      select: { userId: true },
+    });
+
+    if (isAlreadyMember) {
+      return NextResponse.json(
+        { error: "This user is already a member of this workspace" },
+        { status: 400 },
+      );
+    }
+  }
+
+  // Existing invite checks
   const existingInvite = await prisma.invite.findFirst({
-    where: {
-      workspaceId,
-      email: body.email,
-    },
+    where: { workspaceId, email: email.toLowerCase() },
+    select: { accepted: true },
   });
 
   if (existingInvite?.accepted) {
     return NextResponse.json(
-      { error: "This user is already a member of this workspace." },
+      { error: "This user is already a member of this workspace" },
       { status: 400 },
     );
   }
 
   if (existingInvite && !existingInvite.accepted) {
     return NextResponse.json(
-      {
-        error:
-          "This user has already been invited but has not yet accepted the invitation.",
-      },
+      { error: "This user has already been invited and has not accepted yet" },
       { status: 400 },
     );
   }
 
-  const inviter = await prisma.user.findUnique({
-    where: { email: session.user.email },
-  });
-
-  if (!inviter) {
-    return NextResponse.json({ error: "User not found" }, { status: 404 });
-  }
-
+  // Create invite
   const token = nanoid(32);
-
   await prisma.invite.create({
     data: {
-      email: body.email,
+      email: email.toLowerCase(),
       token,
       workspaceId,
-      invitedById: inviter.id,
+      invitedById: requester.id,
     },
   });
 
+  // Compose invite email
   const inviteUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/invite/accept?token=${token}`;
 
   try {
     const { error } = await resend.emails.send({
       from: process.env.RESEND_FROM!,
-      to: body.email,
-      subject: `${inviter.name || "Someone"} invited you to a Workspace in Rocket Issues`,
-      react: `
-        You've been invited to join a workspace in our Rocket issues app.
-        
-        Link: ${inviteUrl}
-      `,
+      to: email,
+      subject: `${requester.name || "Someone"} invited you to a workspace in Rocket Issues`,
+      text: [
+        `You've been invited to join a workspace in Rocket Issues.`,
+        ``,
+        `Open this link to accept: ${inviteUrl}`,
+        ``,
+        `If you didn't expect this, you can ignore the email.`,
+      ].join("\n"),
     });
 
     if (error) {
-      return NextResponse.json({ error }, { status: 500 });
+      return NextResponse.json(
+        { error: "Failed to send email" },
+        { status: 500 },
+      );
     }
-  } catch (error) {
-    console.error("Resend error:", error);
-
+  } catch (err) {
+    // Resend threw before returning structured { error }
     return NextResponse.json(
       { error: "Failed to send email" },
       { status: 500 },
     );
   }
 
-  return NextResponse.json({ success: true });
+  return NextResponse.json({ success: true }, { status: 201 });
 }

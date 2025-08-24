@@ -28,7 +28,7 @@ export async function PATCH(
   const issueId = parseParams.data.id;
 
   // Read raw body first so we can block disallowed keys explicitly
-  const raw = (await request.json()) as unknown as Record<string, unknown>;
+  const raw: unknown = await request.json();
 
   // Hard block: workspaceId must not be patchable
   if (Object.prototype.hasOwnProperty.call(raw, "workspaceId")) {

@@ -6,7 +6,10 @@ export async function GET(req: NextRequest) {
   const workspaceId = searchParams.get("id");
 
   if (!workspaceId) {
-    return NextResponse.json({ error: "Workspace ID ontbreekt" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Workspace ID ontbreekt" },
+      { status: 400 },
+    );
   }
 
   const members = await prisma.membership.findMany({
@@ -25,8 +28,11 @@ export async function GET(req: NextRequest) {
   });
 
   const result = [
-    ...members.map((m) => ({ email: m.user.email!, accepted: true })),
-    ...invites.map((i) => ({ email: i.email, accepted: i.accepted })),
+    ...members.map(({ user: { email } }) => ({
+      email: email!,
+      accepted: true,
+    })),
+    ...invites.map(({ email, accepted }) => ({ email, accepted })),
   ];
 
   return NextResponse.json(result);

@@ -13,3 +13,10 @@ export {
   QuerySchema,
 } from "./comment-schema";
 export { ReactionResponse } from "./reaction-response-schema";
+export { DeleteMembershipBody } from "./membership-schema";
+export {
+  InviteBody,
+  GetWorkspaceQuery,
+  CreateWorkspaceBody,
+  WorkspaceParams,
+} from "./workspaces-schema";

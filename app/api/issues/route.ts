@@ -23,6 +23,7 @@ export async function POST(request: NextRequest) {
 
   // Validate body
   const parsed = issueSchema.safeParse(await request.json());
+
   if (!parsed.success) {
     return NextResponse.json(
       { errors: parsed.error.flatten() },
@@ -43,6 +44,7 @@ export async function POST(request: NextRequest) {
     where: { workspaceId, userId },
     select: { id: true },
   });
+
   if (!membership) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
