@@ -10,18 +10,21 @@ export async function PATCH(
 ) {
   // AuthN
   const session = await getServerSession(authOptions);
+
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   // Params
   const parseParams = Params.safeParse(ctx.params);
+
   if (!parseParams.success) {
     return NextResponse.json(
       { errors: parseParams.error.flatten() },
       { status: 400 },
     );
   }
+
   const issueId = parseParams.data.id;
 
   // Read raw body first so we can block disallowed keys explicitly
@@ -37,12 +40,14 @@ export async function PATCH(
 
   // Validate allowed fields only
   const parseBody = PatchBody.safeParse(raw);
+
   if (!parseBody.success) {
     return NextResponse.json(
       { errors: parseBody.error.flatten() },
       { status: 400 },
     );
   }
+
   const body: PatchIssueData = parseBody.data;
 
   // Ensure the issue exists (authorization/membership checks can go here)
@@ -50,6 +55,7 @@ export async function PATCH(
     where: { id: issueId },
     select: { id: true },
   });
+
   if (!existing) {
     return NextResponse.json({ error: "Issue not found" }, { status: 404 });
   }
@@ -88,18 +94,21 @@ export async function DELETE(
 ) {
   // AuthN
   const session = await getServerSession(authOptions);
+
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   // Params
   const parseParams = Params.safeParse(ctx.params);
+
   if (!parseParams.success) {
     return NextResponse.json(
       { errors: parseParams.error.flatten() },
       { status: 400 },
     );
   }
+
   const issueId = parseParams.data.id;
 
   // Ensure the issue exists
@@ -107,10 +116,12 @@ export async function DELETE(
     where: { id: issueId },
     select: { id: true },
   });
+
   if (!existing) {
     return NextResponse.json({ error: "Issue not found" }, { status: 404 });
   }
 
   await prisma.issue.delete({ where: { id: issueId } });
+
   return new NextResponse(null, { status: 204 });
 }

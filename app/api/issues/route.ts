@@ -29,6 +29,7 @@ export async function POST(request: NextRequest) {
       { status: 400 },
     );
   }
+
   const { title, description, workspaceId, assignedToUserId } = parsed.data;
 
   // Optional: assert that session.user.id itself is a UUID if your DB expects @db.Uuid
@@ -52,17 +53,20 @@ export async function POST(request: NextRequest) {
       where: { id: assignedToUserId },
       select: { id: true },
     });
+
     if (!assignee) {
       return NextResponse.json(
         { error: "Assignee not found" },
         { status: 400 },
       );
     }
+
     // Optional: require assignee to be member of the same workspace
     const assigneeMember = await prisma.membership.findFirst({
       where: { workspaceId, userId: assignedToUserId },
       select: { id: true },
     });
+
     if (!assigneeMember) {
       return NextResponse.json(
         { error: "Assignee not in workspace" },
