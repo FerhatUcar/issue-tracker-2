@@ -41,7 +41,6 @@ export const TopLoadingBar = ({
   };
 
   const start = () => {
-    // skip loader on same route
     if (active) {
       return;
     }
@@ -67,7 +66,6 @@ export const TopLoadingBar = ({
     }
 
     clearRaf();
-
     setWidth(100);
 
     setTimeout(() => {
@@ -76,10 +74,14 @@ export const TopLoadingBar = ({
     }, 150);
   };
 
-  const isSameRoute = (u: URL) =>
-    u.origin === location.origin &&
-    u.pathname === location.pathname &&
-    u.search === location.search; // ignore hash, route is the same
+  // Only start the loader if the PATHNAME changes (ignore query string)
+  const willPathChange = (u: URL) => {
+    if (u.origin !== location.origin) {
+      return false;
+    }
+
+    return u.pathname !== location.pathname;
+  };
 
   useEffect(() => {
     const wrap = <K extends "pushState" | "replaceState">(key: K) => {
@@ -95,15 +97,12 @@ export const TopLoadingBar = ({
           if (urlArg) {
             const nextUrl = new URL(urlArg, location.href);
 
-            // skip loader on same route
-            if (!isSameRoute(nextUrl)) {
+            if (willPathChange(nextUrl)) {
               start();
             }
-          } else {
-            // geen url doorgegeven: geen idee wat er verandert, dus niks starten
           }
         } catch {
-          // op ongeldige URL geen loader starten
+          // Ignore invalid URL
         }
 
         return orig.apply(this, args);
@@ -129,14 +128,13 @@ export const TopLoadingBar = ({
       ) {
         return;
       }
-      const a = (e.target as HTMLElement)?.closest("a");
 
+      const a = (e.target as HTMLElement)?.closest("a");
       if (!a) {
         return;
       }
 
       const href = a.getAttribute("href");
-
       if (!href) {
         return;
       }
@@ -147,8 +145,7 @@ export const TopLoadingBar = ({
         return;
       }
 
-      // same route: skip loader
-      if (isSameRoute(url)) {
+      if (!willPathChange(url)) {
         return;
       }
 
@@ -171,11 +168,13 @@ export const TopLoadingBar = ({
     };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Complete loader only when the pathname changes
   useEffect(() => {
     if (prevPath.current === null) {
       prevPath.current = pathname;
       return;
     }
+
     done();
     prevPath.current = pathname;
   }, [pathname]); // eslint-disable-line react-hooks/exhaustive-deps
