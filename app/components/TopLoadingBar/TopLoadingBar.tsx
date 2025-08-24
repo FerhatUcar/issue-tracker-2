@@ -29,9 +29,19 @@ export const TopLoadingBar = ({
   const pathname = usePathname();
   const [active, setActive] = useState(false);
   const [width, setWidth] = useState(0);
+
   const rafRef = useRef<number | null>(null);
+  const prevPath = useRef<string | null>(null);
+
+  const clearRaf = () => {
+    if (rafRef.current) {
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+    }
+  };
 
   const start = () => {
+    // skip loader on same route
     if (active) {
       return;
     }
@@ -56,20 +66,58 @@ export const TopLoadingBar = ({
       return;
     }
 
-    if (rafRef.current) {
-      cancelAnimationFrame(rafRef.current);
-    }
+    clearRaf();
 
     setWidth(100);
 
-    // let it sit briefly for a "ready" feeling, then remove
     setTimeout(() => {
       setActive(false);
       setWidth(0);
     }, 150);
   };
 
+  const isSameRoute = (u: URL) =>
+    u.origin === location.origin &&
+    u.pathname === location.pathname &&
+    u.search === location.search; // ignore hash, route is the same
+
   useEffect(() => {
+    const wrap = <K extends "pushState" | "replaceState">(key: K) => {
+      const orig = history[key];
+
+      return function (
+        this: History,
+        ...args: Parameters<(typeof history)[K]>
+      ) {
+        try {
+          const urlArg = (args as unknown as [unknown, string, string?])[2];
+
+          if (urlArg) {
+            const nextUrl = new URL(urlArg, location.href);
+
+            // skip loader on same route
+            if (!isSameRoute(nextUrl)) {
+              start();
+            }
+          } else {
+            // geen url doorgegeven: geen idee wat er verandert, dus niks starten
+          }
+        } catch {
+          // op ongeldige URL geen loader starten
+        }
+
+        return orig.apply(this, args);
+      } as (typeof history)[K];
+    };
+
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    const origPush = history.pushState;
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    const origReplace = history.replaceState;
+
+    history.pushState = wrap("pushState");
+    history.replaceState = wrap("replaceState");
+
     const onClick = (e: MouseEvent) => {
       if (
         e.defaultPrevented ||
@@ -81,24 +129,35 @@ export const TopLoadingBar = ({
       ) {
         return;
       }
-
       const a = (e.target as HTMLElement)?.closest("a");
 
       if (!a) {
         return;
       }
 
-      // skip external links
-      const url = new URL(a.href, location.href);
+      const href = a.getAttribute("href");
+
+      if (!href) {
+        return;
+      }
+
+      const url = new URL(href, location.href);
 
       if (url.origin !== location.origin) {
+        return;
+      }
+
+      // same route: skip loader
+      if (isSameRoute(url)) {
         return;
       }
 
       start();
     };
 
-    const onPopState = () => start();
+    const onPopState = () => {
+      start();
+    };
 
     document.addEventListener("click", onClick, true);
     window.addEventListener("popstate", onPopState);
@@ -106,17 +165,17 @@ export const TopLoadingBar = ({
     return () => {
       document.removeEventListener("click", onClick, true);
       window.removeEventListener("popstate", onPopState);
+      history.pushState = origPush;
+      history.replaceState = origReplace;
+      clearRaf();
     };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const prevPath = useRef<string | null>(null);
 
   useEffect(() => {
     if (prevPath.current === null) {
       prevPath.current = pathname;
       return;
     }
-
     done();
     prevPath.current = pathname;
   }, [pathname]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -139,8 +198,8 @@ export const TopLoadingBar = ({
         shadow-[0_0_8px_rgba(56,189,248,0.6)] 
         pointer-events-none 
         bg-gradient-to-r from-sky-400/90 to-sky-400/50
-    ${className ?? ""}
-  `}
+        ${className ?? ""}
+      `}
     />
   );
 };
