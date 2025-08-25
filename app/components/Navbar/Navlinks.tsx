@@ -20,7 +20,7 @@ export const NavLinks = () => {
     {
       label: (
         <Flex direction="row" gap="2" align="center">
-          <MdOutlineWorkspaces /> Workspaces
+          <MdOutlineWorkspaces />
         </Flex>
       ),
       href: "/workspaces",
@@ -33,11 +33,13 @@ export const NavLinks = () => {
         <Flex align="center" gap="3" key={i}>
           <Link
             href={href}
-            className={classnames({
-              "!text-sky-400": href === currentPath,
-              "font-bold": href === currentPath,
-              "nav-link": true,
-            })}
+            className={`transition-transform duration-200 hover:scale-125 ${classnames(
+              {
+                "!text-sky-400": href === currentPath,
+                "font-bold": href === currentPath,
+                "nav-link": true,
+              },
+            )}`}
           >
             {label}
           </Link>

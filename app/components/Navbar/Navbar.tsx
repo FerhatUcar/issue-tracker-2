@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Box, Container, Flex, Separator } from "@radix-ui/themes";
+import { Box, Container, Flex, Separator, Text } from "@radix-ui/themes";
 import { AuthStatus } from "@/app/components";
 import { NavLinks } from "./Navlinks";
 import { useSession } from "next-auth/react";
@@ -25,7 +25,21 @@ export const Navbar = ({ data: { userId, count } }: Props) => {
           <Flex justify="between" align="center">
             <Flex align="center" gap="3">
               <Link href="/" className="relative inline-block">
-                <MdOutlineRocketLaunch className="transition-transform duration-200 hover:scale-125" />
+                {!isLoggedIn && (
+                  <Flex
+                    align="center"
+                    gap="2"
+                    className="transition-transform duration-200 hover:scale-105"
+                  >
+                    <MdOutlineRocketLaunch />
+                    <Text weight="bold">
+                      <span className="text-cyan-500">Rocket</span> Issues
+                    </Text>
+                  </Flex>
+                )}
+                {isLoggedIn && (
+                  <MdOutlineRocketLaunch className="transition-transform duration-200 hover:scale-125" />
+                )}
               </Link>
               {isLoggedIn && <Separator orientation="vertical" />}
               <NavLinks />
