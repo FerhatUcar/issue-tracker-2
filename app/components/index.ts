@@ -4,7 +4,7 @@ export { StatusDot } from "./StatusDot";
 export { ErrorMessage } from "./ErrorMessage";
 export { Link } from "./Link";
 export { Spinner } from "./Spinner";
-export { IssueStatus, AuthStatus } from "./Status";
+export { IssueStatus, AuthStatus, AuthStatusClient } from "./Status";
 export { NavbarWrapper } from "./Navbar";
 export { NoIssuesPlaceholder } from "./Placeholder";
 export { PublicHome } from "./PublicHome";

@@ -1,22 +1,19 @@
-"use client";
-
 import Link from "next/link";
 import { Box, Container, Flex, Separator, Text } from "@radix-ui/themes";
-import { AuthStatus } from "@/app/components";
-import { NavLinks } from "./Navlinks";
-import { useSession } from "next-auth/react";
 import { MdOutlineRocketLaunch } from "react-icons/md";
+import { NavLinks } from "./Navlinks";
+import { getServerSession } from "next-auth";
+import authOptions from "@/app/auth/authOptions";
+import { AuthStatusClient } from "@/app/components";
 
 type Props = {
-  data: {
-    userId: string;
-    count: number;
-  };
+  userId: string;
+  count: number;
 };
 
-export const Navbar = ({ data: { userId, count } }: Props) => {
-  const session = useSession();
-  const isLoggedIn = session.status === "authenticated";
+export const Navbar = async ({ userId, count }: Props) => {
+  const session = await getServerSession(authOptions);
+  const isLoggedIn = !!session;
 
   return (
     <Box className="h-[50px] sticky top-0 z-50">
@@ -25,7 +22,9 @@ export const Navbar = ({ data: { userId, count } }: Props) => {
           <Flex justify="between" align="center">
             <Flex align="center" gap="3">
               <Link href="/" className="relative inline-block">
-                {!isLoggedIn && (
+                {isLoggedIn ? (
+                  <MdOutlineRocketLaunch className="transition-transform duration-200 hover:scale-125" />
+                ) : (
                   <Flex
                     align="center"
                     gap="2"
@@ -37,14 +36,11 @@ export const Navbar = ({ data: { userId, count } }: Props) => {
                     </Text>
                   </Flex>
                 )}
-                {isLoggedIn && (
-                  <MdOutlineRocketLaunch className="transition-transform duration-200 hover:scale-125" />
-                )}
               </Link>
               {isLoggedIn && <Separator orientation="vertical" />}
               <NavLinks />
             </Flex>
-            <AuthStatus userId={userId} count={count} />
+            <AuthStatusClient userId={userId} count={count} />
           </Flex>
         </Container>
       </nav>

@@ -1,9 +1,9 @@
 import "@radix-ui/themes/styles.css";
 import "./theme-config.css";
 import "./globals.css";
+import { PropsWithChildren } from "react";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import React, { ReactNode } from "react";
 import { Container } from "@radix-ui/themes";
 import AuthProvider from "@/app/auth/Provider";
 import {
@@ -12,13 +12,7 @@ import {
   ThemeProvider,
 } from "@/app/providers";
 import { NavbarWrapper, TopLoadingBar } from "@/app/components";
-// import dynamic from "next/dynamic";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-
-// const PushNotifications = dynamic(
-//   () => import("@/app/components/PushNotificationInitializer"),
-//   { ssr: false },
-// );
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -28,7 +22,7 @@ export const metadata: Metadata = {
   manifest: "/manifest.json",
 };
 
-const RootLayout = ({ children }: { children: ReactNode }) => {
+const RootLayout = ({ children }: PropsWithChildren) => {
   return (
     <html lang="en">
       <head>
@@ -43,7 +37,6 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
           <AuthProvider>
             <RecoilContextProvider>
               <ThemeProvider>
-                {/*<PushNotifications />*/}
                 <NavbarWrapper />
                 <TopLoadingBar topOffset={55} height={2} />
                 <main>
