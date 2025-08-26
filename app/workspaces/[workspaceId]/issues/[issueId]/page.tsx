@@ -22,7 +22,11 @@ type Props = {
 
 export async function generateMetadata({ params: { issueId } }: Props) {
   const id = Number(issueId);
-  if (!Number.isFinite(id)) return {};
+
+  if (!Number.isFinite(id)) {
+    return {};
+  }
+
   const issue = await fetchIssue(id);
 
   return {
