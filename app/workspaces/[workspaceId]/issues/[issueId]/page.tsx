@@ -1,12 +1,13 @@
 import prisma from "@/prisma/client";
 import { notFound } from "next/navigation";
-import { Box, Card, Flex, Grid, Text } from "@radix-ui/themes";
+import { Box, Card, Flex, Grid } from "@radix-ui/themes";
 import IssueDetails from "@/app/workspaces/[workspaceId]/issues/[issueId]/IssueDetails";
 import {
   Comments,
   DeleteIssue,
   EditIssue,
   Reporter,
+  SideSection,
   Status,
 } from "@/app/workspaces/[workspaceId]/issues/[issueId]/components";
 import { getServerSession } from "next-auth";
@@ -20,17 +21,29 @@ type Props = {
 };
 
 export async function generateMetadata({ params: { issueId } }: Props) {
-  const issue = await fetchIssue(parseInt(issueId));
+  const id = Number(issueId);
+  if (!Number.isFinite(id)) return {};
+  const issue = await fetchIssue(id);
 
   return {
-    title: issue?.title,
-    description: "Details of issue " + issue?.id,
+    title: issue?.title ?? "Issue",
+    description: issue ? `Details of issue ${issue.id}` : "Issue not found",
   };
 }
 
-const IssueDetailPage = async ({ params: { issueId, workspaceId } }: Props) => {
-  const session = await getServerSession(authOptions);
-  const issue = await fetchIssue(parseInt(issueId));
+export default async function IssueDetailPage({
+  params: { issueId, workspaceId },
+}: Props) {
+  const id = Number(issueId);
+
+  if (!Number.isFinite(id)) {
+    notFound();
+  }
+
+  const [session, issue] = await Promise.all([
+    getServerSession(authOptions),
+    fetchIssue(id),
+  ]);
 
   if (!issue) {
     notFound();
@@ -41,10 +54,7 @@ const IssueDetailPage = async ({ params: { issueId, workspaceId } }: Props) => {
   }
 
   const isMember = await prisma.membership.findFirst({
-    where: {
-      workspaceId,
-      userId: session?.user?.id,
-    },
+    where: { workspaceId, userId: session?.user?.id },
     select: { id: true },
   });
 
@@ -64,49 +74,35 @@ const IssueDetailPage = async ({ params: { issueId, workspaceId } }: Props) => {
           <Flex direction="column" gap="3">
             <Reporter issue={issue} />
             <Status status={issue.status} />
-            <Flex
-              align="start"
-              direction="column"
-              gap="3"
-              className="text-xs text-gray-400 rounded-md p-2 bg-neutral-100 dark:bg-neutral-900"
-            >
-              <Text weight="bold">Update assignee</Text>
+
+            <SideSection title="Update assignee">
               <AssigneeSelect issue={issue} />
-            </Flex>
+            </SideSection>
 
-            <Flex
-              align="start"
-              direction="column"
-              gap="3"
-              className="text-xs text-gray-400 rounded-md p-2 bg-neutral-100 dark:bg-neutral-900"
-            >
-              <Text weight="bold"> Update status</Text>
+            <SideSection title="Update status">
               <IssueStatus issue={issue} />
-            </Flex>
+            </SideSection>
 
-            <Flex
-              align="start"
-              direction="column"
-              width="100%"
-              gap="3"
-              className="text-xs text-gray-400 rounded-md p-2 bg-neutral-100 dark:bg-neutral-900"
-            >
-              <Text weight="bold">Actions</Text>
-              <EditIssue
-                issue={{
-                  id: issue.id,
-                  title: issue.title,
-                  description: issue.description,
-                  assignedToUserId: issue.assignedToUserId,
-                }}
-              />
-              <DeleteIssue issueId={issue.id} workspaceId={workspaceId} />
-            </Flex>
+            <SideSection title="Actions">
+              <Box className="flex gap-2 w-full md:flex-col">
+                <Box className="w-[50%] md:w-full">
+                  <EditIssue
+                    issue={{
+                      id: issue.id,
+                      title: issue.title,
+                      description: issue.description,
+                      assignedToUserId: issue.assignedToUserId,
+                    }}
+                  />
+                </Box>
+                <Box className="w-[50%] md:w-full">
+                  <DeleteIssue issueId={issue.id} workspaceId={workspaceId} />
+                </Box>
+              </Box>
+            </SideSection>
           </Flex>
         </Card>
       )}
     </Grid>
   );
-};
-
-export default IssueDetailPage;
+}
