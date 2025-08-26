@@ -7,11 +7,13 @@ import authOptions from "@/app/auth/authOptions";
 import { AuthStatusClient } from "@/app/components";
 
 type Props = {
-  userId: string;
-  count: number;
+  data: {
+    userId: string;
+    count: number;
+  };
 };
 
-export const Navbar = async ({ userId, count }: Props) => {
+export const Navbar = async ({ data: { userId, count } }: Props) => {
   const session = await getServerSession(authOptions);
   const isLoggedIn = !!session;
 
