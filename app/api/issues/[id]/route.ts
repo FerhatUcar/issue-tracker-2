@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/prisma/client";
 import { getServerSession } from "next-auth";
 import authOptions from "@/app/auth/authOptions";
-import { Params, PatchBody, PatchIssueData } from "@/app/validations";
+import { ParamsIssue, PatchBody, PatchIssueData } from "@/app/validations";
 
 export async function PATCH(
   request: NextRequest,
@@ -16,7 +16,7 @@ export async function PATCH(
   }
 
   // Params
-  const parseParams = Params.safeParse(ctx.params);
+  const parseParams = ParamsIssue.safeParse(ctx.params);
 
   if (!parseParams.success) {
     return NextResponse.json(
@@ -99,8 +99,7 @@ export async function DELETE(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // Params
-  const parseParams = Params.safeParse(ctx.params);
+  const parseParams = ParamsIssue.safeParse(ctx.params);
 
   if (!parseParams.success) {
     return NextResponse.json(

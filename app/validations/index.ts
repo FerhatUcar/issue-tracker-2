@@ -2,6 +2,7 @@ export { issueSchema, type NewIssueInput } from "./issue-schema";
 export {
   patchIssueSchema,
   PatchBody,
+  ParamsIssue,
   type PatchIssueData,
 } from "./patch-issue-schema";
 export {

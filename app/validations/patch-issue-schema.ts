@@ -11,7 +11,7 @@ export const patchIssueSchema = z.object({
 });
 
 /** Validate and coerce route params */
-export const Params = z.object({
+export const ParamsIssue = z.object({
   id: z.string().regex(/^\d+$/, "id must be numeric").transform(Number),
 });
 
