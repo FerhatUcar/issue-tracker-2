@@ -2,7 +2,6 @@
 
 import dynamic from "next/dynamic";
 import { FormEventHandler, useMemo } from "react";
-import { z } from "zod";
 import { Skeleton, Spinner } from "@/app/components";
 import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
@@ -18,7 +17,7 @@ import {
 import "easymde/dist/easymde.min.css";
 import { useParams, useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
-import { patchIssueSchema } from "@/app/validations";
+import { PatchIssueSchema, patchIssueSchema } from "@/app/validations";
 import type { Options } from "easymde";
 import { MdOutlineRocketLaunch } from "react-icons/md";
 import { useDataQuery, useIssueMutation } from "@/app/hooks";
@@ -62,12 +61,11 @@ export const IssueForm = ({ issue, onSuccess }: Props) => {
     control,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<z.infer<typeof patchIssueSchema>>({
+  } = useForm<PatchIssueSchema>({
     resolver: zodResolver(patchIssueSchema),
     defaultValues: {
       title: issue?.title ?? "",
       description: issue?.description ?? "",
-      // store "unassigned" as UI sentinel; convert to null before submit
       assignedToUserId: issue?.assignedToUserId ?? "unassigned",
     },
   });
@@ -88,7 +86,7 @@ export const IssueForm = ({ issue, onSuccess }: Props) => {
     // - PATCH: never include workspaceId
     const payload = isEdit
       ? {
-          id: issue.id, // existing id for patch
+          id: issue.id,
           title: data.title,
           description: data.description,
           assignedToUserId,
@@ -97,7 +95,7 @@ export const IssueForm = ({ issue, onSuccess }: Props) => {
           title: data.title,
           description: data.description,
           assignedToUserId,
-          workspaceId, // only for POST/create
+          workspaceId,
         };
 
     try {
@@ -122,6 +120,7 @@ export const IssueForm = ({ issue, onSuccess }: Props) => {
 
   const handleFormSubmit: FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
+
     // Do NOT pass the event to onSubmit; RHF doesn't need it
     void onSubmit();
   };
@@ -136,7 +135,6 @@ export const IssueForm = ({ issue, onSuccess }: Props) => {
         </Callout.Root>
       )}
 
-      {/* Show a skeleton while users are loading if needed */}
       {isLoadingUsers && <IssueFormSkeleton />}
 
       <form className="space-y-4" onSubmit={handleFormSubmit}>
@@ -159,7 +157,6 @@ export const IssueForm = ({ issue, onSuccess }: Props) => {
             control={control}
             render={({ field }) => (
               <Select.Root
-                // make sure the select always has a string value
                 value={(field.value as string | null) ?? "unassigned"}
                 onValueChange={field.onChange}
               >

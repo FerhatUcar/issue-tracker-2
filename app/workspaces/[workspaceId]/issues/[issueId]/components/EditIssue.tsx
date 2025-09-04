@@ -2,7 +2,13 @@
 
 import { useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
-import { Button, DialogContent, Flex, IconButton, Text } from "@radix-ui/themes";
+import {
+  Button,
+  DialogContent,
+  Flex,
+  IconButton,
+  Text,
+} from "@radix-ui/themes";
 import { Cross2Icon, Pencil2Icon } from "@radix-ui/react-icons";
 import { IssueForm } from "@/app/workspaces/[workspaceId]/issues/_components/IssueForm";
 import { type Issue } from "@prisma/client";

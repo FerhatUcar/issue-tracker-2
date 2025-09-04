@@ -32,3 +32,4 @@ export const PatchBody = z
   );
 
 export type PatchIssueData = z.infer<typeof PatchBody>;
+export type PatchIssueSchema = z.infer<typeof patchIssueSchema>;

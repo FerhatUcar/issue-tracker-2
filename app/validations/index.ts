@@ -4,6 +4,7 @@ export {
   PatchBody,
   ParamsIssue,
   type PatchIssueData,
+  type PatchIssueSchema,
 } from "./patch-issue-schema";
 export {
   CommentArray,
