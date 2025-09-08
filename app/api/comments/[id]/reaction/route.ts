@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import authOptions from "@/app/auth/authOptions";
 import prisma from "@/prisma/client";
@@ -25,8 +25,8 @@ const extractCommentId = (req: Request, params?: { id?: string }) => {
 };
 
 export async function PATCH(
-  req: Request,
-  ctx: { params: { id: string } },
+  req: NextRequest,
+  { params }: { params: { id: string } },
 ): Promise<NextResponse> {
   const session = await getServerSession(authOptions);
 
@@ -34,14 +34,14 @@ export async function PATCH(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const commentId = extractCommentId(req, ctx.params) ?? 0;
+  const commentId = extractCommentId(req, params) ?? 0;
 
   if (!Number.isInteger(commentId)) {
     console.error(
       "Invalid or missing commentId. URL =",
       new URL(req.url).pathname,
       "params =",
-      ctx.params,
+      params,
     );
 
     return NextResponse.json({ error: "Invalid commentId" }, { status: 400 });
