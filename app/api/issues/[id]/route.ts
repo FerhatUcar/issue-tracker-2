@@ -4,9 +4,11 @@ import { getServerSession } from "next-auth";
 import authOptions from "@/app/auth/authOptions";
 import { ParamsIssue, PatchBody, PatchIssueData } from "@/app/validations";
 
+type Params = Promise<{ id: string }>;
+
 export async function PATCH(
   request: NextRequest,
-  ctx: { params: { id: string } },
+  { params }: { params: Params },
 ) {
   // AuthN
   const session = await getServerSession(authOptions);
@@ -16,7 +18,7 @@ export async function PATCH(
   }
 
   // Params
-  const parseParams = ParamsIssue.safeParse(ctx.params);
+  const parseParams = ParamsIssue.safeParse(params);
 
   if (!parseParams.success) {
     return NextResponse.json(
@@ -90,7 +92,7 @@ export async function PATCH(
 
 export async function DELETE(
   _request: NextRequest,
-  ctx: { params: { id: string } },
+  { params }: { params: Params },
 ) {
   // AuthN
   const session = await getServerSession(authOptions);
@@ -99,7 +101,7 @@ export async function DELETE(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const parseParams = ParamsIssue.safeParse(ctx.params);
+  const parseParams = ParamsIssue.safeParse(params);
 
   if (!parseParams.success) {
     return NextResponse.json(

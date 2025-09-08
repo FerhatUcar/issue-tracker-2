@@ -8,9 +8,11 @@ import { InviteBody, WorkspaceParams } from "@/app/validations";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+type Params = Promise<{ id: string }>;
+
 export async function POST(
   request: NextRequest,
-  ctx: { params: { id: string } },
+  { params }: { params: Params },
 ) {
   // AuthN
   const session = await getServerSession(authOptions);
@@ -20,7 +22,7 @@ export async function POST(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const paramsParsed = WorkspaceParams.safeParse(ctx.params);
+  const paramsParsed = WorkspaceParams.safeParse(params);
 
   if (!paramsParsed.success) {
     return NextResponse.json(

@@ -4,9 +4,11 @@ import { getServerSession } from "next-auth";
 import authOptions from "@/app/auth/authOptions";
 import { Params, PatchBodyComment } from "@/app/validations";
 
+type Params = Promise<{ id: string }>;
+
 export async function DELETE(
   _req: NextRequest,
-  ctx: { params: { id: string } },
+  { params }: { params: Params },
 ) {
   const session = await getServerSession(authOptions);
   const userId = session?.user?.id;
@@ -15,7 +17,7 @@ export async function DELETE(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { id } = Params.parse(ctx.params);
+  const { id } = Params.parse(params);
 
   // ownership
   const existing = await prisma.comment.findUnique({
@@ -36,7 +38,7 @@ export async function DELETE(
   return NextResponse.json({ success: true });
 }
 
-export async function PATCH(req: NextRequest, ctx: { params: { id: string } }) {
+export async function PATCH(req: NextRequest, { params }: { params: Params }) {
   const session = await getServerSession(authOptions);
   const userId = session?.user?.id;
 
@@ -45,7 +47,7 @@ export async function PATCH(req: NextRequest, ctx: { params: { id: string } }) {
   }
 
   // validate
-  const { id } = Params.parse(ctx.params);
+  const { id } = Params.parse(params);
   const { content } = PatchBodyComment.parse(await req.json());
 
   // ownership (of admin‑check, whatever your rules are)

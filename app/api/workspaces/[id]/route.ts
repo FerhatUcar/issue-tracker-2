@@ -4,10 +4,10 @@ import { getServerSession } from "next-auth";
 import authOptions from "@/app/auth/authOptions";
 import { revalidatePath } from "next/cache";
 
-export async function DELETE(
-  req: NextRequest,
-  { params }: { params: { id: string } },
-) {
+type Params = Promise<{ id: string }>;
+
+export async function DELETE(req: NextRequest, { params }: { params: Params }) {
+  const { id } = await params;
   const session = await getServerSession(authOptions);
 
   if (!session) {
@@ -15,7 +15,7 @@ export async function DELETE(
   }
 
   const workspace = await prisma.workspace.findUnique({
-    where: { id: params.id },
+    where: { id },
     include: { memberships: true },
   });
 
@@ -28,10 +28,10 @@ export async function DELETE(
   }
 
   try {
-    await prisma.invite.deleteMany({ where: { workspaceId: params.id } });
-    await prisma.issue.deleteMany({ where: { workspaceId: params.id } });
-    await prisma.membership.deleteMany({ where: { workspaceId: params.id } });
-    await prisma.workspace.delete({ where: { id: params.id } });
+    await prisma.invite.deleteMany({ where: { workspaceId: id } });
+    await prisma.issue.deleteMany({ where: { workspaceId: id } });
+    await prisma.membership.deleteMany({ where: { workspaceId: id } });
+    await prisma.workspace.delete({ where: { id } });
 
     revalidatePath("/workspaces");
 
