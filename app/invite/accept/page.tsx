@@ -8,14 +8,11 @@ import Link from "next/link";
 import { Accepted, NoInvite } from "@/app/invite/_components";
 
 type Props = {
-  searchParams: {
-    token: string;
-  };
+  searchParams: Promise<{ token: string }>;
 };
 
-export default async function AcceptInvitePage({
-  searchParams: { token },
-}: Props) {
+export default async function AcceptInvitePage({ searchParams }: Props) {
+  const { token } = await searchParams;
   const session = await getServerSession(authOptions);
   const invite = await prisma.invite.findUnique({
     where: { token },

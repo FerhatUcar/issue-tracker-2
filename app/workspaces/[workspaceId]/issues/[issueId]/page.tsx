@@ -15,12 +15,14 @@ import authOptions from "@/app/auth/authOptions";
 import AssigneeSelect from "@/app/workspaces/[workspaceId]/issues/[issueId]/AssigneeSelect";
 import IssueStatus from "@/app/workspaces/[workspaceId]/issues/_components/IssueStatus";
 import { fetchIssue } from "@/app/workspaces/[workspaceId]/issues/[issueId]/actions";
+import { Metadata } from "next";
 
 type Props = {
-  params: { issueId: string; workspaceId: string };
+  params: Promise<{ issueId: string; workspaceId: string }>;
 };
 
-export async function generateMetadata({ params: { issueId } }: Props) {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { issueId } = await params;
   const id = Number(issueId);
 
   if (!Number.isFinite(id)) {
@@ -35,9 +37,8 @@ export async function generateMetadata({ params: { issueId } }: Props) {
   };
 }
 
-export default async function IssueDetailPage({
-  params: { issueId, workspaceId },
-}: Props) {
+export default async function IssueDetailPage({ params }: Props) {
+  const { workspaceId, issueId } = await params;
   const id = Number(issueId);
 
   if (!Number.isFinite(id)) {

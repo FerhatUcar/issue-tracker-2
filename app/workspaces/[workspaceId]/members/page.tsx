@@ -1,11 +1,11 @@
 import { MembersOverview } from "@/app/workspaces/_components";
 
 type Props = {
-  params: {
-    workspaceId: string;
-  };
+  params: Promise<{ workspaceId: string }>;
 };
 
-export default function Page({ params }: Props) {
-  return <MembersOverview workspaceId={params.workspaceId} />;
+export default async function Page({ params }: Props) {
+  const { workspaceId } = await params;
+
+  return <MembersOverview workspaceId={workspaceId} />;
 }

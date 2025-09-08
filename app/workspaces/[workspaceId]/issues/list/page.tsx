@@ -15,10 +15,11 @@ import { IoMdArrowRoundBack } from "react-icons/io";
 
 type Props = {
   searchParams: IssueQuery;
-  params: { workspaceId: string };
+  params: Promise<{ workspaceId: string }>;
 };
 
-const IssuesPage = async ({ searchParams, params: { workspaceId } }: Props) => {
+const IssuesPage = async ({ searchParams, params }: Props) => {
+  const { workspaceId } = await params;
   const statuses: Status[] = Object.values(Status);
   const status: Status | undefined = statuses.includes(searchParams.status)
     ? searchParams.status

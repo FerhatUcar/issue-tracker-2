@@ -15,13 +15,11 @@ import { IssuesWithAssigning } from "@/app/types/types";
 
 type Props = {
   searchParams: IssueQuery;
-  params: { workspaceId: string };
+  params: Promise<{ workspaceId: string }>;
 };
 
-const AllIssuesPage = async ({
-  searchParams,
-  params: { workspaceId },
-}: Props) => {
+const AllIssuesPage = async ({ searchParams, params }: Props) => {
+  const { workspaceId } = await params;
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.id) {

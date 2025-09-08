@@ -4,12 +4,11 @@ import authOptions from "@/app/auth/authOptions";
 import prisma from "@/prisma/client";
 
 type Props = {
-  params: {
-    inviteId: string;
-  };
+  params: Promise<{ inviteId: string }>;
 };
 
-const AcceptInvitePage = async ({ params: { inviteId } }: Props) => {
+const AcceptInvitePage = async ({ params }: Props) => {
+  const { inviteId } = await params;
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.email) {
