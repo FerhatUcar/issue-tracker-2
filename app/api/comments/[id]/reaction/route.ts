@@ -4,13 +4,15 @@ import authOptions from "@/app/auth/authOptions";
 import prisma from "@/prisma/client";
 import { z } from "zod";
 
+type Params = Promise<{ id: string }>;
+
 const Body = z.object({
   type: z.enum(["LIKE", "DISLIKE"]),
 });
 
-const extractCommentId = (req: Request, params?: { id?: string }) => {
-  if (params?.id && /^\d+$/.test(params.id)) {
-    return Number(params.id);
+const extractCommentId = (req: Request, id?: string) => {
+  if (id && /^\d+$/.test(id)) {
+    return Number(id);
   }
 
   const match = new URL(req.url).pathname.match(
@@ -24,17 +26,15 @@ const extractCommentId = (req: Request, params?: { id?: string }) => {
   return undefined;
 };
 
-export async function PATCH(
-  req: NextRequest,
-  { params }: { params: { id: string } },
-) {
+export async function PATCH(req: NextRequest, { params }: { params: Params }) {
   const session = await getServerSession(authOptions);
+  const { id } = await params;
 
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const commentId = extractCommentId(req, params) ?? 0;
+  const commentId = extractCommentId(req, id) ?? 0;
 
   if (!Number.isInteger(commentId)) {
     console.error(
