@@ -1,14 +1,7 @@
 "use client";
 
-import React, { MouseEventHandler, ReactNode } from "react";
-import * as Dialog from "@radix-ui/react-dialog";
-import {
-  Box,
-  Button,
-  DialogContent,
-  DialogDescription,
-  DialogTitle,
-} from "@radix-ui/themes";
+import { MouseEventHandler, ReactNode } from "react";
+import { Box, Button, Dialog } from "@radix-ui/themes";
 
 type Props = {
   /**
@@ -42,7 +35,7 @@ type Props = {
   /**
    * Notified when the dialog requests to change open state.
    */
-  onOpenChange: (open: boolean) => void;
+  action: (open: boolean) => void;
 
   /**
    * Optional: custom footer content override.
@@ -55,29 +48,29 @@ export const ConfirmationDialog = ({
   description = "You can't revert this action.",
   onConfirm,
   open,
-  onOpenChange,
+  action,
   footer,
 }: Props) => {
   return (
-    <Dialog.Root modal open={open} onOpenChange={onOpenChange}>
-      <DialogContent
+    <Dialog.Root open={open} onOpenChange={action}>
+      <Dialog.Content
         className="bg-white dark:bg-neutral-900 p-6 rounded-lg shadow-lg z-50"
         style={{ maxWidth: 400 }}
       >
-        <DialogTitle className="text-lg font-semibold mb-2">
+        <Dialog.Title className="text-lg font-semibold mb-2">
           {title}
-        </DialogTitle>
-        <DialogDescription className="text-sm mb-4">
+        </Dialog.Title>
+        <Dialog.Description className="text-sm mb-4">
           {description}
-        </DialogDescription>
+        </Dialog.Description>
 
         <Box className="flex justify-end gap-3 mt-4">
           {footer ?? (
             <>
-              <Dialog.Close asChild>
+              <Dialog.Close>
                 <Button variant="soft">Cancel</Button>
               </Dialog.Close>
-              <Dialog.Close asChild>
+              <Dialog.Close>
                 <Button color="red" onClick={onConfirm}>
                   Delete
                 </Button>
@@ -85,7 +78,7 @@ export const ConfirmationDialog = ({
             </>
           )}
         </Box>
-      </DialogContent>
+      </Dialog.Content>
     </Dialog.Root>
   );
 };

@@ -61,7 +61,7 @@ export const DeleteMember = ({ userId, userName, workspaceId }: Props) => {
         description="Are you sure you want to delete this member?"
         onConfirm={handleKick}
         open={open}
-        onOpenChange={setOpen}
+        action={setOpen}
       />
     </>
   );

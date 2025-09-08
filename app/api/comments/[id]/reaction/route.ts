@@ -8,9 +8,9 @@ const Body = z.object({
   type: z.enum(["LIKE", "DISLIKE"]),
 });
 
-const extractCommentId = (req: Request, params?: { commentId?: string }) => {
-  if (params?.commentId && /^\d+$/.test(params.commentId)) {
-    return Number(params.commentId);
+const extractCommentId = (req: Request, params?: { id?: string }) => {
+  if (params?.id && /^\d+$/.test(params.id)) {
+    return Number(params.id);
   }
 
   const match = new URL(req.url).pathname.match(
@@ -24,10 +24,7 @@ const extractCommentId = (req: Request, params?: { commentId?: string }) => {
   return undefined;
 };
 
-export async function PATCH(
-  req: Request,
-  ctx: { params?: { commentId?: string } },
-) {
+export async function PATCH(req: Request, ctx: { params?: { id?: string } }) {
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.id) {

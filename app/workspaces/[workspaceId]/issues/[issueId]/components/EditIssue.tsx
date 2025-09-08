@@ -1,14 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import * as Dialog from "@radix-ui/react-dialog";
-import {
-  Button,
-  DialogContent,
-  Flex,
-  IconButton,
-  Text,
-} from "@radix-ui/themes";
+import { Button, Dialog, Flex, IconButton, Text } from "@radix-ui/themes";
 import { Cross2Icon, Pencil2Icon } from "@radix-ui/react-icons";
 import { IssueForm } from "@/app/workspaces/[workspaceId]/issues/_components/IssueForm";
 import { type Issue } from "@prisma/client";
@@ -28,11 +21,11 @@ export const EditIssue = ({ issue }: Props) => {
       </Button>
 
       <Dialog.Root open={open} onOpenChange={setOpen}>
-        <DialogContent className="relative mx-4">
+        <Dialog.Content className="relative mx-4">
           <Flex justify="between" align="center" mb="4">
             <Text>Edit issue</Text>
 
-            <Dialog.Close asChild>
+            <Dialog.Close>
               <IconButton
                 aria-label="Close dialog"
                 variant="ghost"
@@ -45,7 +38,7 @@ export const EditIssue = ({ issue }: Props) => {
           </Flex>
 
           <IssueForm issue={issue} action={() => setOpen(false)} />
-        </DialogContent>
+        </Dialog.Content>
       </Dialog.Root>
     </>
   );

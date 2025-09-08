@@ -173,7 +173,7 @@ export const Comment = ({ comment, issueId }: Props) => {
                 description="Are you sure you want to delete this comment? This action cannot be undone."
                 onConfirm={handleDelete}
                 open={open}
-                onOpenChange={setOpen}
+                action={setOpen}
               />
             </Flex>
           )}
