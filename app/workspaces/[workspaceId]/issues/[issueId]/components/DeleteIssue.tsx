@@ -15,7 +15,7 @@ type Props = {
 export const DeleteIssue = ({ issueId, workspaceId }: Props) => {
   const router = useRouter();
   const {
-    deleteIssue: { mutate, isError, reset, isLoading },
+    deleteIssue: { mutate, isError, reset, isPending },
   } = useIssueMutation();
 
   const handleDeleteIssue = () => {
@@ -38,10 +38,10 @@ export const DeleteIssue = ({ issueId, workspaceId }: Props) => {
     <>
       <AlertDialog.Root>
         <AlertDialog.Trigger>
-          <Button color="red" className="w-full" disabled={isLoading}>
+          <Button color="red" className="w-full" disabled={isPending}>
             <TrashIcon className="-mr-1" />
             Delete
-            {isLoading && <Spinner />}
+            {isPending && <Spinner />}
           </Button>
         </AlertDialog.Trigger>
         <AlertDialog.Content>

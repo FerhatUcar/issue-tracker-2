@@ -53,7 +53,7 @@ export default function IssueUserFilter({ workspaceId }: Props) {
     const params = new URLSearchParams();
 
     if (id === ALL) {
-      // alles tonen → geen filter
+      // do nothing
     } else {
       params.set("assignedToUserId", id === UNASSIGNED ? "null" : id);
     }

@@ -11,7 +11,7 @@ type Props = {
 
 export const CommentForm = ({ issueId }: Props) => {
   const {
-    createComment: { mutate, isLoading },
+    createComment: { mutate, isPending },
   } = useCommentMutation();
   const [content, setContent] = useState("");
   const router = useRouter();
@@ -45,15 +45,15 @@ export const CommentForm = ({ issueId }: Props) => {
         value={content}
         onChange={(e) => setContent(e.target.value)}
         placeholder="Write a comment..."
-        disabled={isLoading}
+        disabled={isPending}
       />
       <Button
         type="submit"
         variant="soft"
         className="text-sm font-medium px-4 py-2 rounded shadow-sm disabled:opacity-50 float-right w-full md:w-[150px]"
-        disabled={isLoading || !content.trim()}
+        disabled={isPending || !content.trim()}
       >
-        {isLoading ? "Posting..." : "Post Comment"}
+        {isPending ? "Posting..." : "Post Comment"}
       </Button>
     </form>
   );
