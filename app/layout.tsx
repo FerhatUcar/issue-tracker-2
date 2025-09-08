@@ -1,6 +1,7 @@
 import "@radix-ui/themes/styles.css";
 import "./theme-config.css";
 import "./globals.css";
+
 import { PropsWithChildren } from "react";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
@@ -11,7 +12,7 @@ import {
   RecoilContextProvider,
   ThemeProvider,
 } from "@/app/providers";
-import { NavbarWrapper, TopLoadingBar } from "@/app/components";
+import { NavbarWrapper, TopLoadingWrapper } from "@/app/components";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -38,7 +39,7 @@ const RootLayout = ({ children }: PropsWithChildren) => {
             <RecoilContextProvider>
               <ThemeProvider>
                 <NavbarWrapper />
-                <TopLoadingBar topOffset={55} height={2} />
+                <TopLoadingWrapper />
                 <main>
                   <Container className="p-5">{children}</Container>
                 </main>

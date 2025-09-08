@@ -5,8 +5,7 @@ import { Flex, IconButton } from "@radix-ui/themes";
 import IssueStatusFilter from "@/app/workspaces/[workspaceId]/issues/list/IssueStatusFilter";
 import IssueUserFilter from "@/app/workspaces/[workspaceId]/issues/list/IssueUserFilter";
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
-import { useRecoilState } from "recoil";
-import { searchState } from "@/app/state/selectors";
+import { useSearchStore } from "@/app/state";
 import { SearchField } from "./components";
 import { useEscapeKey } from "./hooks";
 import { CreateIssue } from "@/app/workspaces/[workspaceId]/issues/_components";
@@ -17,7 +16,8 @@ type Props = {
 
 const IssueActions = ({ workspaceId }: Props) => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [text, setText] = useRecoilState(searchState);
+  const text = useSearchStore((state) => state.search);
+  const setText = useSearchStore((state) => state.setSearch);
 
   const handleToggleSearch = useCallback(() => {
     setIsSearchOpen(!isSearchOpen);

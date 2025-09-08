@@ -12,7 +12,6 @@ import { IssuesWithAssigning } from "@/app/types/types";
 import { EmptyState } from "@/app/workspaces/[workspaceId]/issues/_components";
 import Link from "next/link";
 import { IoMdArrowRoundBack } from "react-icons/io";
-import React from "react";
 
 type Props = {
   searchParams: IssueQuery;

@@ -14,7 +14,7 @@ type Props = {
 };
 
 export const Link = ({ href, children }: Props) => (
-  <NextLink href={href} passHref legacyBehavior>
-    <RadixLink>{children}</RadixLink>
-  </NextLink>
+  <RadixLink asChild>
+    <NextLink href={href}>{children}</NextLink>
+  </RadixLink>
 );

@@ -1,9 +1,11 @@
 "use client";
 
-import { Flex, Select } from "@radix-ui/themes";
+import { Button, DropdownMenu, Flex } from "@radix-ui/themes";
+import { CheckIcon } from "@radix-ui/react-icons";
+import { IoIosArrowDown } from "react-icons/io";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Skeleton } from "@/app/components";
 import { useDataQuery } from "@/app/hooks";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 type IssueLite = { assignedToUserId: string | null };
 type AppUser = { id: string; name: string | null };
@@ -11,6 +13,7 @@ type AppUser = { id: string; name: string | null };
 type Props = { workspaceId: string };
 
 const UNASSIGNED = "__unassigned__";
+const ALL = "__all__";
 
 export default function IssueUserFilter({ workspaceId }: Props) {
   const router = useRouter();
@@ -29,94 +32,83 @@ export default function IssueUserFilter({ workspaceId }: Props) {
     isLoading: isUsersLoading,
   } = useDataQuery<AppUser>("users", workspaceId);
 
-  if (isUsersError || isIssuesError) {
-    return null;
-  }
+  if (isUsersError || isIssuesError) return null;
+  if (isUsersLoading || isIssuesLoading) return <Skeleton />;
 
-  if (isUsersLoading || isIssuesLoading) {
-    return <Skeleton />;
-  }
-
-  // get the user id from the URL
   const urlValue = searchParams.get("assignedToUserId") ?? "";
+  const selectedIds = urlValue ? urlValue.split(",") : [];
 
-  // Only show "assigned-only" when actually filtering on a specific user.
-  // So NOT at All ("") and NOT at Unassigned.
-  const showingAssignedOnly = urlValue !== "" && urlValue !== "null";
+  const hasUnassigned = (issues ?? []).some((i) => i.assignedToUserId === null);
 
-  // Set of userIds that appear in issues
-  const assignedIds = new Set(
-    (issues ?? [])
-      .map(({ assignedToUserId }) => assignedToUserId)
-      .filter((id): id is string => !!id),
-  );
-
-  // Options: default ALL users
   let options = (users ?? []).map(({ id, name }) => ({
     value: id,
     label: name ?? "(No name)",
   }));
 
-  // If you filter specifically on user, you can limit it to users with issues
-  if (showingAssignedOnly) {
-    options = options.filter((o) => assignedIds.has(o.value));
-
-    // Make sure the selected user remains visible, even without issues
-    if (urlValue && !options.some(({ value }) => value === urlValue)) {
-      const user = users?.find(({ id }) => id === urlValue);
-
-      if (user)
-        options = [
-          { value: user.id, label: user.name ?? "(No name)" },
-          ...options,
-        ];
-    }
-  }
-
-  // Include "Unassigned" if there are unassigned issues.
-  const hasUnassigned = (issues ?? []).some((i) => i.assignedToUserId === null);
-
   if (hasUnassigned) {
     options = [{ value: UNASSIGNED, label: "Unassigned" }, ...options];
   }
 
-  const value =
-    urlValue === "" ? "" : urlValue === "null" ? UNASSIGNED : urlValue;
-
-  const handleOnValueChange = (assignedToUserId: string) => {
+  const handleSelect = (id: string) => {
     const params = new URLSearchParams();
 
-    if (assignedToUserId && assignedToUserId !== UNASSIGNED) {
-      params.set("assignedToUserId", assignedToUserId);
-    } else if (assignedToUserId === UNASSIGNED) {
-      params.set("assignedToUserId", "null");
+    if (id === ALL) {
+      // alles tonen → geen filter
+    } else {
+      params.set("assignedToUserId", id === UNASSIGNED ? "null" : id);
     }
 
     const status = searchParams.get("status");
-
-    if (status) {
-      params.set("status", status);
-    }
+    if (status) params.set("status", status);
 
     router.push(`${pathname}?${params.toString()}`);
   };
 
+  const isAll = selectedIds.length === 0;
+
   return (
     <Flex align="center" gap="3">
-      <Select.Root value={value} onValueChange={handleOnValueChange}>
-        <Select.Trigger
-          placeholder="Filter by user"
-          className="truncate max-w-[85px] sm:max-w-none"
-        />
-        <Select.Content>
-          <Select.Item value="">All</Select.Item>
-          {options.map((opt) => (
-            <Select.Item key={opt.value} value={opt.value}>
-              {opt.label}
-            </Select.Item>
-          ))}
-        </Select.Content>
-      </Select.Root>
+      <DropdownMenu.Root>
+        <DropdownMenu.Trigger>
+          <Button variant="soft" size="3">
+            {isAll ? "All users" : `${selectedIds.length} selected`}
+            <IoIosArrowDown />
+          </Button>
+        </DropdownMenu.Trigger>
+        <DropdownMenu.Content>
+          <DropdownMenu.Item
+            onSelect={(e) => {
+              e.preventDefault();
+              handleSelect(ALL);
+            }}
+            className="flex items-center gap-2"
+          >
+            <span className="w-4 h-4 flex items-center justify-center border rounded">
+              {isAll && <CheckIcon className="w-3 h-3" />}
+            </span>
+            All
+          </DropdownMenu.Item>
+
+          {options.map((opt) => {
+            const checked = selectedIds.includes(opt.value);
+            return (
+              <DropdownMenu.Item
+                key={opt.value}
+                onSelect={(e) => {
+                  e.preventDefault();
+                  handleSelect(opt.value);
+                }}
+                className="flex items-center gap-2"
+              >
+                <span className="w-4 h-4 flex items-center justify-center border rounded">
+                  {checked && <CheckIcon className="w-3 h-3" />}
+                </span>
+                {opt.label}
+              </DropdownMenu.Item>
+            );
+          })}
+        </DropdownMenu.Content>
+      </DropdownMenu.Root>
     </Flex>
   );
 }

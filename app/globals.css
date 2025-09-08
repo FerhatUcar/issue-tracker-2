@@ -1,6 +1,4 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 /* =====================
    🌐 Global CSS Variables
@@ -110,11 +108,15 @@
   vertical-align: middle !important;
 }
 
+.rt-TableRow:hover {
+  background-color: var(--color-bg-table-row-hover);
+}
+
 .rt-BaseMenuItem {
   cursor: pointer !important;
 }
 
-.rt-CardInner {
+.rt-Card {
   width: 100%;
   background-color: var(--color-bg-card);
   box-shadow:
@@ -131,7 +133,7 @@ nav {
 }
 
 body {
-  background-color: var(--color-bg-body) !important;
+  background-color: var(--color-bg-body);
 }
 
 .rt-BaseMenuViewport {
@@ -170,14 +172,19 @@ body {
 }
 
 @keyframes rocket {
-    0%, 100% {
-        transform: translateY(0) rotate(-45deg);
-    }
-    50% {
-        transform: translateY(-30px) rotate(-45deg);
-    }
+  0%,
+  100% {
+    transform: translateY(0) rotate(-45deg);
+  }
+  50% {
+    transform: translateY(-30px) rotate(-45deg);
+  }
 }
 
 .animate-rocket {
-    animation: rocket 3s ease-in-out infinite;
+  animation: rocket 3s ease-in-out infinite;
+}
+
+button {
+  cursor: pointer !important;
 }

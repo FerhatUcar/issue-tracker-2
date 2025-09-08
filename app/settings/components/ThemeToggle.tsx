@@ -21,7 +21,7 @@ export const ThemeToggle = () => {
       <ToggleGroup.Item
         value="light"
         aria-label="Light mode"
-        className="rounded-l-lg px-3 py-2 data-[state=on]:bg-gray-200 dark:data-[state=on]:bg-gray-700"
+        className="rounded-l-lg px-3 py-2 data-[state=on]:bg-gray-200 dark:data-[state=on]:bg-gray-200"
       >
         <SunIcon />
       </ToggleGroup.Item>

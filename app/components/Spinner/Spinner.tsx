@@ -1,5 +1,5 @@
-import { Box } from "@radix-ui/themes";
 import { MdOutlineRocketLaunch } from "react-icons/md";
+import { Box } from "@/app/components";
 
 export const Spinner = () => (
   <Box className="fixed inset-0 flex items-center justify-center z-50 bg-transparent">

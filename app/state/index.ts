@@ -1,1 +1,1 @@
-export { searchValueState } from "./selectors";
+export { useSearchStore } from "./use-search-store";

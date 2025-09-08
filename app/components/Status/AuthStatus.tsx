@@ -100,7 +100,7 @@ export const AuthStatus = ({ userId, count }: Props) => {
                     variant="solid"
                     radius="full"
                     color="red"
-                    className="h-4 w-3 justify-center"
+                    className="h-4 !w-5 justify-center"
                   >
                     {count}
                   </Badge>

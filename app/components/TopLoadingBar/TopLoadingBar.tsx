@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { CSSProperties, useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { Box } from "@radix-ui/themes";
 
@@ -34,10 +34,12 @@ export const TopLoadingBar = ({
   const prevPath = useRef<string | null>(null);
 
   const clearRaf = () => {
-    if (rafRef.current) {
-      cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
+    if (rafRef.current === null) {
+      return;
     }
+
+    cancelAnimationFrame(rafRef.current);
+    rafRef.current = null;
   };
 
   const start = () => {
@@ -45,19 +47,10 @@ export const TopLoadingBar = ({
       return;
     }
 
-    setActive(true);
-    setWidth(0);
-
-    const tick = () => {
-      setWidth((w) => {
-        const next = w < 80 ? w + 8 : w + Math.max(1, (100 - w) * 0.02);
-        return Math.min(next, 92);
-      });
-
-      rafRef.current = requestAnimationFrame(tick);
-    };
-
-    rafRef.current = requestAnimationFrame(tick);
+    setTimeout(() => {
+      setActive(true);
+      setWidth(0);
+    }, 0);
   };
 
   const done = () => {
@@ -66,6 +59,7 @@ export const TopLoadingBar = ({
     }
 
     clearRaf();
+
     setWidth(100);
 
     setTimeout(() => {
@@ -74,19 +68,47 @@ export const TopLoadingBar = ({
     }, 150);
   };
 
-  // Only start the loader if the PATHNAME changes (ignore query string)
   const willPathChange = (u: URL) => {
-    if (u.origin !== location.origin) {
-      return false;
+    const sameOrigin = u.origin === location.origin;
+    const differentPath = u.pathname !== location.pathname;
+
+    return sameOrigin && differentPath;
+  };
+
+  const handleClick = (e: MouseEvent) => {
+    const isLeftClick = e.button === 0;
+    const hasModifier =
+      e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.defaultPrevented;
+
+    if (!isLeftClick || hasModifier) {
+      return;
     }
 
-    return u.pathname !== location.pathname;
+    const anchor = (e.target as HTMLElement)?.closest("a");
+    if (anchor === null) {
+      return;
+    }
+
+    const href = anchor.getAttribute("href");
+    if (href === null) {
+      return;
+    }
+
+    const url = new URL(href, location.href);
+    if (!willPathChange(url)) {
+      return;
+    }
+
+    start();
+  };
+
+  const handlePopState = () => {
+    start();
   };
 
   useEffect(() => {
     const wrap = <K extends "pushState" | "replaceState">(key: K) => {
       const orig = history[key];
-
       return function (
         this: History,
         ...args: Parameters<(typeof history)[K]>
@@ -94,7 +116,7 @@ export const TopLoadingBar = ({
         try {
           const urlArg = (args as unknown as [unknown, string, string?])[2];
 
-          if (urlArg) {
+          if (urlArg !== undefined && urlArg !== null) {
             const nextUrl = new URL(urlArg, location.href);
 
             if (willPathChange(nextUrl)) {
@@ -102,9 +124,8 @@ export const TopLoadingBar = ({
             }
           }
         } catch {
-          // Ignore invalid URL
+          // ignore invalid URL
         }
-
         return orig.apply(this, args);
       } as (typeof history)[K];
     };
@@ -117,88 +138,60 @@ export const TopLoadingBar = ({
     history.pushState = wrap("pushState");
     history.replaceState = wrap("replaceState");
 
-    const onClick = (e: MouseEvent) => {
-      if (
-        e.defaultPrevented ||
-        e.button !== 0 ||
-        e.metaKey ||
-        e.ctrlKey ||
-        e.shiftKey ||
-        e.altKey
-      ) {
-        return;
-      }
-
-      const a = (e.target as HTMLElement)?.closest("a");
-      if (!a) {
-        return;
-      }
-
-      const href = a.getAttribute("href");
-      if (!href) {
-        return;
-      }
-
-      const url = new URL(href, location.href);
-
-      if (url.origin !== location.origin) {
-        return;
-      }
-
-      if (!willPathChange(url)) {
-        return;
-      }
-
-      start();
-    };
-
-    const onPopState = () => {
-      start();
-    };
-
-    document.addEventListener("click", onClick, true);
-    window.addEventListener("popstate", onPopState);
+    document.addEventListener("click", handleClick, true);
+    window.addEventListener("popstate", handlePopState);
 
     return () => {
-      document.removeEventListener("click", onClick, true);
-      window.removeEventListener("popstate", onPopState);
+      document.removeEventListener("click", handleClick, true);
+      window.removeEventListener("popstate", handlePopState);
       history.pushState = origPush;
       history.replaceState = origReplace;
       clearRaf();
     };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Complete loader only when the pathname changes
+  useEffect(() => {
+    if (!active) return;
+
+    const tick = () => {
+      setWidth((w) => {
+        const next = w < 80 ? w + 8 : w + Math.max(1, (100 - w) * 0.02);
+        return Math.min(next, 92);
+      });
+      rafRef.current = requestAnimationFrame(tick);
+    };
+
+    rafRef.current = requestAnimationFrame(tick);
+    return () => clearRaf();
+  }, [active]);
+
   useEffect(() => {
     if (prevPath.current === null) {
       prevPath.current = pathname;
       return;
     }
-
     done();
     prevPath.current = pathname;
   }, [pathname]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  return (
-    <Box
-      aria-hidden
-      style={{
-        top: topOffset,
-        height,
-        transform: `scaleX(${active ? width / 100 : 0})`,
-        transitionDuration: active ? "50ms" : "200ms",
-      }}
-      className={`
-        fixed left-0 right-0 
-        origin-left 
-        [transition-property:transform] 
-        z-[60] 
-        rounded-full 
-        shadow-[0_0_8px_rgba(56,189,248,0.6)] 
-        pointer-events-none 
-        bg-gradient-to-r from-sky-400/90 to-sky-400/50
-        ${className ?? ""}
-      `}
-    />
-  );
+  const barStyle: CSSProperties = {
+    top: topOffset,
+    height,
+    transform: `scaleX(${active ? width / 100 : 0})`,
+    transitionDuration: active ? "50ms" : "200ms",
+  };
+
+  const barClass = `
+    fixed left-0 right-0 
+    origin-left 
+    [transition-property:transform] 
+    z-[60] 
+    rounded-full 
+    shadow-[0_0_8px_rgba(56,189,248,0.6)] 
+    pointer-events-none 
+    bg-gradient-to-r from-sky-400/90 to-sky-400/50
+    ${className ?? ""}
+  `;
+
+  return <Box aria-hidden style={barStyle} className={barClass} />;
 };

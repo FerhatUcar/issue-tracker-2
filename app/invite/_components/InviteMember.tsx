@@ -1,6 +1,6 @@
 "use client";
 
-import { Dispatch, PropsWithChildren, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { Button, Dialog, Flex, Text, TextField } from "@radix-ui/themes";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -24,24 +24,19 @@ type ApiErrorResponse = {
   error: string;
 };
 
-type Props = PropsWithChildren<{
+type Props = {
   workspaceId: string;
   open: boolean;
-  onOpenChange: Dispatch<SetStateAction<boolean>>;
-}>;
+  action: Dispatch<SetStateAction<boolean>>;
+};
 
-export const InviteMember = ({
-  workspaceId,
-  open,
-  onOpenChange,
-  children,
-}: Props) => {
-  const { mutateAsync, isLoading, isError } = useInviteMember();
+export const InviteMember = ({ workspaceId, open, action }: Props) => {
+  const { mutateAsync, isPending, isError } = useInviteMember();
+  const [apiError, setApiError] = useState("");
   const { data: members = [] } = useDataQuery<Member>(
     "workspace-members",
     workspaceId,
   );
-  const [apiError, setApiError] = useState("");
 
   const {
     register,
@@ -75,7 +70,7 @@ export const InviteMember = ({
         {
           onSuccess: () => {
             toast.success("Invitation sent!");
-            onOpenChange(false);
+            action(false);
             reset();
           },
         },
@@ -97,27 +92,22 @@ export const InviteMember = ({
   });
 
   const handleCancel = () => {
-    onOpenChange(false);
+    action(false);
     reset();
     setApiError("");
   };
 
   return (
-    <Dialog.Root open={open} onOpenChange={onOpenChange}>
-      <Dialog.Trigger>{children}</Dialog.Trigger>
-
+    <Dialog.Root open={open} onOpenChange={action}>
       <Dialog.Content className="mx-4">
         <Dialog.Title>Invite member</Dialog.Title>
 
-        {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
         <form onSubmit={onSubmit}>
           <Flex direction="column" gap="3">
-            <TextField.Root>
-              <TextField.Input
-                placeholder="User's email address"
-                {...register("email")}
-              />
-            </TextField.Root>
+            <TextField.Root
+              placeholder="User's email address"
+              {...register("email")}
+            />
 
             {errors.email && (
               <Text color="red" size="1">
@@ -139,13 +129,11 @@ export const InviteMember = ({
 
             <Flex gap="4" mt="4" justify="end" align="center">
               <Dialog.Close onClick={handleCancel}>
-                <Button type="button" variant="ghost">
-                  Cancel
-                </Button>
+                <Button variant="ghost">Cancel</Button>
               </Dialog.Close>
 
-              <Button type="submit" disabled={isLoading}>
-                {isLoading ? "Sending..." : "Invite"}
+              <Button type="submit" disabled={isPending}>
+                {isPending ? "Sending..." : "Invite"}
               </Button>
             </Flex>
           </Flex>

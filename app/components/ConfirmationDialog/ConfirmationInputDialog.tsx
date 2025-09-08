@@ -1,17 +1,7 @@
 "use client";
 
 import { ReactNode, useEffect, useMemo } from "react";
-import * as Dialog from "@radix-ui/react-dialog";
-import {
-  Button,
-  Code,
-  DialogContent,
-  DialogDescription,
-  DialogTitle,
-  Flex,
-  Text,
-  TextField,
-} from "@radix-ui/themes";
+import { Button, Code, Dialog, Flex, Text, TextField } from "@radix-ui/themes";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -27,7 +17,7 @@ type Props = {
   description: string | ReactNode;
   confirmLabel: string;
   confirmInputValue: string;
-  onConfirm: () => void;
+  action: () => void;
   loading?: boolean;
 };
 
@@ -38,7 +28,7 @@ export const ConfirmationInputDialog = ({
   description,
   confirmLabel,
   confirmInputValue,
-  onConfirm,
+  action,
   loading = false,
 }: Props) => {
   const schema = useMemo(
@@ -66,7 +56,7 @@ export const ConfirmationInputDialog = ({
   };
 
   const onSubmit = handleSubmit(() => {
-    onConfirm();
+    action();
     handleClose();
   });
 
@@ -78,22 +68,19 @@ export const ConfirmationInputDialog = ({
 
   return (
     <Dialog.Root open={open} onOpenChange={handleClose}>
-      <DialogContent>
-        <DialogTitle>{title}</DialogTitle>
-        <DialogDescription>
+      <Dialog.Content>
+        <Dialog.Title>{title}</Dialog.Title>
+        <Dialog.Description>
           {description} <Code>{confirmInputValue}</Code> to confirm.
-        </DialogDescription>
+        </Dialog.Description>
 
-        {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
         <form onSubmit={onSubmit}>
           <Flex direction="column" gap="3" mt="4">
-            <TextField.Root>
-              <TextField.Input
-                placeholder={`Type "${confirmInputValue}"`}
-                {...register("confirmation")}
-                disabled={loading || isSubmitting}
-              />
-            </TextField.Root>
+            <TextField.Root
+              placeholder={`Type "${confirmInputValue}"`}
+              {...register("confirmation")}
+              disabled={loading || isSubmitting}
+            ></TextField.Root>
 
             {errors.confirmation && (
               <Text color="red" size="1">
@@ -102,7 +89,7 @@ export const ConfirmationInputDialog = ({
             )}
 
             <Flex justify="end" gap="3" mt="2">
-              <Dialog.Close asChild>
+              <Dialog.Close>
                 <Button type="button" variant="soft">
                   Cancel
                 </Button>
@@ -118,7 +105,7 @@ export const ConfirmationInputDialog = ({
             </Flex>
           </Flex>
         </form>
-      </DialogContent>
+      </Dialog.Content>
     </Dialog.Root>
   );
 };

@@ -76,6 +76,10 @@ const AllIssuesPage = async ({
     name,
   }));
 
+  console.log(1, {
+    issues,
+  });
+
   return (
     <Box className="space-y-4">
       <PageTitle

@@ -8,12 +8,11 @@ import { getIssueStatusCounts } from "@/app/helpers";
 import { Actions } from "@/app/workspaces/_components";
 
 type Props = {
-  params: { workspaceId: string };
+  params: Promise<{ workspaceId: string }>;
 };
 
-export default async function WorkspacePage({
-  params: { workspaceId },
-}: Props) {
+const WorkspacePage = async ({ params }: Props) => {
+  const { workspaceId } = await params;
   const session = await getServerSession(authOptions);
 
   const [workspace, issueCounts] = await Promise.all([
@@ -46,7 +45,7 @@ export default async function WorkspacePage({
 
   return (
     <>
-      <Flex justify="between" align="center" mb="4">
+      <Flex justify="between" align="center" mb="4" width="full">
         <Heading size="4">
           {workspace.name?.charAt(0).toUpperCase() + workspace.name?.slice(1)}
         </Heading>
@@ -67,4 +66,6 @@ export default async function WorkspacePage({
       </Grid>
     </>
   );
-}
+};
+
+export default WorkspacePage;

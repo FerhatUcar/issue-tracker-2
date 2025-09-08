@@ -1,17 +1,9 @@
 "use client";
 
 import { type ComponentProps, useState } from "react";
-import * as Dialog from "@radix-ui/react-dialog";
-import {
-  Box,
-  Button,
-  DialogContent,
-  Flex,
-  IconButton,
-  Text,
-} from "@radix-ui/themes";
+import { Box, Button, Dialog, Flex, IconButton, Text } from "@radix-ui/themes";
 import { Cross2Icon } from "@radix-ui/react-icons";
-import { AiFillPlusCircle } from "react-icons/ai";
+import { HiOutlinePlus } from "react-icons/hi2";
 import { IssueForm } from "./IssueForm";
 import { IoTicketOutline } from "react-icons/io5";
 
@@ -49,27 +41,27 @@ export const CreateIssue = ({ hasSpace = false, hasText = true }: Props) => {
   return (
     <Box className={hasSpace ? "my-4" : ""}>
       {hasText ? (
-        <Button className="w-full justify-start mt-3" {...baseButtonProps}>
-          <AiFillPlusCircle />
-          Create new issue
+        <Button className="!w-full justify-start mt-3" {...baseButtonProps}>
+          <HiOutlinePlus />
+          Create Issue
         </Button>
       ) : (
         <IconButton {...baseButtonProps}>
-          <AiFillPlusCircle />
+          <HiOutlinePlus />
         </IconButton>
       )}
 
       <Dialog.Root open={open} onOpenChange={setOpen}>
-        <DialogContent aria-describedby={undefined} className="relative mx-4">
+        <Dialog.Content aria-describedby={undefined} className="relative mx-4">
           <Flex justify="between" align="center" mb="4">
-            <Dialog.DialogTitle>
+            <Dialog.Title>
               <Flex align="center" gap="2">
                 <IoTicketOutline size="20" />
                 <Text>Create issue</Text>
               </Flex>
-            </Dialog.DialogTitle>
+            </Dialog.Title>
 
-            <Dialog.Close asChild>
+            <Dialog.Close>
               <IconButton
                 aria-label="Close dialog"
                 variant="ghost"
@@ -80,8 +72,9 @@ export const CreateIssue = ({ hasSpace = false, hasText = true }: Props) => {
               </IconButton>
             </Dialog.Close>
           </Flex>
-          <IssueForm onSuccess={() => setOpen(false)} />
-        </DialogContent>
+
+          <IssueForm action={() => setOpen(false)} />
+        </Dialog.Content>
       </Dialog.Root>
     </Box>
   );

@@ -4,12 +4,10 @@ import { Card, Flex, Heading, Text } from "@radix-ui/themes";
 import { getStatusLabel } from "@/app/workspaces/[workspaceId]/issues/helpers";
 import { GiBoxTrap } from "react-icons/gi";
 
-const CreateIssueDialog = dynamic(
-  () =>
-    import(
-      "@/app/workspaces/[workspaceId]/issues/_components/CreateIssue"
-    ).then((m) => m.CreateIssue),
-  { ssr: false },
+const CreateIssueDialog = dynamic(() =>
+  import("@/app/workspaces/[workspaceId]/issues/_components/CreateIssue").then(
+    (m) => m.CreateIssue,
+  ),
 );
 
 type Props = {

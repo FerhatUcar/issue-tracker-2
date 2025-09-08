@@ -3,7 +3,7 @@
 import { Theme } from "@radix-ui/themes";
 import {
   createContext,
-  ReactNode,
+  PropsWithChildren,
   useCallback,
   useContext,
   useEffect,
@@ -11,79 +11,79 @@ import {
   useState,
 } from "react";
 
-export type Appearance = "light" | "dark";
+export type Appearance = "light" | "dark" | "inherit";
 
 const STORAGE_KEY = "ri.theme";
-
-const getInitialAppearance = (): Appearance => {
-  if (typeof window === "undefined") {
-    return "dark";
-  }
-
-  const saved = window.localStorage.getItem(STORAGE_KEY);
-
-  if (saved === "light" || saved === "dark") {
-    return saved;
-  }
-
-  const prefersDark = window.matchMedia?.(
-    "(prefers-color-scheme: dark)",
-  ).matches;
-
-  return prefersDark ? "dark" : "light";
-};
 
 const ThemeContext = createContext<{
   appearance: Appearance;
   toggleAppearance: () => void;
   setAppearance: (a: Appearance) => void;
 }>({
-  appearance: "light",
+  appearance: "dark",
   toggleAppearance: () => {},
   setAppearance: () => {},
 });
 
 export const useThemeToggle = () => useContext(ThemeContext);
 
-export function ThemeProvider({ children }: Readonly<{ children: ReactNode }>) {
-  const [appearance, setAppearance] =
-    useState<Appearance>(getInitialAppearance);
+export function ThemeProvider({ children }: PropsWithChildren) {
+  const [appearance, setAppearance] = useState<Appearance | null>(null);
+
+  // Hydrate on the client
+  useEffect(() => {
+    const saved = window.localStorage.getItem(STORAGE_KEY);
+
+    if (saved === "light" || saved === "dark") {
+      setAppearance(saved);
+    } else {
+      const prefersDark = window.matchMedia(
+        "(prefers-color-scheme: dark)",
+      ).matches;
+
+      setAppearance(prefersDark ? "dark" : "light");
+    }
+  }, []);
 
   useEffect(() => {
-    try {
+    if (appearance) {
       window.localStorage.setItem(STORAGE_KEY, appearance);
-    } catch {
-      console.warn("Failed to save theme to localStorage");
     }
   }, [appearance]);
-
-  useEffect(() => {
-    const onStorage = (e: StorageEvent) => {
-      if (
-        e.key === STORAGE_KEY &&
-        (e.newValue === "light" || e.newValue === "dark")
-      ) {
-        setAppearance(e.newValue);
-      }
-    };
-
-    window.addEventListener("storage", onStorage);
-
-    return () => window.removeEventListener("storage", onStorage);
-  }, []);
 
   const toggleAppearance = useCallback(() => {
     setAppearance((prev) => (prev === "light" ? "dark" : "light"));
   }, []);
 
   const ctxValue = useMemo(
-    () => ({ appearance, toggleAppearance, setAppearance }),
+    () => ({
+      appearance: appearance ?? "inherit",
+      toggleAppearance,
+      setAppearance,
+    }),
     [appearance, toggleAppearance],
   );
 
+  if (!appearance) {
+    // Optional: render a loading state or consistent fallback here
+    return null;
+  }
+
   return (
     <ThemeContext.Provider value={ctxValue}>
-      <Theme appearance={appearance} accentColor="sky" radius="large">
+      <Theme
+        appearance={appearance}
+        accentColor="sky"
+        grayColor="slate"
+        radius="large"
+        hasBackground={false}
+        style={{
+          backgroundColor:
+            appearance === "light"
+              ? "rgba(237, 237, 237, 0.8)"
+              : "rgba(27, 27, 27, 0.8)",
+        }}
+      >
         {children}
       </Theme>
     </ThemeContext.Provider>

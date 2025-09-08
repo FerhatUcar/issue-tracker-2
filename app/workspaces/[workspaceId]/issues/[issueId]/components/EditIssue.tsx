@@ -44,7 +44,7 @@ export const EditIssue = ({ issue }: Props) => {
             </Dialog.Close>
           </Flex>
 
-          <IssueForm issue={issue} onSuccess={() => setOpen(false)} />
+          <IssueForm issue={issue} action={() => setOpen(false)} />
         </DialogContent>
       </Dialog.Root>
     </>

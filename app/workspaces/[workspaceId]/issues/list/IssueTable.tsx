@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC, useEffect, useMemo, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 import { Avatar, Flex, Table, Text } from "@radix-ui/themes";
 import NextLink from "next/link";
 import { ArrowDownIcon, ArrowUpIcon } from "@radix-ui/react-icons";
@@ -9,8 +9,8 @@ import { Issue, Status } from "@prisma/client";
 import { columns } from "@/app/workspaces/[workspaceId]/issues/list/IssueColumns";
 import { useSession } from "next-auth/react";
 import { type IssuesWithAssigning } from "@/app/types/types";
-import { useRecoilValue } from "recoil";
-import { searchValueState } from "@/app/state";
+import { useSearchStore } from "@/app/state";
+import { useSearchParams } from "next/navigation";
 
 export type OrderableIssueField = keyof Issue | "workspaceName";
 
@@ -46,8 +46,9 @@ const IssueTable: FC<IssueTableProps> = ({
   showWorkspacePerIssue = false,
 }) => {
   const { status } = useSession();
+  const params = useSearchParams();
   const [sort, setSort] = useState<"asc" | "desc">("asc");
-  const searchValue = useRecoilValue(searchValueState);
+  const searchValue = useSearchStore((state) => state.search);
   const [filteredList, setFilteredList] =
     useState<IssuesWithAssigning[]>(issuesWithAssigning);
 
@@ -66,12 +67,17 @@ const IssueTable: FC<IssueTableProps> = ({
 
   useEffect(() => {
     const q = searchValue.toLowerCase();
+    const statusParam = params.get("status");
+
     setFilteredList(
-      issuesWithAssigning.filter(({ title }) =>
-        title.toLowerCase().includes(q),
-      ),
+      issuesWithAssigning.filter((issue) => {
+        const matchesSearch = issue.title.toLowerCase().includes(q);
+        const matchesStatus = statusParam ? issue.status === statusParam : true;
+
+        return matchesSearch && matchesStatus;
+      }),
     );
-  }, [searchValue, issuesWithAssigning]);
+  }, [searchValue, issuesWithAssigning, params]);
 
   const handleOnSort = () =>
     setSort((prev) => (prev === "asc" ? "desc" : "asc"));

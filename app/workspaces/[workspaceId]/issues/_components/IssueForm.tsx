@@ -35,10 +35,10 @@ const simpleMdeOptions: Options = {
 
 type Props = {
   issue?: Partial<Issue>;
-  onSuccess?: () => void;
+  action?: () => void;
 };
 
-export const IssueForm = ({ issue, onSuccess }: Props) => {
+export const IssueForm = ({ issue, action }: Props) => {
   const router = useRouter();
   const params = useParams();
   const {
@@ -48,7 +48,7 @@ export const IssueForm = ({ issue, onSuccess }: Props) => {
   // Resolve workspaceId from a route if not provided by props
   const workspaceId = Array.isArray(params?.workspaceId)
     ? params?.workspaceId[0]
-    : (params?.workspaceId as string | undefined);
+    : params?.workspaceId;
 
   // Load users for assignee select
   const { data: users = [], isLoading: isLoadingUsers } = useDataQuery<User>(
@@ -102,8 +102,8 @@ export const IssueForm = ({ issue, onSuccess }: Props) => {
       await mutateAsync(payload, {
         onSuccess: () => {
           toast.success("Issue submitted successfully!");
-          if (onSuccess) {
-            onSuccess();
+          if (action) {
+            action();
             router.refresh();
           } else {
             router.push(`/workspaces/${workspaceId}`);
@@ -137,19 +137,15 @@ export const IssueForm = ({ issue, onSuccess }: Props) => {
 
       {isLoadingUsers && <IssueFormSkeleton />}
 
-      <form className="space-y-4" onSubmit={handleFormSubmit}>
-        <TextField.Root className="relative z-10 pointer-events-auto">
-          <Flex align="center" width="100%">
-            <TextField.Input
-              size="3"
-              placeholder="Issue title..."
-              inputMode="text"
-              autoComplete="off"
-              className="rounded-sm"
-              {...register("title")}
-            />
-          </Flex>
-        </TextField.Root>
+      <form className="!space-y-4" onSubmit={handleFormSubmit}>
+        <TextField.Root
+          className="relative rounded-sm z-10 pointer-events-auto"
+          size="3"
+          placeholder="Issue title..."
+          inputMode="text"
+          autoComplete="off"
+          {...register("title")}
+        />
 
         {!isLoadingUsers && users.length > 0 ? (
           <Controller
@@ -161,7 +157,7 @@ export const IssueForm = ({ issue, onSuccess }: Props) => {
                 onValueChange={field.onChange}
               >
                 <Select.Trigger
-                  className="w-full"
+                  className="!w-full"
                   placeholder="Assign user..."
                 />
                 <Select.Content className="bg-neutral-500 dark:bg-neutral-900">

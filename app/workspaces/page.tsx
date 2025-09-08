@@ -2,12 +2,13 @@ import { getServerSession } from "next-auth";
 import authOptions from "@/app/auth/authOptions";
 import prisma from "@/prisma/client";
 import { redirect } from "next/navigation";
-import { Box, Card, Flex, Grid, Text } from "@radix-ui/themes";
+import { Card, Flex, Grid, Text } from "@radix-ui/themes";
 import { HiOutlinePlus } from "react-icons/hi2";
 import { CreateWorkspace } from "@/app/workspaces/_components/CreateWorkspace";
 import { WorkspaceCard } from "@/app/workspaces/_components";
 import { WorkspaceCardData, workspaceCardSelect } from "@/app/types/workspace";
-import { PageTitle } from "@/app/components";
+import { Box, PageTitle } from "@/app/components";
+import Link from "next/link";
 
 const WorkspacesPage = async () => {
   const session = await getServerSession(authOptions);
@@ -28,7 +29,7 @@ const WorkspacesPage = async () => {
 
       {workspaces.length === 0 ? (
         <Card>
-          <Box p="4" className="flex items-center justify-between">
+          <Box className="p-4 flex items-center justify-between">
             <Text size="3">You do not have any workspaces.</Text>
             <CreateWorkspace>
               <Card className="cursor-pointer">
@@ -53,11 +54,13 @@ const WorkspacesPage = async () => {
           ))}
 
           <CreateWorkspace>
-            <Card className="cursor-pointer transition-transform duration-300 hover:scale-105">
-              <Box className="flex justify-center items-center h-full">
-                <HiOutlinePlus className="w-10 h-10" />
-              </Box>
-            </Card>
+            <Link href="">
+              <Card className="h-full cursor-pointer transition-transform duration-300 hover:scale-105">
+                <Box className="flex justify-center items-center h-full">
+                  <HiOutlinePlus className="w-10 h-10" />
+                </Box>
+              </Card>
+            </Link>
           </CreateWorkspace>
         </Grid>
       )}

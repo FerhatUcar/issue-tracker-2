@@ -1,4 +1,5 @@
 export { default as Skeleton } from "./Skeleton/Skeleton";
+export { Box } from "./Box";
 export { StatusBadge } from "./StatusBadge";
 export { StatusDot } from "./StatusDot";
 export { ErrorMessage } from "./ErrorMessage";
@@ -18,5 +19,5 @@ export { PageTitle } from "./PageTitle";
 export { CommentForm } from "./CommentForm";
 export { ConfirmationDialog } from "./ConfirmationDialog";
 export { ConfirmationInputDialog } from "./ConfirmationDialog";
-export { TopLoadingBar } from "./TopLoadingBar";
+export { TopLoadingWrapper, TopLoadingBar } from "./TopLoadingBar";
 export { LikeButton, DislikeButton } from "./Reactions";

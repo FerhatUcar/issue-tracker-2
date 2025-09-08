@@ -1,8 +1,8 @@
 "use client";
 
-import { Button, DropdownMenu, Flex, Text } from "@radix-ui/themes";
-import { RiMore2Line } from "react-icons/ri";
 import Link from "next/link";
+import { DropdownMenu, Flex, IconButton, Text } from "@radix-ui/themes";
+import { RiMore2Line } from "react-icons/ri";
 import { IoTicketOutline } from "react-icons/io5";
 import { FaTrash, FaUserGroup } from "react-icons/fa6";
 import { useState } from "react";
@@ -20,7 +20,7 @@ type Props = {
 
 export const Actions = ({ workspaceId, workspaceName, isAdmin }: Props) => {
   const router = useRouter();
-  const { mutate, isLoading } = useDeleteWorkspace();
+  const { mutate, isPending } = useDeleteWorkspace();
   const [showDialog, setShowDialog] = useState(false);
   const [inviteOpen, setInviteOpen] = useState(false);
 
@@ -47,9 +47,9 @@ export const Actions = ({ workspaceId, workspaceName, isAdmin }: Props) => {
     <>
       <DropdownMenu.Root>
         <DropdownMenu.Trigger>
-          <Button variant="soft" size="3">
+          <IconButton variant="soft" size="3">
             <RiMore2Line />
-          </Button>
+          </IconButton>
         </DropdownMenu.Trigger>
 
         <DropdownMenu.Content
@@ -106,16 +106,18 @@ export const Actions = ({ workspaceId, workspaceName, isAdmin }: Props) => {
           confirmInputValue="DELETE"
           title={`Delete ${workspaceName}`}
           description="This will permanently delete the workspace. Type"
-          loading={isLoading}
-          onConfirm={handleDeleteConfirm}
+          loading={isPending}
+          action={handleDeleteConfirm}
         />
       )}
 
-      <InviteMember
-        workspaceId={workspaceId}
-        open={inviteOpen}
-        onOpenChange={setInviteOpen}
-      />
+      {inviteOpen && (
+        <InviteMember
+          workspaceId={workspaceId}
+          open={inviteOpen}
+          action={setInviteOpen}
+        />
+      )}
     </>
   );
 };

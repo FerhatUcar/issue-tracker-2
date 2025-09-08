@@ -14,12 +14,10 @@ import { IoTicketOutline } from "react-icons/io5";
 import { getLatestIssues } from "@/app/helpers";
 import { BsChatDots } from "react-icons/bs";
 
-const CreateIssueDialog = dynamic(
-  () =>
-    import(
-      "@/app/workspaces/[workspaceId]/issues/_components/CreateIssue"
-    ).then((m) => m.CreateIssue),
-  { ssr: false },
+const CreateIssueDialog = dynamic(() =>
+  import("@/app/workspaces/[workspaceId]/issues/_components/CreateIssue").then(
+    (m) => m.CreateIssue,
+  ),
 );
 
 type Props = {
@@ -48,7 +46,7 @@ export const LatestIssues = async ({ workspaceId }: Props) => {
             >
               <Box
                 mb="3"
-                className="bg-neutral-200/30 hover:bg-neutral-200/50 dark:bg-neutral-900/50 dark:hover:bg-neutral-900 transition rounded-lg pl-3 pr-2 py-2 min-h-[48px] content-center"
+                className="rt-TableRow transition rounded-lg pl-3 pr-2 py-2 min-h-[48px] content-center"
               >
                 <Flex justify="between" align="center">
                   <Flex direction="row" align="center" height="5" gap="2">

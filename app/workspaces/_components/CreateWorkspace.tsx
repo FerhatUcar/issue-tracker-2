@@ -19,7 +19,7 @@ type FormData = z.infer<typeof schema>;
 export const CreateWorkspace = ({ children }: PropsWithChildren) => {
   const [open, setOpen] = useState(false);
   const router = useRouter();
-  const { mutateAsync, isLoading } = useCreateWorkspace();
+  const { mutateAsync, isPending } = useCreateWorkspace();
 
   const {
     register,
@@ -34,7 +34,7 @@ export const CreateWorkspace = ({ children }: PropsWithChildren) => {
     try {
       await mutateAsync(data, {
         onSuccess: (res) => {
-          setOpen(!isLoading);
+          setOpen(!isPending);
           router.push(`/workspaces/${res.id}`);
           router.refresh();
         },
@@ -68,12 +68,10 @@ export const CreateWorkspace = ({ children }: PropsWithChildren) => {
 
         <form onSubmit={onSubmit}>
           <Flex direction="column" gap="3">
-            <TextField.Root>
-              <TextField.Input
-                placeholder="Workspace name"
-                {...register("name")}
-              />
-            </TextField.Root>
+            <TextField.Root
+              placeholder="Workspace name"
+              {...register("name")}
+            />
 
             {errors.name && (
               <Text color="red" size="1">
@@ -87,8 +85,9 @@ export const CreateWorkspace = ({ children }: PropsWithChildren) => {
                   Cancel
                 </Button>
               </Dialog.Close>
-              <Button type="submit" disabled={isSubmitting || isLoading}>
-                {isLoading ? "Creating..." : "Create"}
+
+              <Button type="submit" disabled={isSubmitting || isPending}>
+                {isPending ? "Creating..." : "Create"}
               </Button>
             </Flex>
           </Flex>

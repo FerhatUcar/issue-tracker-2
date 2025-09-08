@@ -1,10 +1,10 @@
 "use client";
 
-import React from "react";
 import { Box, Card, Grid, Text } from "@radix-ui/themes";
 import Link from "next/link";
 import classnames from "classnames";
 import { getSummaryData, Item } from "./get-summary-data";
+import { useThemeToggle } from "@/app/providers";
 
 type Props = {
   /**
@@ -42,7 +42,14 @@ export const Summary = ({
   closed,
   workspaceId,
 }: Props) => {
-  const items: Item[] = getSummaryData(open, inProgress, review, closed);
+  const { appearance } = useThemeToggle();
+  const items: Item[] = getSummaryData(
+    open,
+    inProgress,
+    review,
+    closed,
+    appearance,
+  );
 
   return (
     <Card>
