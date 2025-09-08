@@ -24,7 +24,10 @@ const extractCommentId = (req: Request, params?: { id?: string }) => {
   return undefined;
 };
 
-export async function PATCH(req: Request, ctx: { params?: { id?: string } }) {
+export async function PATCH(
+  req: Request,
+  ctx: { params: { id: string } },
+): Promise<NextResponse> {
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.id) {
