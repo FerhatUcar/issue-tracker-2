@@ -27,7 +27,7 @@ const extractCommentId = (req: Request, params?: { id?: string }) => {
 export async function PATCH(
   req: NextRequest,
   { params }: { params: { id: string } },
-): Promise<NextResponse> {
+) {
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.id) {
