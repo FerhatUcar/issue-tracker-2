@@ -2,9 +2,7 @@ import prisma from "@/prisma/client";
 import IssueActions from "@/app/workspaces/[workspaceId]/issues/list/IssueActions";
 import { Status } from "@prisma/client";
 import { Pagination } from "@/app/components";
-import IssueTable, {
-  IssueQuery,
-} from "@/app/workspaces/[workspaceId]/issues/list/IssueTable";
+import IssueTable, { IssueQuery } from "@/app/workspaces/[workspaceId]/issues/list/IssueTable";
 import { Box, Button, Card, Flex, Heading, Text } from "@radix-ui/themes";
 import { columns } from "@/app/workspaces/[workspaceId]/issues/list/IssueColumns";
 import { getPaginatedIssuesWithAssignedUser } from "@/app/helpers";
@@ -14,36 +12,37 @@ import Link from "next/link";
 import { IoMdArrowRoundBack } from "react-icons/io";
 
 type Props = {
-  searchParams: IssueQuery;
+  searchParams: Promise<IssueQuery>;
   params: Promise<{ workspaceId: string }>;
 };
 
 const IssuesPage = async ({ searchParams, params }: Props) => {
   const { workspaceId } = await params;
+  const searchParamsValue = await searchParams;
   const statuses: Status[] = Object.values(Status);
-  const status: Status | undefined = statuses.includes(searchParams.status)
-    ? searchParams.status
+  const status: Status | undefined = statuses.includes(searchParamsValue.status)
+    ? searchParamsValue.status
     : undefined;
 
   const assignedToUserId =
-    searchParams.assignedToUserId === "All"
+    searchParamsValue.assignedToUserId === "All"
       ? undefined
-      : searchParams.assignedToUserId;
+      : searchParamsValue.assignedToUserId;
 
   const validOrderFields = columns.map((column) => column.value);
-  const sortBy = searchParams.sortBy === "asc" ? "asc" : "desc";
+  const sortBy = searchParamsValue.sortBy === "asc" ? "asc" : "desc";
 
   let orderBy: NonNullable<unknown> = { createdAt: "desc" };
 
-  if (validOrderFields.includes(searchParams.orderBy)) {
-    if (searchParams.orderBy === "workspaceName") {
+  if (validOrderFields.includes(searchParamsValue.orderBy)) {
+    if (searchParamsValue.orderBy === "workspaceName") {
       orderBy = { Workspace: { name: sortBy } };
     } else {
-      orderBy = { [searchParams.orderBy]: sortBy };
+      orderBy = { [searchParamsValue.orderBy]: sortBy };
     }
   }
 
-  const page = parseInt(searchParams.page) || 1;
+  const page = parseInt(searchParamsValue.page) || 1;
 
   const [issues, issueCount, workspace] = await Promise.all([
     getPaginatedIssuesWithAssignedUser({
@@ -130,7 +129,10 @@ const IssuesPage = async ({ searchParams, params }: Props) => {
       </Card>
 
       <Card className="overflow-hidden shadow">
-        <IssueTable searchParams={searchParams} issuesWithAssigning={issues} />
+        <IssueTable
+          searchParams={searchParamsValue}
+          issuesWithAssigning={issues}
+        />
       </Card>
 
       {issueCount > 10 && (
