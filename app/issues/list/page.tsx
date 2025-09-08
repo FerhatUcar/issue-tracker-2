@@ -14,12 +14,13 @@ import { getPaginatedIssuesWithAssignedUser } from "@/app/helpers";
 import { IssuesWithAssigning } from "@/app/types/types";
 
 type Props = {
-  searchParams: IssueQuery;
+  searchParams: Promise<IssueQuery>;
   params: Promise<{ workspaceId: string }>;
 };
 
 const AllIssuesPage = async ({ searchParams, params }: Props) => {
   const { workspaceId } = await params;
+  const searchParamsValue = await searchParams;
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.id) {
@@ -27,15 +28,15 @@ const AllIssuesPage = async ({ searchParams, params }: Props) => {
   }
 
   const statuses: Status[] = Object.values(Status);
-  const status: Status | undefined = statuses.includes(searchParams.status)
-    ? searchParams.status
+  const status = statuses.includes(searchParamsValue.status)
+    ? searchParamsValue.status
     : undefined;
 
   const assignedToUserId =
-    searchParams.assignedToUserId === "All"
+    searchParamsValue.assignedToUserId === "All"
       ? undefined
-      : searchParams.assignedToUserId;
-  const page = parseInt(searchParams.page) || 1;
+      : searchParamsValue.assignedToUserId;
+  const page = parseInt(searchParamsValue.page) || 1;
   const pageSize = 10;
 
   const [issues, issueCount, memberships] = await Promise.all([
@@ -109,7 +110,7 @@ const AllIssuesPage = async ({ searchParams, params }: Props) => {
         <>
           <Card className="overflow-hidden">
             <IssueTable
-              searchParams={searchParams}
+              searchParams={searchParamsValue}
               issuesWithAssigning={issues}
               showWorkspacePerIssue
             />

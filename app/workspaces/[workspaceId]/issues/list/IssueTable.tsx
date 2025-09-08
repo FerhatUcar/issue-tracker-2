@@ -69,15 +69,48 @@ const IssueTable: FC<IssueTableProps> = ({
     const q = searchValue.toLowerCase();
     const statusParam = params.get("status");
 
-    setFilteredList(
-      issuesWithAssigning.filter((issue) => {
-        const matchesSearch = issue.title.toLowerCase().includes(q);
-        const matchesStatus = statusParam ? issue.status === statusParam : true;
+    let list = issuesWithAssigning.filter((issue) => {
+      const matchesSearch = issue.title.toLowerCase().includes(q);
+      const matchesStatus = statusParam ? issue.status === statusParam : true;
+      return matchesSearch && matchesStatus;
+    });
 
-        return matchesSearch && matchesStatus;
-      }),
-    );
-  }, [searchValue, issuesWithAssigning, params]);
+    // sort list
+    list = list.sort((a, b) => {
+      const { orderBy, sortBy } = searchParams;
+
+      const getValue = (issue: IssuesWithAssigning) => {
+        if (orderBy === "workspaceName") return issue.workspace?.name ?? "";
+        return issue[orderBy];
+      };
+
+      const aValue = getValue(a);
+      const bValue = getValue(b);
+
+      // handle string comparison
+      if (typeof aValue === "string" && typeof bValue === "string") {
+        return sortBy === "asc"
+          ? aValue.localeCompare(bValue)
+          : bValue.localeCompare(aValue);
+      }
+
+      // handle number comparison
+      if (typeof aValue === "number" && typeof bValue === "number") {
+        return sortBy === "asc" ? aValue - bValue : bValue - aValue;
+      }
+
+      // handle Date comparison
+      if (aValue instanceof Date && bValue instanceof Date) {
+        return sortBy === "asc"
+          ? aValue.getTime() - bValue.getTime()
+          : bValue.getTime() - aValue.getTime();
+      }
+
+      return 0;
+    });
+
+    setFilteredList(list);
+  }, [searchValue, issuesWithAssigning, params, searchParams]);
 
   const handleOnSort = () =>
     setSort((prev) => (prev === "asc" ? "desc" : "asc"));
