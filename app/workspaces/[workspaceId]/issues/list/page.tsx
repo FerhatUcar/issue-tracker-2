@@ -2,7 +2,9 @@ import prisma from "@/prisma/client";
 import IssueActions from "@/app/workspaces/[workspaceId]/issues/list/IssueActions";
 import { Status } from "@prisma/client";
 import { Pagination } from "@/app/components";
-import IssueTable, { IssueQuery } from "@/app/workspaces/[workspaceId]/issues/list/IssueTable";
+import IssueTable, {
+  IssueQuery,
+} from "@/app/workspaces/[workspaceId]/issues/list/IssueTable";
 import { Box, Button, Card, Flex, Heading, Text } from "@radix-ui/themes";
 import { columns } from "@/app/workspaces/[workspaceId]/issues/list/IssueColumns";
 import { getPaginatedIssuesWithAssignedUser } from "@/app/helpers";

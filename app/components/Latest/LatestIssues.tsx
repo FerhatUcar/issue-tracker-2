@@ -57,7 +57,7 @@ export const LatestIssues = async ({ workspaceId }: Props) => {
                     </Text>
                   </Flex>
 
-                  <Flex gap="2">
+                  <Flex gap="2" align="center">
                     {issue.Comment.length > 0 && (
                       <Badge variant="soft" color="gray">
                         <BsChatDots /> {issue.Comment.length}

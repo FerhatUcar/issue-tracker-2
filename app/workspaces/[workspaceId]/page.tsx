@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { Flex, Grid, Heading } from "@radix-ui/themes";
 import { getServerSession } from "next-auth";
 import authOptions from "@/app/auth/authOptions";
-import { IssueChart, LatestIssues, Summary } from "@/app/components";
+import { Box, IssueChart, LatestIssues, Summary } from "@/app/components";
 import { getIssueStatusCounts } from "@/app/helpers";
 import { Actions } from "@/app/workspaces/_components";
 
@@ -46,15 +46,19 @@ const WorkspacePage = async ({ params }: Props) => {
   return (
     <>
       <Flex justify="between" align="center" mb="4" width="full">
-        <Heading size="4">
-          {workspace.name?.charAt(0).toUpperCase() + workspace.name?.slice(1)}
-        </Heading>
+        <Box className="w-4/12">
+          <Heading size="4" className="truncate">
+            {workspace.name?.charAt(0).toUpperCase() + workspace.name?.slice(1)}
+          </Heading>
+        </Box>
 
-        <Actions
-          workspaceId={workspaceId}
-          workspaceName={workspace.name}
-          isAdmin={isAdmin ?? false}
-        />
+        <Box className="w-1/12 flex justify-end">
+          <Actions
+            workspaceId={workspaceId}
+            workspaceName={workspace.name}
+            isAdmin={isAdmin ?? false}
+          />
+        </Box>
       </Flex>
 
       <Grid columns={{ initial: "1", md: "2" }} gap="5">

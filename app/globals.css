@@ -144,7 +144,11 @@ body {
   height: 2.5rem !important;
 }
 
-.rt-Separator[data-orientation="horizontal"] {
+/*.rt-Separator[data-orientation="horizontal"] {*/
+/*  width: 100% !important;*/
+/*}*/
+
+.rt-Separator:where(.rt-r-orientation-horizontal) {
   width: 100% !important;
 }
 
@@ -187,4 +191,9 @@ body {
 
 button {
   cursor: pointer !important;
+  width: 100% !important;
+}
+
+.rt-BaseDialogContent button {
+    width: auto !important;
 }

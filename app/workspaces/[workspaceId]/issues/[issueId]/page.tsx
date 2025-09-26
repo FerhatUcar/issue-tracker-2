@@ -1,6 +1,6 @@
 import prisma from "@/prisma/client";
 import { notFound } from "next/navigation";
-import { Box, Card, Flex, Grid } from "@radix-ui/themes";
+import { Card, Flex, Grid } from "@radix-ui/themes";
 import IssueDetails from "@/app/workspaces/[workspaceId]/issues/[issueId]/IssueDetails";
 import {
   Comments,
@@ -16,6 +16,7 @@ import AssigneeSelect from "@/app/workspaces/[workspaceId]/issues/[issueId]/Assi
 import IssueStatus from "@/app/workspaces/[workspaceId]/issues/_components/IssueStatus";
 import { fetchIssue } from "@/app/workspaces/[workspaceId]/issues/[issueId]/actions";
 import { Metadata } from "next";
+import { Box } from "@/app/components";
 
 type Props = {
   params: Promise<{ issueId: string; workspaceId: string }>;
