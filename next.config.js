@@ -1,4 +1,4 @@
-/** @type {import('next').NextConfig} */
+/** @type {boolean} */
 
 const isProd = process.env.NODE_ENV === "production";
 
@@ -14,6 +14,7 @@ const withBundleAnalyzer = require("@next/bundle-analyzer")({
 });
 
 const nextConfig = {
+  turbopack: {},
   async headers() {
     return [
       {
