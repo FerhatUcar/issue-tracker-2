@@ -1,11 +1,11 @@
-import { Box } from "@radix-ui/themes";
 import Image from "next/image";
 import { FeatureCards } from "@/app/components/FeatureCards";
+import { Box } from "@/app/components";
 
 export const PublicHome = () => (
   <>
     <Box className="flex items-center">
-      <Box className="max-w-7xl w-full flex flex-col md:flex-row items-center justify-between">
+      <Box className="max-w-7xl w-full flex items-center justify-between">
         <Box className="text-left flex-1">
           <h1 className="text-4xl md:text-5xl font-extrabold mb-6 leading-tight">
             Create <span className="text-cyan-500">Rocket</span> fast issues..
