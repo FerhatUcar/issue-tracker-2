@@ -191,7 +191,6 @@ body {
 
 button {
   cursor: pointer !important;
-  width: 100% !important;
 }
 
 .rt-BaseDialogContent button {
