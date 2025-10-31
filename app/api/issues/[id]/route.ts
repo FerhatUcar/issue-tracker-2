@@ -4,32 +4,33 @@ import { getServerSession } from "next-auth";
 import authOptions from "@/app/auth/authOptions";
 import { ParamsIssue, PatchBody, PatchIssueData } from "@/app/validations";
 
-type Params = Promise<{ id: string }>;
-
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: Params },
-) {
-  // AuthN
+async function getAuthorizedIssueId(context: { params: Promise<{ id: string }> }) {
+  const { id } = await context.params;
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // Params
-  const parseParams = ParamsIssue.safeParse(params);
-
-  if (!parseParams.success) {
+  const parsed = ParamsIssue.safeParse({ id });
+  if (!parsed.success) {
     return NextResponse.json(
-      { errors: parseParams.error.flatten() },
+      { errors: parsed.error.flatten() },
       { status: 400 },
     );
   }
 
-  const issueId = parseParams.data.id;
+  return parsed.data.id;
+}
 
-  // Read raw body first so we can block disallowed keys explicitly
+export async function PATCH(
+  request: NextRequest,
+  context: { params: Promise<{ id: string }> },
+) {
+  const issueIdOrResponse = await getAuthorizedIssueId(context);
+  if (issueIdOrResponse instanceof NextResponse) return issueIdOrResponse;
+  const issueId = issueIdOrResponse;
+
   const raw: unknown = await request.json();
 
   // Hard block: workspaceId must not be patchable
@@ -92,25 +93,11 @@ export async function PATCH(
 
 export async function DELETE(
   _request: NextRequest,
-  { params }: { params: Params },
+  context: { params: Promise<{ id: string }> },
 ) {
-  // AuthN
-  const session = await getServerSession(authOptions);
-
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  const parseParams = ParamsIssue.safeParse(params);
-
-  if (!parseParams.success) {
-    return NextResponse.json(
-      { errors: parseParams.error.flatten() },
-      { status: 400 },
-    );
-  }
-
-  const issueId = parseParams.data.id;
+  const issueIdOrResponse = await getAuthorizedIssueId(context);
+  if (issueIdOrResponse instanceof NextResponse) return issueIdOrResponse;
+  const issueId = issueIdOrResponse;
 
   // Ensure the issue exists
   const existing = await prisma.issue.findUnique({

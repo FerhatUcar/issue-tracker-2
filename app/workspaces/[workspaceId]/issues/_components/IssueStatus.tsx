@@ -28,7 +28,7 @@ const IssueStatus = ({ issue }: Props) => {
     notFound();
   }
 
-  const handleOnChange = (status: string) => {
+  const handleOnChange = (status: Status) => {
     if (!issue.id) {
       toast.error("Issue ID is missing");
       return;
@@ -38,7 +38,7 @@ const IssueStatus = ({ issue }: Props) => {
       mutate(
         {
           id: issue.id,
-          status: status as Status,
+          status,
         },
         {
           onSuccess: () => {
