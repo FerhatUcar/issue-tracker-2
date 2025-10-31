@@ -68,7 +68,7 @@ const AssigneeSelect = ({ issue }: Props) => {
         onValueChange={handleOnValueChange}
         size="1"
       >
-        <Select.Trigger className="w-full" placeholder="Assign..." />
+        <Select.Trigger className="!w-full" placeholder="Assign..." />
         <Select.Content>
           <Select.Group>
             <Select.Label>Suggestions</Select.Label>

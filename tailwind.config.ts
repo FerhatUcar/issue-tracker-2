@@ -3,8 +3,6 @@ import type { Config } from "tailwindcss";
 const config: Config = {
   darkMode: ["class", '[prefers-color-scheme="light"]'],
   content: [
-    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
@@ -150,7 +148,13 @@ const config: Config = {
       },
     },
   },
-  plugins: [require("@tailwindcss/forms"), require("tailwindcss-radix")],
+  plugins: [
+    require("@tailwindcss/forms"),
+    require("@tailwindcss/postcss"),
+    require("tailwindcss-radix"),
+    require("tailwindcss/utilities"),
+    require("tailwindcss/plugin"),
+  ],
 };
 
 export default config;

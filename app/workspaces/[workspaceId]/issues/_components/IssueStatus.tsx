@@ -60,7 +60,7 @@ const IssueStatus = ({ issue }: Props) => {
         onValueChange={handleOnChange}
         size="1"
       >
-        <Select.Trigger className="w-full" placeholder="Status..." />
+        <Select.Trigger className="!w-full" placeholder="Status..." />
         <Select.Content>
           <Select.Group>
             <Select.Label>Choose status</Select.Label>

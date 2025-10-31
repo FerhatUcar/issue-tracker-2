@@ -10,10 +10,10 @@ import { FaFacebookF } from "react-icons/fa";
 type Props = {
   callbackUrl?: string;
   open: boolean;
-  setOpen: (open: boolean) => void;
+  action: (open: boolean) => void;
 };
 
-export const Login = ({ callbackUrl = "/", open, setOpen }: Props) => {
+export const Login = ({ callbackUrl = "/", open, action }: Props) => {
   const [loading, setLoading] = useState(false);
 
   const handleOnClick = () => {
@@ -23,8 +23,8 @@ export const Login = ({ callbackUrl = "/", open, setOpen }: Props) => {
   };
 
   return (
-    <Dialog.Root open={open} onOpenChange={setOpen}>
-      <Dialog.Content className="relative mx-4">
+    <Dialog.Root open={open} onOpenChange={action}>
+      <Dialog.Content className="relative mx-2">
         <Flex justify="between" align="start">
           <Box>
             <Dialog.Title mb="0">Log in</Dialog.Title>
@@ -64,7 +64,7 @@ export const Login = ({ callbackUrl = "/", open, setOpen }: Props) => {
             title="Login with Facebook"
           >
             <FaFacebookF />
-            Continue with Facebook
+            Login with Facebook
           </Button>
         </Flex>
       </Dialog.Content>

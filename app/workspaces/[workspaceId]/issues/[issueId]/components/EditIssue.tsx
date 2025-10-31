@@ -15,7 +15,7 @@ export const EditIssue = ({ issue }: Props) => {
 
   return (
     <>
-      <Button className="w-full" variant="soft" onClick={() => setOpen(true)}>
+      <Button className="!w-full" variant="soft" onClick={() => setOpen(true)}>
         <Pencil2Icon />
         Edit
       </Button>

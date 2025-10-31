@@ -90,20 +90,17 @@ export default async function IssueDetailPage({ params }: Props) {
             </SideSection>
 
             <SideSection title="Actions">
-              <Box className="flex gap-2 w-full md:flex-col">
-                <Box className="w-[50%] md:w-full">
-                  <EditIssue
-                    issue={{
-                      id: issue.id,
-                      title: issue.title,
-                      description: issue.description,
-                      assignedToUserId: issue.assignedToUserId,
-                    }}
-                  />
-                </Box>
-                <Box className="w-[50%] md:w-full">
-                  <DeleteIssue issueId={issue.id} workspaceId={workspaceId} />
-                </Box>
+              <Box className="flex gap-2 w-full flex-col xs:flex-row">
+                <EditIssue
+                  issue={{
+                    id: issue.id,
+                    title: issue.title,
+                    description: issue.description,
+                    assignedToUserId: issue.assignedToUserId,
+                  }}
+                />
+
+                <DeleteIssue issueId={issue.id} workspaceId={workspaceId} />
               </Box>
             </SideSection>
           </Flex>

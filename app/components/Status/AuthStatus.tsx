@@ -47,7 +47,7 @@ export const AuthStatus = ({ userId, count }: Props) => {
           Log in
         </Button>
 
-        <Login open={openIn} setOpen={setOpenIn} />
+        <Login open={openIn} action={setOpenIn} />
       </>
     );
   }
