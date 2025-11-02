@@ -7,11 +7,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Container } from "@radix-ui/themes";
 import AuthProvider from "@/app/auth/Provider";
-import {
-  QueryClientProvider,
-  RecoilContextProvider,
-  ThemeProvider,
-} from "@/app/providers";
+import { QueryClientProvider, ThemeProvider } from "@/app/providers";
 import { NavbarWrapper, TopLoadingWrapper } from "@/app/components";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
@@ -36,15 +32,13 @@ const RootLayout = ({ children }: PropsWithChildren) => {
       <body className={inter.variable}>
         <QueryClientProvider>
           <AuthProvider>
-            <RecoilContextProvider>
-              <ThemeProvider>
-                <NavbarWrapper />
-                <TopLoadingWrapper />
-                <main>
-                  <Container className="p-5">{children}</Container>
-                </main>
-              </ThemeProvider>
-            </RecoilContextProvider>
+            <ThemeProvider>
+              <NavbarWrapper />
+              <TopLoadingWrapper />
+              <main>
+                <Container className="p-5">{children}</Container>
+              </main>
+            </ThemeProvider>
           </AuthProvider>
           {process.env.NODE_ENV === "development" && (
             <ReactQueryDevtools initialIsOpen={false} />
