@@ -4,53 +4,53 @@ import { getServerSession } from "next-auth";
 import authOptions from "@/app/auth/authOptions";
 import { Params, PatchBodyComment } from "@/app/validations";
 
-type Params = Promise<{ id: string }>;
-
-export async function DELETE(
-  _req: NextRequest,
-  { params }: { params: Params },
-) {
+async function getAuthorizedCommentId(context: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await context.params;
   const session = await getServerSession(authOptions);
   const userId = session?.user?.id;
 
   if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return { error: NextResponse.json({ error: "Unauthorized" }, { status: 401 }) };
   }
 
-  const { id } = Params.parse(params);
-
-  // ownership
-  const existing = await prisma.comment.findUnique({
-    where: { id },
-    select: { authorId: true },
-  });
-
-  if (!existing) {
-    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  const parsed = Params.safeParse({ id });
+  if (!parsed.success) {
+    return {
+      error: NextResponse.json(
+        { errors: parsed.error.flatten() },
+        { status: 400 },
+      ),
+    };
   }
 
-  if (existing.authorId !== userId) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  }
-
-  await prisma.comment.delete({ where: { id } });
-
-  return NextResponse.json({ success: true });
+  return { id: parsed.data.id, userId };
 }
 
-export async function PATCH(req: NextRequest, { params }: { params: Params }) {
-  const session = await getServerSession(authOptions);
-  const userId = session?.user?.id;
+export async function PATCH(
+  request: NextRequest,
+  context: { params: Promise<{ id: string }> },
+) {
+  const auth = await getAuthorizedCommentId(context);
 
-  if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if ("error" in auth) {
+    return auth.error;
   }
 
-  // validate
-  const { id } = Params.parse(params);
-  const { content } = PatchBodyComment.parse(await req.json());
+  const { id, userId } = auth;
 
-  // ownership (of admin‑check, whatever your rules are)
+  const bodyResult = PatchBodyComment.safeParse(await request.json());
+  if (!bodyResult.success) {
+    return NextResponse.json(
+      { errors: bodyResult.error.flatten() },
+      { status: 400 },
+    );
+  }
+
+  const { content } = bodyResult.data;
+
+  // ownership
   const existing = await prisma.comment.findUnique({
     where: { id },
     select: { authorId: true },
@@ -71,4 +71,35 @@ export async function PATCH(req: NextRequest, { params }: { params: Params }) {
   });
 
   return NextResponse.json(updated);
+}
+
+export async function DELETE(
+  _request: NextRequest,
+  context: { params: Promise<{ id: string }> },
+) {
+  const auth = await getAuthorizedCommentId(context);
+
+  if ("error" in auth) {
+    return auth.error;
+  }
+
+  const { id, userId } = auth;
+
+  // ownership (of admin‑check, whatever your rules are)
+  const existing = await prisma.comment.findUnique({
+    where: { id },
+    select: { authorId: true },
+  });
+
+  if (!existing) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+
+  if (existing.authorId !== userId) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  await prisma.comment.delete({ where: { id } });
+
+  return NextResponse.json({ success: true });
 }

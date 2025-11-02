@@ -64,7 +64,7 @@ export const ConfirmationDialog = ({
           {description}
         </Dialog.Description>
 
-        <Box className="flex justify-end gap-3 mt-4">
+        <Box className="!flex !justify-end !gap-3 mt-4">
           {footer ?? (
             <>
               <Dialog.Close>

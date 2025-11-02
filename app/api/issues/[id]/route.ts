@@ -28,9 +28,12 @@ export async function PATCH(
   context: { params: Promise<{ id: string }> },
 ) {
   const issueIdOrResponse = await getAuthorizedIssueId(context);
-  if (issueIdOrResponse instanceof NextResponse) return issueIdOrResponse;
-  const issueId = issueIdOrResponse;
 
+  if (issueIdOrResponse instanceof NextResponse) {
+    return issueIdOrResponse;
+  }
+
+  const issueId = issueIdOrResponse;
   const raw: unknown = await request.json();
 
   // Hard block: workspaceId must not be patchable

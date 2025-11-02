@@ -24,7 +24,7 @@ const IssueStatusFilter = () => {
     if (status !== "ALL") {
       params.set("status", status);
     } else {
-      params.set("status", "ALL");
+      params.delete("status");
     }
 
     if (assignedToUserId) {

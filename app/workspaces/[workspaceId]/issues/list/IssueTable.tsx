@@ -72,6 +72,7 @@ const IssueTable: FC<IssueTableProps> = ({
     let list = issuesWithAssigning.filter((issue) => {
       const matchesSearch = issue.title.toLowerCase().includes(q);
       const matchesStatus = statusParam ? issue.status === statusParam : true;
+
       return matchesSearch && matchesStatus;
     });
 
@@ -80,7 +81,10 @@ const IssueTable: FC<IssueTableProps> = ({
       const { orderBy, sortBy } = searchParams;
 
       const getValue = (issue: IssuesWithAssigning) => {
-        if (orderBy === "workspaceName") return issue.workspace?.name ?? "";
+        if (orderBy === "workspaceName") {
+          return issue.workspace?.name ?? "";
+        }
+
         return issue[orderBy];
       };
 
