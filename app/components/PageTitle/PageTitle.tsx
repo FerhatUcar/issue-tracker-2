@@ -7,7 +7,7 @@ type Props = {
 };
 
 export const PageTitle = ({ title, description }: Props) => (
-  <Box mb="4">
+  <Box mb="6" mt="4">
     <Heading as="h1" size="6">
       {title}
     </Heading>

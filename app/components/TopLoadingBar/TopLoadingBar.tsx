@@ -32,21 +32,24 @@ export const TopLoadingBar = ({
 
   const rafRef = useRef<number | null>(null);
   const prevPath = useRef<string | null>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const clearRaf = () => {
-    if (rafRef.current === null) {
-      return;
+    if (rafRef.current !== null) {
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
     }
+  };
 
-    cancelAnimationFrame(rafRef.current);
-    rafRef.current = null;
+  const clearTimeoutRef = () => {
+    if (timeoutRef.current !== null) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
   };
 
   const start = () => {
-    if (active) {
-      return;
-    }
-
+    if (active) return;
     setTimeout(() => {
       setActive(true);
       setWidth(0);
@@ -54,12 +57,9 @@ export const TopLoadingBar = ({
   };
 
   const done = () => {
-    if (!active) {
-      return;
-    }
-
+    if (!active) return;
     clearRaf();
-
+    clearTimeoutRef();
     setWidth(100);
 
     setTimeout(() => {
@@ -70,9 +70,9 @@ export const TopLoadingBar = ({
 
   const willPathChange = (u: URL) => {
     const sameOrigin = u.origin === location.origin;
-    const differentPath = u.pathname !== location.pathname;
-
-    return sameOrigin && differentPath;
+    const differentPathOrQuery =
+      u.pathname !== location.pathname || u.search !== location.search;
+    return sameOrigin && differentPathOrQuery;
   };
 
   const handleClick = (e: MouseEvent) => {
@@ -85,12 +85,12 @@ export const TopLoadingBar = ({
     }
 
     const anchor = (e.target as HTMLElement)?.closest("a");
-    if (anchor === null) {
+    if (!anchor) {
       return;
     }
 
     const href = anchor.getAttribute("href");
-    if (href === null) {
+    if (!href) {
       return;
     }
 
@@ -102,9 +102,7 @@ export const TopLoadingBar = ({
     start();
   };
 
-  const handlePopState = () => {
-    start();
-  };
+  const handlePopState = () => start();
 
   useEffect(() => {
     const wrap = <K extends "pushState" | "replaceState">(key: K) => {
@@ -115,13 +113,9 @@ export const TopLoadingBar = ({
       ) {
         try {
           const urlArg = (args as unknown as [unknown, string, string?])[2];
-
-          if (urlArg !== undefined && urlArg !== null) {
+          if (urlArg) {
             const nextUrl = new URL(urlArg, location.href);
-
-            if (willPathChange(nextUrl)) {
-              start();
-            }
+            if (willPathChange(nextUrl)) start();
           }
         } catch {
           // ignore invalid URL
@@ -130,11 +124,8 @@ export const TopLoadingBar = ({
       } as (typeof history)[K];
     };
 
-    // eslint-disable-next-line @typescript-eslint/unbound-method
     const origPush = history.pushState;
-    // eslint-disable-next-line @typescript-eslint/unbound-method
     const origReplace = history.replaceState;
-
     history.pushState = wrap("pushState");
     history.replaceState = wrap("replaceState");
 
@@ -147,9 +138,11 @@ export const TopLoadingBar = ({
       history.pushState = origPush;
       history.replaceState = origReplace;
       clearRaf();
+      clearTimeoutRef();
     };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // progress animation
   useEffect(() => {
     if (!active) return;
 
@@ -162,9 +155,17 @@ export const TopLoadingBar = ({
     };
 
     rafRef.current = requestAnimationFrame(tick);
-    return () => clearRaf();
+
+    // Failsafe: auto-finish after 1.5s if no path change happened
+    timeoutRef.current = setTimeout(done, 1500);
+
+    return () => {
+      clearRaf();
+      clearTimeoutRef();
+    };
   }, [active]);
 
+  // finish when path actually changes
   useEffect(() => {
     if (prevPath.current === null) {
       prevPath.current = pathname;

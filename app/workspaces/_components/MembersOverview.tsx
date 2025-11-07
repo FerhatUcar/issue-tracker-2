@@ -64,7 +64,7 @@ export const MembersOverview = async ({ workspaceId }: Props) => {
           </Link>
         </Button>
 
-        <Badge size="2">{workspace.name}</Badge>
+        <Badge size="3" className="!h-8">{workspace.name}</Badge>
       </Flex>
 
       <Flex direction="column" gap="3">
