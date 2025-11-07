@@ -197,3 +197,20 @@ button {
 .rt-BaseDialogContent button {
   width: auto !important;
 }
+
+.top-loading-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  transform-origin: left;
+  transition-property: transform;
+  z-index: 60;
+  border-radius: 9999px;
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.6);
+  pointer-events: none;
+  background: linear-gradient(
+    to right,
+    rgba(56, 189, 248, 0.9),
+    rgba(56, 189, 248, 0.5)
+  );
+}

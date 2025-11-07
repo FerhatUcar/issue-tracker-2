@@ -14,17 +14,11 @@ type Props = {
    * Height of the loading bar in pixels.
    */
   height?: number;
-
-  /**
-   * Additional CSS classes to apply to the loading bar.
-   */
-  className?: string;
 };
 
 export const TopLoadingBar = ({
   topOffset = 60,
   height = 2,
-  className,
 }: Props) => {
   const pathname = usePathname();
   const [active, setActive] = useState(false);
@@ -95,6 +89,7 @@ export const TopLoadingBar = ({
     }
 
     const url = new URL(href, location.href);
+
     if (!willPathChange(url)) {
       return;
     }
@@ -105,27 +100,30 @@ export const TopLoadingBar = ({
   const handlePopState = () => start();
 
   useEffect(() => {
-    const wrap = <K extends "pushState" | "replaceState">(key: K) => {
-      const orig = history[key];
-      return function (
-        this: History,
-        ...args: Parameters<(typeof history)[K]>
-      ) {
+    // Helper to safely wrap pushState/replaceState
+    const wrap = (key: "pushState" | "replaceState") => {
+      const original = history[key].bind(history);
+
+      return (...args: string[]) => {
         try {
-          const urlArg = (args as unknown as [unknown, string, string?])[2];
-          if (urlArg) {
-            const nextUrl = new URL(urlArg, location.href);
-            if (willPathChange(nextUrl)) start();
+          const urlArg = args[2];
+          const nextUrl = new URL(urlArg, location.href);
+
+          if (willPathChange(nextUrl)) {
+            start();
           }
         } catch {
           // ignore invalid URL
         }
-        return orig.apply(this, args);
-      } as (typeof history)[K];
+
+        return original(...(args as Parameters<History["pushState"]>));
+      };
     };
 
-    const origPush = history.pushState;
-    const origReplace = history.replaceState;
+    // Save originals with bound context to avoid unbound method lint errors
+    const origPush = history.pushState.bind(history);
+    const origReplace = history.replaceState.bind(history);
+
     history.pushState = wrap("pushState");
     history.replaceState = wrap("replaceState");
 
@@ -135,8 +133,11 @@ export const TopLoadingBar = ({
     return () => {
       document.removeEventListener("click", handleClick, true);
       window.removeEventListener("popstate", handlePopState);
+
+      // Restore originals
       history.pushState = origPush;
       history.replaceState = origReplace;
+
       clearRaf();
       clearTimeoutRef();
     };
@@ -144,7 +145,9 @@ export const TopLoadingBar = ({
 
   // progress animation
   useEffect(() => {
-    if (!active) return;
+    if (!active) {
+      return;
+    }
 
     const tick = () => {
       setWidth((w) => {
@@ -163,7 +166,7 @@ export const TopLoadingBar = ({
       clearRaf();
       clearTimeoutRef();
     };
-  }, [active]);
+  }, [active]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // finish when path actually changes
   useEffect(() => {
@@ -182,17 +185,5 @@ export const TopLoadingBar = ({
     transitionDuration: active ? "50ms" : "200ms",
   };
 
-  const barClass = `
-    fixed left-0 right-0 
-    origin-left 
-    [transition-property:transform] 
-    z-[60] 
-    rounded-full 
-    shadow-[0_0_8px_rgba(56,189,248,0.6)] 
-    pointer-events-none 
-    bg-gradient-to-r from-sky-400/90 to-sky-400/50
-    ${className ?? ""}
-  `;
-
-  return <Box aria-hidden style={barStyle} className={barClass} />;
+  return <Box aria-hidden style={barStyle} className="top-loading-bar" />;
 };
