@@ -8,10 +8,10 @@ import { Cross2Icon, ExitIcon } from "@radix-ui/react-icons";
 type Props = {
   callbackUrl?: string;
   open: boolean;
-  setOpen: (open: boolean) => void;
+  action: (open: boolean) => void;
 };
 
-export const Logout = ({ callbackUrl = "/", open, setOpen }: Props) => {
+export const Logout = ({ callbackUrl = "/", open, action }: Props) => {
   const [loading, setLoading] = useState(false);
 
   const handleLogout = () => {
@@ -21,22 +21,27 @@ export const Logout = ({ callbackUrl = "/", open, setOpen }: Props) => {
   };
 
   return (
-    <Dialog.Root open={open} onOpenChange={setOpen}>
+    <Dialog.Root open={open} onOpenChange={action}>
       <Dialog.Content className="relative mx-4">
-        <Dialog.Close>
-          <IconButton
-            variant="ghost"
-            size="1"
-            color="gray"
-            className="float-right"
-            aria-label="Close"
-          >
-            <Cross2Icon />
-          </IconButton>
-        </Dialog.Close>
-
-        <Dialog.Title mb="0">Logout</Dialog.Title>
-        <Text className="text-gray-600">Are you sure you want to log out?</Text>
+        <Flex justify="between" align="start">
+          <Box>
+            <Dialog.Title mb="0">Logout</Dialog.Title>
+            <Text className="text-gray-600">
+              Are you sure you want to log out?
+            </Text>
+          </Box>
+          <Dialog.Close>
+            <IconButton
+              variant="ghost"
+              size="1"
+              color="gray"
+              className="float-right"
+              aria-label="Close"
+            >
+              <Cross2Icon />
+            </IconButton>
+          </Dialog.Close>
+        </Flex>
 
         <Box className="mt-6">
           <Button

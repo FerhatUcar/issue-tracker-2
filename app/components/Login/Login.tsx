@@ -13,13 +13,23 @@ type Props = {
   action: (open: boolean) => void;
 };
 
+type Provider = "google" | "facebook";
+
 export const Login = ({ callbackUrl = "/", open, action }: Props) => {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState({
+    google: false,
+    facebook: false,
+  });
 
-  const handleOnClick = () => {
-    setLoading(true);
+  const handleOnClick = (provider: Provider) => {
+    setLoading(
+      (prev) => ({
+        ...prev,
+        [provider]: true,
+      }),
+    );
 
-    void signIn("google", { callbackUrl });
+    void signIn(provider, { callbackUrl });
   };
 
   return (
@@ -31,7 +41,12 @@ export const Login = ({ callbackUrl = "/", open, action }: Props) => {
             <Text className="text-gray-600">With your Google account</Text>
           </Box>
           <Dialog.Close>
-            <IconButton variant="ghost" size="1" color="gray" aria-label="Close">
+            <IconButton
+              variant="ghost"
+              size="1"
+              color="gray"
+              aria-label="Close"
+            >
               <Cross2Icon />
             </IconButton>
           </Dialog.Close>
@@ -42,11 +57,11 @@ export const Login = ({ callbackUrl = "/", open, action }: Props) => {
             type="button"
             variant="soft"
             size="3"
-            disabled={loading}
-            onClick={handleOnClick}
+            disabled={loading.google}
+            onClick={() => handleOnClick("google")}
             className="rounded bg-blue-600 text-white py-2 disabled:opacity-60"
           >
-            {loading ? (
+            {loading.google ? (
               "Loading..."
             ) : (
               <Flex direction="row" align="center" justify="center" gap="2">
@@ -59,12 +74,19 @@ export const Login = ({ callbackUrl = "/", open, action }: Props) => {
             type="button"
             variant="soft"
             size="3"
+            disabled={loading.facebook}
             className="rounded bg-blue-600 text-white py-2 disabled:opacity-60"
-            onClick={() => signIn("facebook", { callbackUrl: "/" })}
+            onClick={() => handleOnClick("facebook")}
             title="Login with Facebook"
           >
-            <FaFacebookF />
-            Login with Facebook
+            {loading.facebook ? (
+              "Loading..."
+            ) : (
+              <Flex direction="row" align="center" justify="center" gap="2">
+                <FaFacebookF />
+                Login with Facebook
+              </Flex>
+            )}
           </Button>
         </Flex>
       </Dialog.Content>

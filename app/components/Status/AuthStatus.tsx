@@ -141,7 +141,7 @@ export const AuthStatus = ({ userId, count }: Props) => {
         </DropdownMenu.Content>
       </DropdownMenu.Root>
 
-      <Logout open={openOut} setOpen={setOpenOut} />
+      <Logout open={openOut} action={setOpenOut} />
     </>
   );
 };
