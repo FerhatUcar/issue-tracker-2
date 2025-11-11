@@ -17,7 +17,14 @@ export const Logout = ({ callbackUrl = "/", open, action }: Props) => {
   const handleLogout = () => {
     setLoading(true);
 
-    void signOut({ callbackUrl });
+    signOut({ callbackUrl })
+      .then(() => {
+        setLoading(false);
+        action(false);
+      })
+      .catch((error: Error) => {
+        console.error("Error signing out:", error.message);
+      });
   };
 
   return (

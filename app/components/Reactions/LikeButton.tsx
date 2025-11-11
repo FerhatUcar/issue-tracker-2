@@ -8,18 +8,18 @@ type Props = {
   count: number;
   active: boolean;
   disabled?: boolean;
-  onClick: () => void;
+  action: () => void;
 };
 
-export const LikeButton = ({ count, active, disabled, onClick }: Props) => (
+export const LikeButton = ({ count, active, disabled, action }: Props) => (
   <Flex align="center" gap="2">
     <motion.button
       whileTap={{ y: -8, rotate: -10 }}
       transition={{ type: "spring", stiffness: 300 }}
-      onClick={onClick}
+      onClick={action}
       disabled={disabled}
       className={`px-2 py-1 rounded ${
-        active ? "bg-green-100 text-green-600" : "bg-transparent text-gray-500"
+        active ? "text-green-600" : "bg-transparent text-gray-500"
       }`}
       title="Like"
     >

@@ -126,12 +126,12 @@ export const Comment = ({ comment, issueId }: Props) => {
             <LikeButton
               count={comment.likesCount ?? 0}
               active={comment.myReaction === "LIKE"}
-              onClick={() => onReact("LIKE")}
+              action={() => onReact("LIKE")}
             />
             <DislikeButton
               count={comment.dislikesCount ?? 0}
               active={comment.myReaction === "DISLIKE"}
-              onClick={() => onReact("DISLIKE")}
+              action={() => onReact("DISLIKE")}
             />
           </Flex>
           {canModify && (

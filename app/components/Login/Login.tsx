@@ -22,14 +22,21 @@ export const Login = ({ callbackUrl = "/", open, action }: Props) => {
   });
 
   const handleOnClick = (provider: Provider) => {
-    setLoading(
-      (prev) => ({
-        ...prev,
-        [provider]: true,
-      }),
-    );
+    setLoading((prev) => ({
+      ...prev,
+      [provider]: true,
+    }));
 
-    void signIn(provider, { callbackUrl });
+    signIn(provider, { callbackUrl })
+      .then(() => {
+        setLoading((prev) => ({
+          ...prev,
+          [provider]: false,
+        }));
+      })
+      .catch((error: Error) => {
+        console.error("Error signing in:", error.message);
+      });
   };
 
   return (
