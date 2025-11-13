@@ -17,7 +17,10 @@
     "@typescript-eslint/no-unsafe-member-access": "error",
     "@typescript-eslint/no-unsafe-call": "error",
     "@typescript-eslint/no-unsafe-return": "error",
-    "@typescript-eslint/no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
+    "@typescript-eslint/no-unused-vars": [
+      "warn",
+      { "argsIgnorePattern": "^_" }
+    ],
     "@typescript-eslint/no-misused-promises": [
       "error",
       {
@@ -27,10 +30,15 @@
   },
   "overrides": [
     {
-      "files": ["*.d.ts"],
+      "files": ["*.d.ts", "**/*.test.ts", "**/*.test.tsx"],
       "rules": {
         "@typescript-eslint/no-unused-vars": "off"
-      }
+      },
+      "env": {
+        "vitest-globals/env": true
+      },
+      "plugins": ["vitest"],
+      "extends": ["plugin:vitest/recommended"]
     }
   ]
 }

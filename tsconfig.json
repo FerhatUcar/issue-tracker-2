@@ -16,7 +16,9 @@
     "resolveJsonModule": true,
     "types": [
       "node",
-      "next-auth"
+      "next-auth",
+      "vitest",
+      "jest"
     ],
     "isolatedModules": true,
     "jsx": "preserve",
