@@ -23,6 +23,8 @@ import { HiOutlineArrowTopRightOnSquare } from "react-icons/hi2";
 import { AvatarIcon } from "@radix-ui/react-icons";
 import { getStatusLabel } from "@/app/workspaces/[workspaceId]/issues/helpers";
 import { Row } from "@/app/settings/components/Row";
+import { BillingSection } from "./BillingSection";
+import { SubscriptionStatus } from "@prisma/client";
 
 type Workspace = { id: string; name: string; createdAt: string };
 type Issue = {
@@ -46,6 +48,12 @@ type Props = {
     closed: number;
   };
   recentIssues: Issue[];
+  subscription: {
+    status: SubscriptionStatus | null;
+    currentPeriodEnd: string | null;
+  };
+  workspaceLimit: number;
+  ownedWorkspaceCount: number;
 };
 
 export const SettingsTabs = ({
@@ -53,6 +61,9 @@ export const SettingsTabs = ({
   workspace,
   stats,
   recentIssues,
+  subscription,
+  workspaceLimit,
+  ownedWorkspaceCount,
 }: Props) => {
   const totalIssues =
     stats.open + stats.inProgress + stats.review + stats.closed;
@@ -103,6 +114,7 @@ export const SettingsTabs = ({
           <Tabs.Trigger value="workspaces">Workspaces</Tabs.Trigger>
           <Tabs.Trigger value="issues">Issues</Tabs.Trigger>
           <Tabs.Trigger value="stats">Statistics</Tabs.Trigger>
+          <Tabs.Trigger value="billing">Billing</Tabs.Trigger>
         </Tabs.List>
 
         <Tabs.Content value="profile">
@@ -269,6 +281,15 @@ export const SettingsTabs = ({
               </Flex>
             </Card>
           </Grid>
+        </Tabs.Content>
+
+        <Tabs.Content value="billing">
+          <BillingSection
+            status={subscription.status}
+            currentPeriodEnd={subscription.currentPeriodEnd}
+            workspaceLimit={workspaceLimit}
+            ownedWorkspaceCount={ownedWorkspaceCount}
+          />
         </Tabs.Content>
       </Tabs.Root>
     </>

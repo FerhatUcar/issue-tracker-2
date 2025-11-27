@@ -42,20 +42,23 @@ export const CreateWorkspace = ({ children }: PropsWithChildren) => {
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const axiosError = error as AxiosError<{ error: string }>;
+        const message = axiosError.response?.data?.error;
 
-        if (axiosError.response?.data?.error) {
-          console.log(axiosError.response?.data?.error);
+        if (axiosError.response?.status === 402 && message) {
+          toast.error(message);
+          return;
+        }
 
+        if (message) {
           setError("name", {
             type: "manual",
-            message: "A workspace with this name already exists.",
+            message,
           });
-        } else {
-          toast.error("Unexpected error while creating workspace.");
+          return;
         }
-      } else {
-        toast.error("Unexpected error while creating workspace.");
       }
+
+      toast.error("Unexpected error while creating workspace.");
     }
   });
 
