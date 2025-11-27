@@ -9,3 +9,4 @@ export { getStatusToColor } from "./get-status-to-color";
 export { delay } from "./delay";
 export { extractAxiosError } from "./extract-axios-error";
 export { applyReaction } from "./apply-reactions";
+export { isSubscriptionActive } from "./is-subscription-active";
