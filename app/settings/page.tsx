@@ -4,6 +4,7 @@ import authOptions from "@/app/auth/authOptions";
 import { notFound } from "next/navigation";
 import { SettingsTabs } from "./components";
 import { Status } from "@prisma/client";
+import { FREE_WORKSPACE_LIMIT } from "@/app/constants/billing";
 
 type RecentIssue = {
   id: number;
@@ -28,10 +29,18 @@ export default async function SettingsPage() {
     notFound();
   }
 
-  const memberships = await prisma.membership.findMany({
-    where: { userId: user.id },
-    include: { workspace: true },
-  });
+  const [
+    memberships,
+    subscription,
+    ownedWorkspaceCount,
+  ] = await Promise.all([
+    prisma.membership.findMany({
+      where: { userId: user.id },
+      include: { workspace: true },
+    }),
+    prisma.subscription.findUnique({ where: { userId: user.id } }),
+    prisma.workspace.count({ where: { ownerId: user.id } }),
+  ]);
 
   const workspaces = memberships.map((m) => ({
     id: m.workspace.id,
@@ -48,6 +57,12 @@ export default async function SettingsPage() {
         workspace={[]}
         stats={{ open: 0, inProgress: 0, review: 0, closed: 0 }}
         recentIssues={[]}
+        subscription={{
+          status: subscription?.status ?? null,
+          currentPeriodEnd: subscription?.currentPeriodEnd?.toISOString() ?? null,
+        }}
+        workspaceLimit={FREE_WORKSPACE_LIMIT}
+        ownedWorkspaceCount={ownedWorkspaceCount}
       />
     );
   }
@@ -103,6 +118,12 @@ export default async function SettingsPage() {
         review: reviewCount,
         closed: closedCount,
       }}
+      subscription={{
+        status: subscription?.status ?? null,
+        currentPeriodEnd: subscription?.currentPeriodEnd?.toISOString() ?? null,
+      }}
+      workspaceLimit={FREE_WORKSPACE_LIMIT}
+      ownedWorkspaceCount={ownedWorkspaceCount}
     />
   );
 }
