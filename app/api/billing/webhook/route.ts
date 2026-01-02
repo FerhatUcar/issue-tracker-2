@@ -70,7 +70,7 @@ const syncSubscription = async (subscription: StripeSubscriptionPayload) => {
 };
 
 export async function POST(req: NextRequest) {
-  const signature = headers().get("stripe-signature");
+  const signature = (await headers()).get("stripe-signature");
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
   if (!signature || !webhookSecret) {
@@ -91,7 +91,9 @@ export async function POST(req: NextRequest) {
       case "checkout.session.completed": {
         const session = event.data.object as { subscription?: unknown };
         const subscriptionId =
-          typeof session.subscription === "string" ? session.subscription : null;
+          typeof session.subscription === "string"
+            ? session.subscription
+            : null;
 
         if (subscriptionId) {
           const subscription = await retrieveSubscription(subscriptionId);
