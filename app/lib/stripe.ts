@@ -84,9 +84,6 @@ export const createBillingPortalSession = async (params: {
   return stripeRequest("/billing_portal/sessions", body);
 };
 
-export const retrieveSubscription = async (subscriptionId: string) =>
-  await stripeRequest(`/subscriptions/${subscriptionId}`, undefined, "GET") as Promise<StripeSubscriptionPayload>;
-
 export type StripeWebhookEvent = {
   type: string;
   data: { object: Record<string, unknown> };
