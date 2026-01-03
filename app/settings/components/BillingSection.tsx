@@ -15,6 +15,7 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 import { formatDate, isSubscriptionActive } from "@/app/helpers";
 import { SubscriptionStatus } from "@prisma/client";
+import { HiOutlineArrowRight } from "react-icons/hi2";
 
 type Props = {
   status: SubscriptionStatus | null;
@@ -55,7 +56,7 @@ export const BillingSection = ({
       window.location.href = data.url;
     } catch (error) {
       console.error(error);
-      toast.error("We konden je niet doorsturen naar de betaalpagina.");
+      toast.error("We couldn't redirect you to the checkout page.");
     } finally {
       setIsRedirecting(false);
     }
@@ -72,7 +73,7 @@ export const BillingSection = ({
       window.location.href = data.url;
     } catch (error) {
       console.error(error);
-      toast.error("We konden de abonnement instellingen niet openen.");
+      toast.error("We couldn't open the subscription settings.");
     } finally {
       setIsPortalLoading(false);
     }
@@ -88,12 +89,12 @@ export const BillingSection = ({
             </Heading>
             <Text color="gray" size="2">
               {hasActiveSubscription
-                ? "Je abonnement is actief."
-                : "Upgrade om onbeperkt workspaces en features te gebruiken."}
+                ? "Your subscription is active."
+                : "Upgrade to Rocket Issues Pro to get unlimited workspaces and more features."}
             </Text>
           </div>
           <Badge color={hasActiveSubscription ? "green" : "orange"}>
-            {hasActiveSubscription ? "Actief" : "Gratis"}
+            {hasActiveSubscription ? "Active" : "Free"}
           </Badge>
         </Flex>
 
@@ -119,8 +120,8 @@ export const BillingSection = ({
             </Text>
             <Text color="gray" size="2">
               {hasActiveSubscription
-                ? "Onbeperkt"
-                : `${ownedWorkspaceCount}/${workspaceLimit} gebruikt`}
+                ? "Limitless workspaces."
+                : `${ownedWorkspaceCount}/${workspaceLimit} used.`}
             </Text>
           </Flex>
 
@@ -131,7 +132,7 @@ export const BillingSection = ({
                 onClick={handleManage}
                 disabled={isPortalLoading}
               >
-                {isPortalLoading ? "Bezig..." : "Manage subscription"}
+                {isPortalLoading ? "Loading..." : "Manage subscription"}
               </Button>
             ) : (
               <Button
@@ -139,7 +140,7 @@ export const BillingSection = ({
                 onClick={handleCheckout}
                 disabled={isRedirecting}
               >
-                {isRedirecting ? "Bezig..." : "Upgrade naar Pro"}
+                {isRedirecting ? "Loading..." : "Upgrade to Pro"}
               </Button>
             )}
           </Flex>
@@ -147,29 +148,36 @@ export const BillingSection = ({
 
         {nextRenewal && (
           <Text color="gray" size="1" className="mt-3 block">
-            Volgende verlenging op {nextRenewal}.
+            Next renewal on {nextRenewal}.
           </Text>
         )}
       </Card>
 
       <Card>
         <Heading size="3" mb="2">
-          Meer voordelen
+          More benefits
         </Heading>
         <Separator my="3" />
         <Flex direction="column" gap="3">
-          <Text>
-            * Free accounts kunnen maximaal {workspaceLimit} workspace
-            {workspaceLimit === 1 ? "" : "s"} aanmaken.
-          </Text>
-          <Text>
-            * Pro accounts krijgen directe toegang tot nieuwe features zoals
-            uitgebreide meldingen en toekomstige bèta releases.
-          </Text>
-          <Text>
-            * Je kan op elk moment downgraden of annuleren via het billing
-            portal.
-          </Text>
+          <Flex align="center" gap="2">
+            <HiOutlineArrowRight size="14" className="text-gray-500" />
+            <Text>
+              Free accounts can create a maximum of {workspaceLimit} workspace
+              {workspaceLimit === 1 ? "" : "s"}.
+            </Text>
+          </Flex>
+          <Flex align="center" gap="2">
+            <HiOutlineArrowRight size="14" className="text-gray-500" />
+            <Text>
+              Pro accounts get direct access to new features
+            </Text>
+          </Flex>
+          <Flex align="center" gap="2">
+            <HiOutlineArrowRight size="14" className="text-gray-500" />
+            <Text>
+              You can downgrade or cancel at any time via the billing portal.
+            </Text>
+          </Flex>
         </Flex>
       </Card>
     </Grid>

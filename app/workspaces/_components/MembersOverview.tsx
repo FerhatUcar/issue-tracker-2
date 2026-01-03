@@ -7,6 +7,7 @@ import { notFound } from "next/navigation";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { MembersList } from "@/app/workspaces/_components";
 import { PageTitle } from "@/app/components";
+import { SubscriptionStatus } from "@prisma/client";
 
 type Props = { workspaceId: string };
 
@@ -19,7 +20,25 @@ export const MembersOverview = async ({ workspaceId }: Props) => {
 
   const workspace = await prisma.workspace.findUnique({
     where: { id: workspaceId },
-    include: { memberships: { include: { user: true } } },
+    include: {
+      memberships: {
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              image: true,
+              Subscription: {
+                select: {
+                  status: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
   });
 
   if (!workspace) {
@@ -40,6 +59,8 @@ export const MembersOverview = async ({ workspaceId }: Props) => {
     const iAmAdmin = currentMembership.role === "ADMIN";
     const showMenu = iAmAdmin && !isAdmin && !isCurrentUser;
 
+    const isPro = user.Subscription?.status === SubscriptionStatus.ACTIVE;
+
     return {
       user: {
         id: user.id,
@@ -50,6 +71,7 @@ export const MembersOverview = async ({ workspaceId }: Props) => {
       role,
       isCurrentUser,
       showMenu,
+      isPro,
     };
   });
 
@@ -64,7 +86,7 @@ export const MembersOverview = async ({ workspaceId }: Props) => {
           </Link>
         </Button>
 
-        <Badge size="3" className="!h-8">{workspace.name}</Badge>
+        <Badge size="3" className="h-8!">{workspace.name}</Badge>
       </Flex>
 
       <Flex direction="column" gap="3">

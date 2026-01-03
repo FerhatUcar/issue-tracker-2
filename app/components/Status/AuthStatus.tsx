@@ -22,6 +22,7 @@ import { useParams } from "next/navigation";
 import { Login, Logout } from "@/app/components";
 import { useState } from "react";
 import Link from "next/link";
+import { useIsPro } from "@/app/hooks";
 
 type Props = { userId: string; count: number };
 
@@ -30,6 +31,7 @@ export const AuthStatus = ({ userId, count }: Props) => {
   const { workspaceId } = useParams();
   const [openIn, setOpenIn] = useState(false);
   const [openOut, setOpenOut] = useState(false);
+  const { data, isLoading } = useIsPro();
 
   const workspaceIdString = Array.isArray(workspaceId)
     ? workspaceId[0]
@@ -62,7 +64,11 @@ export const AuthStatus = ({ userId, count }: Props) => {
               fallback="?"
               size="2"
               radius="large"
-              className="cursor-pointer transition-transform duration-200 hover:scale-105"
+              className={`${
+                data?.isPro && !isLoading
+                  ? "ring-1 ring-yellow-500 shadow-[0_0_10px_rgba(250,204,21,0.5)]"
+                  : ""
+              } cursor-pointer transition-transform duration-200 hover:scale-105`}
               referrerPolicy="no-referrer"
             />
             {count > 0 && (
@@ -100,7 +106,7 @@ export const AuthStatus = ({ userId, count }: Props) => {
                     variant="solid"
                     radius="full"
                     color="red"
-                    className="h-4 !w-5 justify-center"
+                    className="h-4 w-5! justify-center"
                   >
                     {count}
                   </Badge>

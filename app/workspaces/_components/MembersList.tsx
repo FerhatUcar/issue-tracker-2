@@ -16,6 +16,7 @@ type MemberItem = {
   role: Role;
   isCurrentUser: boolean;
   showMenu: boolean;
+  isPro: boolean;
 };
 
 type Props = {
@@ -34,6 +35,7 @@ export const MembersList = ({ members, workspaceId }: Props) => {
           workspaceId={workspaceId}
           user={m.user}
           role={m.role}
+          isPro={m.isPro}
           isCurrentUser={m.isCurrentUser}
           showMenu={m.showMenu}
           glow={promotedId === m.user.id}

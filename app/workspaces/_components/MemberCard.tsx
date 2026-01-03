@@ -14,6 +14,7 @@ type Props = {
   workspaceId: string;
   user: SlimUser;
   role: Role;
+  isPro: boolean;
   isCurrentUser: boolean;
   showMenu: boolean;
   glow?: boolean;
@@ -24,6 +25,7 @@ export const MemberCard = ({
   workspaceId,
   user,
   role,
+  isPro,
   isCurrentUser,
   showMenu,
   glow = false,
@@ -40,6 +42,11 @@ export const MemberCard = ({
             radius="large"
             src={user.image ?? ""}
             size="3"
+            className={`${
+              isPro
+                ? "ring-1 ring-yellow-500 shadow-[0_0_10px_rgba(250,204,21,0.5)]"
+                : ""
+            }`}
           />
           <Flex direction="column">
             <Text weight="bold">
