@@ -45,7 +45,10 @@ export const CreateWorkspace = ({ children }: PropsWithChildren) => {
         const message = axiosError.response?.data?.error;
 
         if (axiosError.response?.status === 402 && message) {
-          toast.error(message);
+          setError("root", {
+            type: "manual",
+            message,
+          });
           return;
         }
 
@@ -79,6 +82,12 @@ export const CreateWorkspace = ({ children }: PropsWithChildren) => {
             {errors.name && (
               <Text color="red" size="1">
                 {errors.name.message}
+              </Text>
+            )}
+
+            {errors.root && (
+              <Text color="red" size="2" weight="bold">
+                {errors.root.message}
               </Text>
             )}
 

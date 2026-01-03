@@ -86,6 +86,8 @@ export async function POST(req: NextRequest) {
 
   const event = JSON.parse(rawBody) as StripeWebhookEvent;
 
+  console.log("🔥 STRIPE WEBHOOK HIT", event.type);
+
   try {
     switch (event.type) {
       case "checkout.session.completed": {
@@ -99,6 +101,21 @@ export async function POST(req: NextRequest) {
           const subscription = await retrieveSubscription(subscriptionId);
           await syncSubscription(subscription);
         }
+        break;
+      }
+      case "invoice.payment_succeeded": {
+        const invoice = event.data.object as { subscription?: unknown };
+
+        if (!invoice.subscription) break;
+
+        await prisma.subscription.update({
+          where: {
+            stripeSubscriptionId: invoice.subscription as string,
+          },
+          data: {
+            status: "ACTIVE",
+          },
+        });
         break;
       }
       case "customer.subscription.updated":
