@@ -9,42 +9,20 @@ datasource db {
   relationMode      = "prisma"
 }
 
-enum Status {
-  OPEN
-  IN_PROGRESS
-  REVIEW
-  CLOSED
-}
-
-enum Role {
-  ADMIN
-  MEMBER
-}
-
-enum ReactionType {
-  LIKE
-  DISLIKE
-}
-
 model Issue {
-  id          Int      @id @default(autoincrement())
-  title       String   @db.VarChar(255)
-  description String
-  status      Status   @default(OPEN)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now()) @updatedAt
-
-  // temporary optional
-  authorId String?
-  author   User?   @relation(fields: [authorId], references: [id], onDelete: Cascade)
-
-  assignedToUserId String? @db.VarChar(255)
-  assignedToUser   User?   @relation("AssignedIssues", fields: [assignedToUserId], references: [id])
-
-  workspaceId String
-  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-
-  Comment Comment[]
+  id               Int       @id @default(autoincrement())
+  title            String    @db.VarChar(255)
+  description      String
+  status           Status    @default(OPEN)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @default(now()) @updatedAt
+  assignedToUserId String?   @db.VarChar(255)
+  workspaceId      String
+  authorId         String?
+  author           User?     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  assignedToUser   User?     @relation("AssignedIssues", fields: [assignedToUserId], references: [id])
+  workspace        Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  Comment          Comment[]
 
   @@index([authorId])
   @@index([workspaceId])
@@ -78,24 +56,21 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-
-  accounts Account[]
-  sessions Session[]
-
-  assignedIssues Issue[] @relation("AssignedIssues")
+  id             String            @id @default(cuid())
+  name           String?
+  email          String?           @unique
+  emailVerified  DateTime?
+  image          String?
+  accounts       Account[]
+  sessions       Session[]
+  assignedIssues Issue[]           @relation("AssignedIssues")
   authoredIssues Issue[]
-
-  Comment    Comment[]
-  Membership Membership[]
-  Invite     Invite[]
-  Workspace  Workspace[]
-
-  reactions CommentReaction[]
+  Comment        Comment[]
+  Membership     Membership[]
+  Invite         Invite[]
+  Workspace      Workspace[]
+  Subscription   Subscription?
+  reactions      CommentReaction[]
 }
 
 model VerificationToken {
@@ -107,20 +82,17 @@ model VerificationToken {
 }
 
 model Comment {
-  id        Int      @id @default(autoincrement())
-  content   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
-  issueId   Int
-  authorId  String?
-
-  issue  Issue @relation(fields: [issueId], references: [id], onDelete: Cascade)
-  author User? @relation(fields: [authorId], references: [id], onDelete: Cascade)
-
-  likesCount    Int @default(0)
-  dislikesCount Int @default(0)
-
-  reactions CommentReaction[]
+  id            Int               @id @default(autoincrement())
+  content       String
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @default(now()) @updatedAt
+  issueId       Int
+  authorId      String?
+  dislikesCount Int               @default(0)
+  likesCount    Int               @default(0)
+  issue         Issue             @relation(fields: [issueId], references: [id], onDelete: Cascade)
+  author        User?             @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  reactions     CommentReaction[]
 }
 
 model CommentReaction {
@@ -130,9 +102,8 @@ model CommentReaction {
   commentId Int
   createdAt DateTime     @default(now())
   updatedAt DateTime     @default(now()) @updatedAt
-
-  user    User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  comment Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  user      User?        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  comment   Comment      @relation(fields: [commentId], references: [id], onDelete: Cascade)
 
   @@unique([commentId, userId])
   @@index([userId])
@@ -142,10 +113,10 @@ model CommentReaction {
 model Workspace {
   id          String       @id @default(cuid())
   name        String
-  ownerId     String
-  owner       User         @relation(fields: [ownerId], references: [id])
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
+  ownerId     String
+  owner       User         @relation(fields: [ownerId], references: [id])
   memberships Membership[]
   issues      Issue[]
   Invite      Invite[]
@@ -154,13 +125,12 @@ model Workspace {
 }
 
 model Membership {
-  id          String @id @default(cuid())
+  id          String    @id @default(cuid())
   userId      String
   workspaceId String
-  role        Role   @default(MEMBER)
-
-  user      User      @relation(fields: [userId], references: [id])
-  workspace Workspace @relation(fields: [workspaceId], references: [id])
+  role        Role      @default(MEMBER)
+  user        User      @relation(fields: [userId], references: [id])
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
 
   @@unique([userId, workspaceId])
 }
@@ -170,9 +140,52 @@ model Invite {
   email       String
   token       String    @unique
   workspaceId String
-  workspace   Workspace @relation(fields: [workspaceId], references: [id])
   invitedById String
-  invitedBy   User      @relation(fields: [invitedById], references: [id])
   createdAt   DateTime  @default(now())
   accepted    Boolean   @default(false)
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  invitedBy   User      @relation(fields: [invitedById], references: [id])
+}
+
+model Subscription {
+  id                   String             @id @default(cuid())
+  userId               String             @unique
+  stripeCustomerId     String?
+  stripeSubscriptionId String?            @unique
+  stripePriceId        String?
+  status               SubscriptionStatus @default(INCOMPLETE)
+  currentPeriodEnd     DateTime?
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([stripeCustomerId])
+}
+
+enum Status {
+  OPEN
+  IN_PROGRESS
+  CLOSED
+  REVIEW
+}
+
+enum Role {
+  ADMIN
+  MEMBER
+}
+
+enum ReactionType {
+  LIKE
+  DISLIKE
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  INCOMPLETE
+  INCOMPLETE_EXPIRED
+  TRIALING
+  PAST_DUE
+  CANCELED
+  UNPAID
 }

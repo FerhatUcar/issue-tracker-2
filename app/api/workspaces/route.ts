@@ -4,6 +4,8 @@ import { getServerSession } from "next-auth";
 import prisma from "@/prisma/client";
 import { revalidatePath } from "next/cache";
 import { CreateWorkspaceBody, GetWorkspaceQuery } from "@/app/validations";
+import { FREE_WORKSPACE_LIMIT } from "@/app/constants/billing";
+import { isSubscriptionActive } from "@/app/helpers";
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -68,11 +70,27 @@ export async function POST(req: Request) {
 
   const user = await prisma.user.findUnique({
     where: { email: requesterEmail },
-    select: { id: true },
+    select: { id: true, Subscription: { select: { status: true } } },
   });
 
   if (!user) {
     return NextResponse.json({ error: "User not found" }, { status: 404 });
+  }
+
+  const ownedWorkspaceCount = await prisma.workspace.count({
+    where: { ownerId: user.id },
+  });
+
+  const hasActiveSubscription = isSubscriptionActive(user.Subscription?.status);
+
+  if (!hasActiveSubscription && ownedWorkspaceCount >= FREE_WORKSPACE_LIMIT) {
+    return NextResponse.json(
+      {
+        error:
+          "Free plan limit reached. Upgrade your account to create more workspaces.",
+      },
+      { status: 402 },
+    );
   }
 
   // Enforce a unique workspace name per owner

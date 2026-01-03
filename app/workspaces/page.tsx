@@ -28,21 +28,19 @@ const WorkspacesPage = async () => {
       <PageTitle title="Workspaces" description="Manage your workspaces." />
 
       {workspaces.length === 0 ? (
-        <Card>
-          <Box className="p-4 flex items-center justify-between">
-            <Text size="3">You do not have any workspaces.</Text>
-            <CreateWorkspace>
-              <Card className="cursor-pointer">
-                <Box className="flex justify-center items-center h-full p-2">
-                  <Flex align="center" gap="2">
-                    <HiOutlinePlus className="w-5 h-5" />
-                    <Text>New workspace</Text>
-                  </Flex>
-                </Box>
-              </Card>
-            </CreateWorkspace>
-          </Box>
-        </Card>
+        <Box className="flex items-center justify-between">
+          <Text size="3">You do not have any workspaces.</Text>
+          <CreateWorkspace>
+            <Card className="cursor-pointer!">
+              <Box className="flex justify-center items-center h-full p-2">
+                <Flex align="center" gap="2">
+                  <HiOutlinePlus className="w-5 h-5" />
+                  <Text>New workspace</Text>
+                </Flex>
+              </Box>
+            </Card>
+          </CreateWorkspace>
+        </Box>
       ) : (
         <Grid
           columns={{ initial: "1", sm: "3", md: "3", lg: "4" }}
