@@ -49,7 +49,7 @@ export const BillingSection = ({
 
     try {
       const { data } = await axios.post<{ url: string }>(
-        "/api/billing/checkout",
+        "/api/stripe/checkout",
       );
 
       window.location.href = data.url;
@@ -66,7 +66,7 @@ export const BillingSection = ({
 
     try {
       const { data } = await axios.post<{ url: string }>(
-        "/api/billing/portal",
+        "/api/stripe/portal",
       );
 
       window.location.href = data.url;

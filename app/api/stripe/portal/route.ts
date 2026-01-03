@@ -47,7 +47,7 @@ export async function POST() {
   } catch (error) {
     console.error("Stripe portal creation failed", error);
     return NextResponse.json(
-      { error: "Unable to open billing portal." },
+      { error: "Unable to open stripe portal." },
       { status: 500 },
     );
   }
