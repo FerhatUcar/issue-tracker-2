@@ -10,7 +10,7 @@ import { toast } from "react-hot-toast";
 import { useDataQuery, useInviteMember } from "@/app/hooks";
 
 const schema = z.object({
-  email: z.string().email("Enter valid email address"),
+  email: z.email("Enter valid email address"),
 });
 
 type FormData = z.infer<typeof schema>;

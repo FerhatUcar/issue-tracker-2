@@ -9,3 +9,5 @@ export { useInviteMember } from "./use-invite-member";
 export { useDeleteMember } from "./use-delete-member";
 export { useCommentReaction } from "./use-comment-reaction";
 export { useIsPro } from "./use-is-pro";
+export { useStripeCheckout } from "./use-stripe-checkout";
+export { useStripePortal } from "./use-stripe-portal";

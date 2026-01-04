@@ -9,6 +9,9 @@ const ACTIVE_STATUSES: SubscriptionStatus[] = [
 export const isSubscriptionActive = (
   status: SubscriptionStatus | null | undefined,
 ) => {
-  if (!status) return false;
+  if (!status) {
+    return false;
+  }
+
   return ACTIVE_STATUSES.includes(status);
 };

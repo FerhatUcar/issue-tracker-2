@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import {
   Badge,
   Button,
@@ -11,11 +11,11 @@ import {
   Separator,
   Text,
 } from "@radix-ui/themes";
-import axios from "axios";
-import { toast } from "react-hot-toast";
-import { formatDate, isSubscriptionActive } from "@/app/helpers";
-import { SubscriptionStatus } from "@prisma/client";
 import { HiOutlineArrowRight } from "react-icons/hi2";
+import { SubscriptionStatus } from "@prisma/client";
+
+import { formatDate, isSubscriptionActive } from "@/app/helpers";
+import { useStripeCheckout, useStripePortal } from "@/app/hooks";
 
 type Props = {
   status: SubscriptionStatus | null;
@@ -36,47 +36,25 @@ export const BillingSection = ({
   workspaceLimit,
   ownedWorkspaceCount,
 }: Props) => {
-  const [isRedirecting, setIsRedirecting] = useState(false);
-  const [isPortalLoading, setIsPortalLoading] = useState(false);
   const hasActiveSubscription = isSubscriptionActive(status);
+  const { mutate: startCheckout, isPending: isRedirecting } =
+    useStripeCheckout();
+  const { mutate: openPortal, isPending: isPortalLoading } = useStripePortal();
 
   const nextRenewal = useMemo(() => {
-    if (!currentPeriodEnd) return null;
+    if (!currentPeriodEnd) {
+      return null;
+    }
+
     return formatDate(currentPeriodEnd, false);
   }, [currentPeriodEnd]);
 
-  const handleCheckout = async () => {
-    setIsRedirecting(true);
-
-    try {
-      const { data } = await axios.post<{ url: string }>(
-        "/api/stripe/checkout",
-      );
-
-      window.location.href = data.url;
-    } catch (error) {
-      console.error(error);
-      toast.error("We couldn't redirect you to the checkout page.");
-    } finally {
-      setIsRedirecting(false);
-    }
+  const handleCheckout = () => {
+    startCheckout();
   };
 
-  const handleManage = async () => {
-    setIsPortalLoading(true);
-
-    try {
-      const { data } = await axios.post<{ url: string }>(
-        "/api/stripe/portal",
-      );
-
-      window.location.href = data.url;
-    } catch (error) {
-      console.error(error);
-      toast.error("We couldn't open the subscription settings.");
-    } finally {
-      setIsPortalLoading(false);
-    }
+  const handleManage = () => {
+    openPortal();
   };
 
   return (
@@ -168,9 +146,7 @@ export const BillingSection = ({
           </Flex>
           <Flex align="center" gap="2">
             <HiOutlineArrowRight size="14" className="text-gray-500" />
-            <Text>
-              Pro accounts get direct access to new features
-            </Text>
+            <Text>Pro accounts get direct access to new features</Text>
           </Flex>
           <Flex align="center" gap="2">
             <HiOutlineArrowRight size="14" className="text-gray-500" />

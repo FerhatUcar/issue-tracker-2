@@ -29,11 +29,7 @@ export default async function SettingsPage() {
     notFound();
   }
 
-  const [
-    memberships,
-    subscription,
-    ownedWorkspaceCount,
-  ] = await Promise.all([
+  const [memberships, subscription, ownedWorkspaceCount] = await Promise.all([
     prisma.membership.findMany({
       where: { userId: user.id },
       include: { workspace: true },
@@ -42,13 +38,13 @@ export default async function SettingsPage() {
     prisma.workspace.count({ where: { ownerId: user.id } }),
   ]);
 
-  const workspaces = memberships.map((m) => ({
-    id: m.workspace.id,
-    name: m.workspace.name,
-    createdAt: m.workspace.createdAt.toISOString(),
+  const workspaces = memberships.map(({ workspace }) => ({
+    id: workspace.id,
+    name: workspace.name,
+    createdAt: workspace.createdAt.toISOString(),
   }));
 
-  const workspaceIds = workspaces.map((w) => w.id);
+  const workspaceIds = workspaces.map(({ id }) => id);
 
   if (workspaceIds.length === 0) {
     return (
@@ -59,7 +55,8 @@ export default async function SettingsPage() {
         recentIssues={[]}
         subscription={{
           status: subscription?.status ?? null,
-          currentPeriodEnd: subscription?.currentPeriodEnd?.toISOString() ?? null,
+          currentPeriodEnd:
+            subscription?.currentPeriodEnd?.toISOString() ?? null,
         }}
         workspaceLimit={FREE_WORKSPACE_LIMIT}
         ownedWorkspaceCount={ownedWorkspaceCount}
