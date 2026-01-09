@@ -5,7 +5,9 @@ import prisma from "@/prisma/client";
 import { Box, Button, Card, Flex, Heading, Text } from "@radix-ui/themes";
 import { CheckCircledIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
-import { Accepted, NoInvite } from "@/app/invite/_components";
+import { Accepted, LimitReached, NoInvite } from "@/app/invite/_components";
+import { FREE_WORKSPACE_MEMBER_LIMIT } from "@/app/constants/billing";
+import { isSubscriptionActive } from "@/app/helpers";
 
 type Props = {
   searchParams: Promise<{ token: string }>;
@@ -52,6 +54,34 @@ export default async function AcceptInvitePage({ searchParams }: Props) {
   });
 
   if (!existing) {
+    const workspace = await prisma.workspace.findUnique({
+      where: { id: invite.workspaceId },
+      select: { ownerId: true },
+    });
+
+    if (!workspace) {
+      return <NoInvite />;
+    }
+
+    const ownerSubscription = await prisma.subscription.findUnique({
+      where: { userId: workspace.ownerId },
+      select: { status: true },
+    });
+
+    const hasActiveSubscription = isSubscriptionActive(
+      ownerSubscription?.status,
+    );
+
+    if (!hasActiveSubscription) {
+      const memberCount = await prisma.membership.count({
+        where: { workspaceId: invite.workspaceId },
+      });
+
+      if (memberCount >= FREE_WORKSPACE_MEMBER_LIMIT) {
+        return <LimitReached />;
+      }
+    }
+
     await prisma.membership.create({
       data: {
         user: { connect: { email: session.user.email } },
