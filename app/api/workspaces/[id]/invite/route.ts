@@ -5,6 +5,8 @@ import authOptions from "@/app/auth/authOptions";
 import { Resend } from "resend";
 import { nanoid } from "nanoid";
 import { InviteBody, WorkspaceParams } from "@/app/validations";
+import { FREE_WORKSPACE_MEMBER_LIMIT } from "@/app/constants/billing";
+import { isSubscriptionActive } from "@/app/helpers";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -60,6 +62,41 @@ export async function POST(
 
   if (!requesterMembership) {
     return NextResponse.json({ error: "No admin rights" }, { status: 403 });
+  }
+
+  const workspace = await prisma.workspace.findUnique({
+    where: { id: workspaceId },
+    select: { ownerId: true },
+  });
+
+  if (!workspace) {
+    return NextResponse.json({ error: "Workspace not found" }, { status: 404 });
+  }
+
+  const ownerSubscription = await prisma.subscription.findUnique({
+    where: { userId: workspace.ownerId },
+    select: { status: true },
+  });
+
+  const hasActiveSubscription = isSubscriptionActive(
+    ownerSubscription?.status,
+  );
+
+  if (!hasActiveSubscription) {
+    const [memberCount, pendingInviteCount] = await Promise.all([
+      prisma.membership.count({ where: { workspaceId } }),
+      prisma.invite.count({ where: { workspaceId, accepted: false } }),
+    ]);
+
+    if (memberCount + pendingInviteCount >= FREE_WORKSPACE_MEMBER_LIMIT) {
+      return NextResponse.json(
+        {
+          error:
+            "Workspace member limit reached. Upgrade to Pro to add more members.",
+        },
+        { status: 402 },
+      );
+    }
   }
 
   // If a user already exists and is already a member, block

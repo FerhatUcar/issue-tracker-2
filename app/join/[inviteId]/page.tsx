@@ -2,6 +2,9 @@ import { notFound, redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import authOptions from "@/app/auth/authOptions";
 import prisma from "@/prisma/client";
+import { LimitReached } from "@/app/invite/_components";
+import { FREE_WORKSPACE_MEMBER_LIMIT } from "@/app/constants/billing";
+import { isSubscriptionActive } from "@/app/helpers";
 
 type Props = {
   params: Promise<{ inviteId: string }>;
@@ -52,6 +55,34 @@ const AcceptInvitePage = async ({ params }: Props) => {
   });
 
   if (!existingMembership) {
+    const workspace = await prisma.workspace.findUnique({
+      where: { id: invite.workspaceId },
+      select: { ownerId: true },
+    });
+
+    if (!workspace) {
+      notFound();
+    }
+
+    const ownerSubscription = await prisma.subscription.findUnique({
+      where: { userId: workspace.ownerId },
+      select: { status: true },
+    });
+
+    const hasActiveSubscription = isSubscriptionActive(
+      ownerSubscription?.status,
+    );
+
+    if (!hasActiveSubscription) {
+      const memberCount = await prisma.membership.count({
+        where: { workspaceId: invite.workspaceId },
+      });
+
+      if (memberCount >= FREE_WORKSPACE_MEMBER_LIMIT) {
+        return <LimitReached />;
+      }
+    }
+
     await prisma.membership.create({
       data: {
         userId: user.id,
